@@ -33,6 +33,8 @@
   "optionalDependencies": {
     "@astrojs/compiler-binding-linux-x64-gnu": "^0.4.0",
     "@astrojs/compiler-binding-wasm32-wasi": "^0.4.0",
+    "@bruits/satteri-linux-x64-gnu": "^0.10.4",
+    "@bruits/satteri-wasm32-wasi": "^0.10.4",
     "@rolldown/binding-linux-x64-gnu": "^1.2.5",
     "@rolldown/binding-wasm32-wasi": "^1.2.5",
     "@tailwindcss/oxide-linux-x64-gnu": "^4.3.3",
