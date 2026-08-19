@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
+import { LearningPanel } from '../../../components/terminal/LearningPanel';
+import { TRANSLATIONS, type SupportedLocale } from '../../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t.navTerminal} — ${t.heroHighlight}`}
+  description={t.heroSub}
+>
+  <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4">
+    <!-- Top Workspace Status Bar -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
+      <div>
+        <h1 class="text-lg sm:text-xl font-bold font-mono text-zinc-100 flex items-center space-x-2">
+          <span class="text-emerald-400">$</span>
+          <span>{t.navTerminal} Workspace</span>
+        </h1>
+        <p class="text-[11px] sm:text-xs text-zinc-400">{t.heroBadge}</p>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs font-mono text-zinc-400">
+        <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-zinc-800 border border-zinc-700 text-emerald-400 text-[11px]">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Status: Ready</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Workspace Main Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-250px)] min-h-[500px]">
+      <div class="lg:col-span-2 h-[450px] sm:h-[500px] lg:h-full">
+        <TerminalRunner client:load className="h-full" />
+      </div>
+      <div class="lg:col-span-1 h-full min-h-[350px]">
+        <LearningPanel client:load />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

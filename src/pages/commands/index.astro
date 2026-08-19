@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { AdSlot } from '../../components/ads/AdSlot';
+
+export const COMMANDS_LIST = [
+  { name: 'ls', category: 'Navigation', desc: 'List directory contents with details and hidden files.' },
+  { name: 'cd', category: 'Navigation', desc: 'Change current working directory.' },
+  { name: 'pwd', category: 'Navigation', desc: 'Print name of current working directory.' },
+  { name: 'tree', category: 'Navigation', desc: 'Display directory structure in a tree-like diagram.' },
+  { name: 'cat', category: 'File Operations', desc: 'Concatenate and print file contents to terminal.' },
+  { name: 'touch', category: 'File Operations', desc: 'Create empty files or update timestamps.' },
+  { name: 'mkdir', category: 'File Operations', desc: 'Create new directory folders.' },
+  { name: 'rm', category: 'File Operations', desc: 'Remove files or directories recursively.' },
+  { name: 'cp', category: 'File Operations', desc: 'Copy files or directories to new paths.' },
+  { name: 'mv', category: 'File Operations', desc: 'Move or rename files and directories.' },
+  { name: 'grep', category: 'Text Processing', desc: 'Search text files using matching regular expressions.' },
+  { name: 'sed', category: 'Text Processing', desc: 'Stream editor for filtering and transforming text.' },
+  { name: 'awk', category: 'Text Processing', desc: 'Pattern scanning and column processing language.' },
+  { name: 'head', category: 'Text Processing', desc: 'Output the first part of files.' },
+  { name: 'tail', category: 'Text Processing', desc: 'Output the last part of files.' },
+  { name: 'wc', category: 'Text Processing', desc: 'Print line, word, and byte counts for files.' },
+  { name: 'echo', category: 'Text Processing', desc: 'Print text or redirect content to files.' },
+  { name: 'chmod', category: 'Permissions', desc: 'Change file mode bits and access permissions.' },
+  { name: 'chown', category: 'Permissions', desc: 'Change file owner and group attributes.' },
+  { name: 'nano', category: 'Editors', desc: 'Launch simple text editor modal.' },
+  { name: 'vim', category: 'Editors', desc: 'Launch vi/vim text editor modal.' },
+  { name: 'curl', category: 'Networking', desc: 'Transfer data from or to a server URL.' },
+  { name: 'tar', category: 'Archives', desc: 'Store and extract file archives in VFS.' },
+  { name: 'gzip', category: 'Archives', desc: 'Compress or expand files in Virtual File System.' },
+  { name: 'top', category: 'System', desc: 'Display simulated real-time Linux processes.' },
+  { name: 'python3', category: 'System', desc: 'Interactive Python 3 interpreter REPL.' },
+  { name: 'apt', category: 'Packages', desc: 'Simulated package manager to install utilities.' },
+  { name: 'whoami', category: 'System', desc: 'Print effective user ID name.' },
+  { name: 'date', category: 'System', desc: 'Display current system date and time.' },
+  { name: 'uname', category: 'System', desc: 'Print system information and kernel architecture.' },
+  { name: 'history', category: 'System', desc: 'Display list of executed terminal commands.' },
+];
+
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Linux Command Manual & Directory",
+  "description": "Comprehensive reference guide for essential Linux commands with live interactive testing.",
+  "itemListElement": COMMANDS_LIST.map((cmd, idx) => ({
+    "@type": "ListItem",
+    "position": idx + 1,
+    "name": cmd.name,
+    "url": `https://onlinelinuxterminal.com/commands/${cmd.name}/`
+  }))
+};
+---
+
+<BaseLayout
+  title="Linux Command Reference Hub — Best Online Linux Terminal Platform"
+  description="Comprehensive reference guide for essential Linux commands. Learn syntax, options, and real-world examples for grep, ls, cd, chmod, find, nano, sed, awk, and test live in browser."
+  keywords="online linux terminal, linux command reference, best online linux terminal, online linux terminal platform, online linux terminal simulator, linux command manual"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Command Reference Directory</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Linux Command Reference Manual
+      </h1>
+      <p class="text-sm text-zinc-400 leading-relaxed">
+        Select any Linux command below to inspect syntax rules, flags, options, and test live in our online browser terminal.
+      </p>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Commands Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {COMMANDS_LIST.map((cmd) => (
+        <a
+          href={`/commands/${cmd.name}/`}
+          class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between"
+        >
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
+                {cmd.name}
+              </span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                {cmd.category}
+              </span>
+            </div>
+            <p class="text-xs text-zinc-400 leading-relaxed">{cmd.desc}</p>
+          </div>
+
+          <div class="pt-4 flex items-center justify-between text-xs font-mono text-emerald-400 font-semibold">
+            <span>View Manual & Try Live</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- 600+ Word SEO Content Section -->
+    <section class="max-w-4xl mx-auto p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
+      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+        Comprehensive Linux Command Reference & Simulator
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Understanding command syntax and option flags is essential for effective system administration. Our <strong>online linux terminal platform</strong> pairs detailed technical documentation with live interactive testing.
+      </p>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <h3 class="text-lg font-bold text-emerald-400">Interactive Execution for Every Linux Utility</h3>
+        <p class="text-zinc-400 leading-relaxed">
+          Every command manual page includes a <strong>"Try Live in Terminal"</strong> widget. You can test flag combinations like <code>grep -i -n</code>, column filters like <code>awk '&#123;print $1&#125;'</code>, and mode updates like <code>chmod 755</code> with zero installation risk.
+        </p>
+      </div>
+    </section>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

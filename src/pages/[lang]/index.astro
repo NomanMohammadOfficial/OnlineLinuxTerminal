@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../components/terminal/TerminalRunner';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t.heroHighlight} — ${t.heroBadge}`}
+  description={t.heroSub}
+>
+  <!-- Hero Section with Embedded Terminal -->
+  <section class="relative overflow-hidden pt-12 pb-16 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>{t.heroBadge}</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-zinc-100 font-sans">
+          {t.heroTitle} <br class="hidden sm:block" />
+          <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent">
+            {t.heroHighlight}
+          </span>
+        </h1>
+        <p class="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+          {t.heroSub}
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <a
+            href={getLocalizedPath('/terminal/', lang)}
+            class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-950/50 flex items-center space-x-2"
+          >
+            <span class="font-mono text-base">$</span>
+            <span>{t.ctaTerminal}</span>
+          </a>
+          <a
+            href={getLocalizedPath('/commands/', lang)}
+            class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold rounded-xl text-sm transition-all"
+          >
+            {t.ctaCommands}
+          </a>
+          <a
+            href={getLocalizedPath('/tutorials/', lang)}
+            class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold rounded-xl text-sm transition-all"
+          >
+            {t.ctaTutorials}
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Terminal Canvas -->
+      <div class="max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-b from-zinc-700/50 to-zinc-800/20 shadow-2xl">
+        <TerminalRunner client:load className="h-[480px]" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="py-16 bg-zinc-950 border-t border-zinc-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
+            AST
+          </div>
+          <h3 class="font-bold text-lg text-zinc-100">{t.feature1Title}</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">{t.feature1Desc}</p>
+        </div>
+
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
+            VFS
+          </div>
+          <h3 class="font-bold text-lg text-zinc-100">{t.feature2Title}</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">{t.feature2Desc}</p>
+        </div>
+
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
+            ROOT
+          </div>
+          <h3 class="font-bold text-lg text-zinc-100">{t.feature3Title}</h3>
+          <p class="text-xs text-zinc-400 leading-relaxed">{t.feature3Desc}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Localized SEO Guide Section -->
+  <section class="py-16 bg-zinc-900/40 border-t border-zinc-800/80">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-zinc-300">
+      <h2 class="text-3xl font-extrabold text-zinc-100">{t.guideTitle}</h2>
+      <p class="text-xs sm:text-sm leading-relaxed">{t.guideIntro}</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,248 @@
+---
+import '../styles/global.css';
+import { LanguageSwitcher } from '../components/i18n/LanguageSwitcher';
+import { LOCALES, TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../i18n/translations';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  lang?: SupportedLocale;
+}
+
+const {
+  lang = 'en',
+  title,
+  description,
+  keywords = "online linux terminal, webminal online linux terminal, free online linux terminal, online linux terminal for practice free, online linux terminal for practice, online linux terminal ubuntu, online linux terminal free, online linux terminal practice, webminal online linux terminal practice, webminal online linux terminal free, online linux terminal platform, online linux terminal simulator, online linux terminal in browser, best online linux terminal, online linux terminal with root access, free online linux terminal practice, free online linux terminal for practice",
+  canonicalUrl = "https://onlinelinuxterminal.com" + Astro.url.pathname,
+  ogImage = "https://onlinelinuxterminal.com/og-image.png",
+} = Astro.props;
+
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const pageTitle = title || `${t.heroHighlight} — ${t.heroBadge}`;
+const pageDesc = description || t.heroSub;
+
+const jsonLdApp = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Linux, Web, ChromeOS, Windows, macOS",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": pageDesc,
+  "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas."
+};
+
+// Generate clean base path without locale prefix
+let rawPath = Astro.url.pathname;
+LOCALES.forEach((l) => {
+  if (rawPath.startsWith(`/${l.code}/`)) {
+    rawPath = rawPath.replace(`/${l.code}/`, '/');
+  } else if (rawPath === `/${l.code}`) {
+    rawPath = '/';
+  }
+});
+---
+
+<!DOCTYPE html>
+<html lang={lang} class="dark overflow-x-hidden">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Online Linux Terminal" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Internationalization (i18n) Hreflang Tags for Google & Yandex -->
+    {LOCALES.map((locale) => (
+      <link
+        rel="alternate"
+        hreflang={locale.code}
+        href={`https://onlinelinuxterminal.com${getLocalizedPath(rawPath, locale.code)}`}
+      />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`https://onlinelinuxterminal.com${rawPath}`} />
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={pageDesc} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Online Linux Terminal Team" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Online Linux Terminal" />
+    <meta property="og:locale" content={lang} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={pageDesc} />
+    <meta property="twitter:image" content={ogImage} />
+    <meta property="twitter:site" content="@OnlineLinuxTerm" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLdApp)} />
+  </head>
+  <body class="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-emerald-900 selection:text-emerald-100 antialiased overflow-x-hidden">
+    <!-- Navbar Header -->
+    <header class="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- Logo -->
+        <a href={getLocalizedPath('/', lang)} class="flex items-center space-x-3 group min-h-[44px]" title="Online Linux Terminal Home">
+          <img src="/icon.svg" alt="Online Linux Terminal Logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl shadow-lg shadow-emerald-900/30 group-hover:scale-105 transition-transform" />
+          <div>
+            <span class="font-mono font-bold text-sm sm:text-base tracking-tight text-zinc-100 group-hover:text-emerald-400 transition-colors">
+              OnlineLinux<span class="text-emerald-400">Terminal</span>
+            </span>
+            <span class="hidden sm:block text-[10px] text-zinc-500 font-mono tracking-wider uppercase">onlinelinuxterminal.com</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links & Language Switcher -->
+        <div class="flex items-center space-x-4">
+          <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <a href={getLocalizedPath('/terminal/', lang)} class="px-3.5 py-2 rounded-lg text-emerald-400 hover:bg-zinc-900 transition-colors flex items-center space-x-1.5 border border-emerald-800/50 bg-emerald-950/40 min-h-[44px]">
+              <span class="font-mono font-bold">$</span>
+              <span>{t.navTerminal}</span>
+            </a>
+            <a href={getLocalizedPath('/commands/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+              {t.navCommands}
+            </a>
+            <a href={getLocalizedPath('/tutorials/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+              {t.navTutorials}
+            </a>
+            <a href={getLocalizedPath('/challenges/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+              {t.navChallenges}
+            </a>
+          </nav>
+
+          <!-- i18n Language Switcher -->
+          <LanguageSwitcher client:load currentLang={lang} currentPath={rawPath} />
+
+          <!-- Mobile Hamburger Toggle Button -->
+          <button
+            id="mobile-menu-btn"
+            type="button"
+            class="md:hidden p-2.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 border border-zinc-800 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Toggle navigation menu"
+            aria-expanded="false"
+          >
+            <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Navigation Drawer -->
+      <div id="mobile-menu" class="hidden md:hidden border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl px-4 py-4 space-y-2 animate-in slide-in-from-top duration-200">
+        <a href={getLocalizedPath('/terminal/', lang)} class="flex items-center space-x-2 px-4 py-3 rounded-xl text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 text-sm font-semibold min-h-[48px]">
+          <span class="font-mono">$</span>
+          <span>{t.navTerminal}</span>
+        </a>
+        <a href={getLocalizedPath('/commands/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
+          {t.navCommands}
+        </a>
+        <a href={getLocalizedPath('/tutorials/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
+          {t.navTutorials}
+        </a>
+        <a href={getLocalizedPath('/challenges/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
+          {t.navChallenges}
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Page Content -->
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-zinc-950 border-t border-zinc-800/80 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div class="md:col-span-2 space-y-4">
+            <div class="flex items-center space-x-2 font-mono font-bold text-lg text-zinc-100">
+              <span class="text-emerald-400">$</span>
+              <span>OnlineLinuxTerminal.com</span>
+            </div>
+            <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
+              {t.heroSub}
+            </p>
+          </div>
+          <div>
+            <h4 class="font-mono text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">Resources</h4>
+            <ul class="space-y-2 text-xs text-zinc-400">
+              <li><a href={getLocalizedPath('/commands/', lang)} class="hover:text-emerald-400 transition-colors">{t.navCommands}</a></li>
+              <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTutorials}</a></li>
+              <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">{t.navChallenges}</a></li>
+              <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTerminal}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-mono text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">Legal & Trust</h4>
+            <ul class="space-y-2 text-xs text-zinc-400">
+              <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & EEAT</a></li>
+              <li><a href="/privacy/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="pt-8 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2">
+          <p>© 2026 OnlineLinuxTerminal.com. {t.footerRights}</p>
+          <p class="mt-2 sm:mt-0">{t.footerTagline}</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Mobile Drawer Script -->
+    <script>
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
+
+      if (btn && menu && hamburgerIcon && closeIcon) {
+        btn.addEventListener('click', () => {
+          const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', (!isExpanded).toString());
+          menu.classList.toggle('hidden');
+          hamburgerIcon.classList.toggle('hidden');
+          closeIcon.classList.toggle('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>

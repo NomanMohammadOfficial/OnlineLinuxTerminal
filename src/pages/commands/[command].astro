@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../components/terminal/TerminalRunner';
+import { AdSlot } from '../../components/ads/AdSlot';
+
+export function getStaticPaths() {
+  const commandsData = [
+    {
+      name: 'grep',
+      category: 'Text Processing',
+      syntax: 'grep [OPTIONS] PATTERN [FILE...]',
+      description: 'Search for matching string patterns or regular expressions inside text files.',
+      details: 'Grep (Global Regular Expression Print) is the standard Unix search utility. It scans input lines matching a specified pattern and prints them to standard output.',
+      flags: [
+        { flag: '-i', desc: 'Ignore case distinctions in patterns and input files.' },
+        { flag: '-n', desc: 'Prefix each line of output with its 1-based line number.' },
+        { flag: '-v', desc: 'Invert match: select non-matching lines.' },
+        { flag: '-c', desc: 'Suppress normal output and print a count of matching lines.' },
+      ],
+      exampleCmd: 'grep -i -n "error" /var/log/syslog',
+    },
+    {
+      name: 'ls',
+      category: 'Navigation',
+      syntax: 'ls [OPTIONS] [FILE...]',
+      description: 'List directory contents including file sizes, permissions, and modification times.',
+      details: 'ls displays information about files and directories. By default, it lists files in the current working directory in alphabetical order.',
+      flags: [
+        { flag: '-l', desc: 'Use long listing format showing permissions, owner, size, and date.' },
+        { flag: '-a', desc: 'Do not ignore entries starting with dot (.) including hidden files.' },
+        { flag: '-h', desc: 'Print human readable sizes (e.g. 1K, 234M, 2G).' },
+      ],
+      exampleCmd: 'ls -l -a -h',
+    },
+    {
+      name: 'cd',
+      category: 'Navigation',
+      syntax: 'cd [DIRECTORY]',
+      description: 'Change current working directory in shell workspace.',
+      details: 'cd allows navigation across the virtual filesystem. Using "cd ~" returns to home, while "cd .." moves up to parent folder.',
+      flags: [
+        { flag: '~', desc: 'Navigate to user home directory (/home/user).' },
+        { flag: '..', desc: 'Navigate up to parent directory.' },
+      ],
+      exampleCmd: 'cd /etc',
+    },
+    {
+      name: 'cat',
+      category: 'File Operations',
+      syntax: 'cat [OPTIONS] [FILE...]',
+      description: 'Concatenate and print file contents to standard output.',
+      details: 'cat reads files sequentially, writing them to standard output. It is commonly used to inspect text files or combine multiple files.',
+      flags: [
+        { flag: '-n', desc: 'Number all output lines.' },
+      ],
+      exampleCmd: 'cat welcome.txt',
+    },
+    {
+      name: 'chmod',
+      category: 'Permissions',
+      syntax: 'chmod [OCTAL|MODE] FILE',
+      description: 'Change file permissions mode bits for owner, group, and others.',
+      details: 'chmod alters access permissions of files. Modes can be specified numerically using octal numbers (e.g., 755 or 644) or symbolically.',
+      flags: [
+        { flag: '755', desc: 'Read, write, execute for owner; read and execute for group/others.' },
+        { flag: '644', desc: 'Read and write for owner; read-only for group/others.' },
+      ],
+      exampleCmd: 'chmod 755 /home/user/projects/demo.sh',
+    },
+    {
+      name: 'mkdir',
+      category: 'File Operations',
+      syntax: 'mkdir [OPTIONS] DIRECTORY...',
+      description: 'Create new directories if they do not already exist.',
+      details: 'mkdir creates one or more new directory folders in the Virtual File System.',
+      flags: [
+        { flag: '-p', desc: 'Create parent directories as needed without throwing error if existing.' },
+      ],
+      exampleCmd: 'mkdir -p /home/user/docs/pdf',
+    },
+  ];
+
+  const allCmdNames = ['pwd', 'tree', 'touch', 'rm', 'cp', 'mv', 'head', 'tail', 'wc', 'echo', 'nano', 'vim', 'curl', 'apt', 'whoami', 'date', 'uname', 'history', 'sed', 'awk', 'tar', 'gzip', 'top', 'python3', 'chown'];
+
+  const fallbackData = allCmdNames.map((cmd) => ({
+    name: cmd,
+    category: 'System Utility',
+    syntax: `${cmd} [OPTIONS] [ARGS]`,
+    description: `Execute the ${cmd} command line utility in Linux.`,
+    details: `${cmd} is an essential tool in Linux terminal workflow for file processing and system control.`,
+    flags: [
+      { flag: '--help', desc: 'Display help documentation.' },
+    ],
+    exampleCmd: `${cmd} --help`,
+  }));
+
+  return [...commandsData, ...fallbackData].map((item) => ({
+    params: { command: item.name },
+    props: { data: item },
+  }));
+}
+
+const { data } = Astro.props;
+
+const techArticleSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": `How to use the Linux ${data.name} command`,
+  "description": data.description,
+  "articleSection": data.category,
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com"
+  }
+};
+---
+
+<BaseLayout
+  title={`${data.name} Command Guide — Online Linux Terminal`}
+  description={`Learn how to use the Linux ${data.name} command. Syntax rules, options table, real-world examples, and live terminal testing in browser.`}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(techArticleSchema)} />
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <!-- Header -->
+    <div class="space-y-3">
+      <div class="flex items-center space-x-3">
+        <a href="/commands/" class="text-xs font-mono text-emerald-400 hover:underline">← All Commands</a>
+        <span class="text-zinc-600">•</span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+          {data.category}
+        </span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-zinc-100 font-mono flex items-center space-x-3">
+        <span class="text-emerald-400">$</span>
+        <span>{data.name}</span>
+      </h1>
+      <p class="text-base text-zinc-300">{data.description}</p>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Syntax Box -->
+    <div class="p-4 bg-zinc-900 border border-zinc-800 rounded-xl space-y-2 font-mono text-xs">
+      <div class="text-zinc-500 uppercase text-[10px] tracking-wider font-semibold">Command Syntax</div>
+      <div class="text-emerald-300 text-sm font-semibold">{data.syntax}</div>
+    </div>
+
+    <!-- Live Interactive Test Widget -->
+    <div class="space-y-3">
+      <h2 class="text-xl font-bold text-zinc-100 flex items-center space-x-2">
+        <span>Try `{data.name}` Live in Terminal</span>
+      </h2>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-1">
+        <TerminalRunner client:load initialCommand={data.exampleCmd} className="h-[380px]" />
+      </div>
+    </div>
+
+    <!-- Detailed Guide & Options Table -->
+    <div class="space-y-6 text-zinc-300">
+      <h2 class="text-2xl font-bold text-zinc-100">Overview & Usage Details</h2>
+      <p class="text-sm leading-relaxed text-zinc-300">{data.details}</p>
+
+      <h3 class="text-lg font-bold text-emerald-400">Command Options & Flags</h3>
+      <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/60">
+        <table class="w-full text-left text-xs font-mono">
+          <thead class="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
+            <tr>
+              <th class="p-3">Option / Flag</th>
+              <th class="p-3">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-800/80">
+            {data.flags.map((f) => (
+              <tr>
+                <td class="p-3 text-emerald-300 font-bold">{f.flag}</td>
+                <td class="p-3 text-zinc-300 font-sans text-xs">{f.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

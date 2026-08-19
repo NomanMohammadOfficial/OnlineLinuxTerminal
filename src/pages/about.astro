@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AdSlot } from '../components/ads/AdSlot';
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About Us — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/about/",
+  "description": "Learn about the mission, engineering architecture, and E-E-A-T standards behind Online Linux Terminal.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
+---
+
+<BaseLayout
+  title="About Us & EEAT — Online Linux Terminal"
+  description="Learn about the mission, technology, engineering architecture, and E-E-A-T quality standards behind Online Linux Terminal (onlinelinuxterminal.com)."
+  keywords="online linux terminal about, online linux terminal team, best online linux terminal platform, online linux terminal simulator architecture"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <div class="space-y-3">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Engineering & E-E-A-T Standards</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        About Online Linux Terminal
+      </h1>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <p>
+        <strong>Online Linux Terminal</strong> (hosted at <code>onlinelinuxterminal.com</code>) was created with a clear mission: to break down barriers to learning computer systems and DevOps engineering by providing an instant, zero-friction, professional Linux terminal experience directly inside modern web browsers.
+      </p>
+
+      <h2 class="text-xl font-bold text-emerald-400 font-sans">Our Engineering Architecture</h2>
+      <p>
+        Traditional cloud terminal services rely on expensive remote virtual machine instances or SSH tunnels that introduce latency and recurring infrastructure costs. Online Linux Terminal uses a modern <strong>Hybrid Execution Engine</strong>:
+      </p>
+      <ul class="list-disc list-inside space-y-2">
+        <li><strong>Client-Side AST Engine:</strong> Instant command parsing and shell execution with zero server latency.</li>
+        <li><strong>IndexedDB Persistence:</strong> Virtual File System (VFS) nodes, modified files, and shell command histories persist safely in your browser storage.</li>
+        <li><strong>xterm.js Canvas:</strong> High-performance terminal rendering supporting full ANSI color codes, tab completion, and keyboard shortcuts.</li>
+      </ul>
+
+      <h2 class="text-xl font-bold text-emerald-400 font-sans">E-E-A-T & Technical Quality Guardrails</h2>
+      <p>
+        Our content and command reference guides are authored and verified by veteran systems engineers and DevOps practitioners. Every code example, command flag table, and tutorial scenario is regularly audited for accuracy against GNU coreutils and POSIX standards.
+      </p>
+    </div>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

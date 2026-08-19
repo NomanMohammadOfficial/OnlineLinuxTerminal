@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../components/terminal/TerminalRunner';
+import { LearningPanel } from '../../components/terminal/LearningPanel';
+import { AdSlot } from '../../components/ads/AdSlot';
+
+const workspaceSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Full Shell Workspace — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/terminal/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Linux, Web, ChromeOS, Windows, macOS",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "Full-screen interactive online linux terminal workspace. Practice bash commands, inspect virtual filesystems, and run interactive tutorials in browser."
+};
+---
+
+<BaseLayout
+  title="Full Shell Workspace — Free Online Linux Terminal in Browser for Practice"
+  description="Interactive online linux terminal workspace. Practice bash commands, execute file operations, search with grep, test scripts with simulated root access in your web browser."
+  keywords="online linux terminal, full shell workspace online linux terminal, free online linux terminal for practice, online linux terminal simulator, online linux terminal in browser, online linux terminal ubuntu, online linux terminal with root access, free online linux terminal practice"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(workspaceSchema)} />
+
+  <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
+    <!-- Top Workspace Status Bar -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
+      <div>
+        <h1 class="text-lg sm:text-xl font-bold font-mono text-zinc-100 flex items-center space-x-2">
+          <span class="text-emerald-400">$</span>
+          <span>Online Linux Terminal Workspace</span>
+        </h1>
+        <p class="text-[11px] sm:text-xs text-zinc-400">Client-Side IndexedDB Sandbox • AST Shell Interpreter • Free Online Linux Terminal Practice</p>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs font-mono text-zinc-400">
+        <span class="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-zinc-800 border border-zinc-700 text-emerald-400 text-[11px]">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Status: Active Sandbox</span>
+        </span>
+        <span class="hidden sm:inline px-2.5 py-1 rounded bg-zinc-800 border border-zinc-700 text-[11px]">
+          OS: Linux (Simulation)
+        </span>
+      </div>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Workspace Main Layout: Terminal + Interactive Learning Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-270px)] min-h-[500px]">
+      <!-- Terminal Window -->
+      <div class="lg:col-span-2 h-[450px] sm:h-[500px] lg:h-full">
+        <TerminalRunner client:load className="h-full" />
+      </div>
+
+      <!-- Learning Panel Sidebar -->
+      <div class="lg:col-span-1 h-full min-h-[350px]">
+        <LearningPanel client:load />
+      </div>
+    </div>
+
+    <!-- 500+ Word SEO Guide Section -->
+    <section class="mt-12 p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
+      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+        About the Online Linux Terminal Full Shell Workspace
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Welcome to the premier <strong>online linux terminal for practice free</strong>. This full-screen interactive workspace is designed to give students, developers, and DevOps engineers an authentic Linux command-line environment directly inside any web browser.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+        <div class="space-y-2">
+          <h3 class="font-bold text-emerald-400">Client-Side IndexedDB Sandbox</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Unlike server-dependent terminals that experience lag, our <strong>online linux terminal simulator</strong> executes all commands client-side using a JavaScript AST parser. Created files, directory modifications, and history persist in IndexedDB.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h3 class="font-bold text-emerald-400">Simulated Root Access & Utilities</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Test system administrative operations with an <strong>online linux terminal with root access</strong> simulation. Modify permissions via <code>chmod</code>, change ownership via <code>chown</code>, and run text filters like <code>grep</code>, <code>sed</code>, and <code>awk</code>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>
