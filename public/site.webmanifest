@@ -1,21 +1,23 @@
 {
   "name": "Online Linux Terminal",
-  "short_name": "Online Linux Terminal",
+  "short_name": "LinuxTerminal",
+  "description": "Free Online Linux Terminal Platform & Simulator in Browser",
   "icons": [
     {
-      "src": "/web-app-manifest-192x192.png",
-      "sizes": "192x192",
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     },
     {
-      "src": "/web-app-manifest-512x512.png",
-      "sizes": "512x512",
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "start_url": "/",
+  "theme_color": "#09090b",
+  "background_color": "#09090b",
   "display": "standalone"
 }

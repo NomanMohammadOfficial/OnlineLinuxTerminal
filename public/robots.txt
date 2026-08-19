@@ -1,0 +1,10 @@
+# Robots.txt for OnlineLinuxTerminal.com
+User-agent: *
+Allow: /
+
+# Disallow administrative or build scratch directories
+Disallow: /scratch/
+Disallow: /api/
+
+# Sitemap Location for Google, Yandex, Bing & Baidu
+Sitemap: https://onlinelinuxterminal.com/sitemap-index.xml
