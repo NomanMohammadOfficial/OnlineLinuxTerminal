@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { TUTORIALS_LIST } from '../../tutorials/index.astro';
-import { TRANSLATIONS, type SupportedLocale } from '../../../i18n/translations';
+import { TRANSLATIONS, getLocalizedPath, type SupportedLocale } from '../../../i18n/translations';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -30,7 +30,7 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
       {TUTORIALS_LIST.map((t) => (
         <a
-          href={`/tutorials/${t.slug}/`}
+          href={getLocalizedPath(`/tutorials/${t.slug}/`, lang)}
           class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between space-y-4"
         >
           <div class="space-y-2">

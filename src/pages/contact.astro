@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AdSlot } from '../components/ads/AdSlot';
+
+const contactSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact Us — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/contact/",
+  "description": "Get in touch with the Online Linux Terminal team for support, feature requests, or technical feedback."
+};
+---
+
+<BaseLayout
+  title="Contact Us & Support — Online Linux Terminal"
+  description="Contact the Online Linux Terminal engineering team for support, bug reports, feature requests, or partnership inquiries."
+  keywords="online linux terminal contact, online linux terminal support, linux terminal feedback"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(contactSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <div class="space-y-3 text-center sm:text-left">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Engineering Support</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Contact & Support
+      </h1>
+      <p class="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        Have questions, feedback, or a feature request for Online Linux Terminal? We'd love to hear from you.
+      </p>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Contact Info Box -->
+      <div class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl space-y-4">
+        <h2 class="text-xl font-bold text-emerald-400 font-sans">Get in Touch</h2>
+        <p class="text-xs text-zinc-400 leading-relaxed">
+          For technical issues, bug reports, or feature requests regarding our browser AST terminal simulator:
+        </p>
+
+        <div class="space-y-3 text-xs font-mono">
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-lg">
+            <span class="text-zinc-500">Email:</span> <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a>
+          </div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-lg">
+            <span class="text-zinc-500">GitHub:</span> <a href="https://github.com/NomanMohammadOfficial/OnlineLinuxTerminal" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">github.com/NomanMohammadOfficial</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Message Box -->
+      <div class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl space-y-4">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans">Feedback & Bug Reports</h2>
+        <form class="space-y-3 text-xs">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-mono">Your Name</label>
+            <input type="text" placeholder="John Doe" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-mono">Email Address</label>
+            <input type="email" placeholder="you@example.com" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-mono">Message</label>
+            <textarea rows="3" placeholder="Describe your request or feedback..." class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 focus:outline-none focus:border-emerald-500"></textarea>
+          </div>
+          <button type="button" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-lg transition-colors font-mono">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

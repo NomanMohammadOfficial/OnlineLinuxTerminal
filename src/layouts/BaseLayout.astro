@@ -59,6 +59,16 @@ LOCALES.forEach((l) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6WHQHVGS0R"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6WHQHVGS0R');
+    </script>
+    
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -189,41 +199,95 @@ LOCALES.forEach((l) => {
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-zinc-950 border-t border-zinc-800/80 mt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div class="md:col-span-2 space-y-4">
-            <div class="flex items-center space-x-2 font-mono font-bold text-lg text-zinc-100">
-              <span class="text-emerald-400">$</span>
-              <span>OnlineLinuxTerminal.com</span>
-            </div>
-            <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
+    <!-- Comprehensive Modern Footer -->
+    <footer class="bg-zinc-950 border-t border-zinc-800/80 mt-16 text-zinc-400">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
+        
+        <!-- Top Footer Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          
+          <!-- Brand Info Column -->
+          <div class="lg:col-span-2 space-y-4">
+            <a href={getLocalizedPath('/', lang)} class="flex items-center space-x-3 group">
+              <img src="/icon.svg" alt="Online Linux Terminal Logo" class="w-8 h-8 rounded-xl shadow-lg shadow-emerald-900/30 group-hover:scale-105 transition-transform" />
+              <span class="font-mono font-bold text-lg text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                OnlineLinux<span class="text-emerald-400">Terminal</span>
+              </span>
+            </a>
+            <p class="text-xs text-zinc-400 leading-relaxed max-w-sm">
               {t.heroSub}
             </p>
+            <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>AST Engine: Active & Online</span>
+            </div>
           </div>
-          <div>
-            <h4 class="font-mono text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">Resources</h4>
-            <ul class="space-y-2 text-xs text-zinc-400">
-              <li><a href={getLocalizedPath('/commands/', lang)} class="hover:text-emerald-400 transition-colors">{t.navCommands}</a></li>
-              <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTutorials}</a></li>
-              <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">{t.navChallenges}</a></li>
-              <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTerminal}</a></li>
+
+          <!-- Command Manuals Column -->
+          <div class="space-y-3">
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Popular Commands</h4>
+            <ul class="space-y-2 text-xs font-mono">
+              <li><a href={getLocalizedPath('/commands/grep/', lang)} class="hover:text-emerald-400 transition-colors">man grep</a></li>
+              <li><a href={getLocalizedPath('/commands/ls/', lang)} class="hover:text-emerald-400 transition-colors">man ls</a></li>
+              <li><a href={getLocalizedPath('/commands/chmod/', lang)} class="hover:text-emerald-400 transition-colors">man chmod</a></li>
+              <li><a href={getLocalizedPath('/commands/cd/', lang)} class="hover:text-emerald-400 transition-colors">man cd</a></li>
+              <li><a href={getLocalizedPath('/commands/cat/', lang)} class="hover:text-emerald-400 transition-colors">man cat</a></li>
+              <li><a href={getLocalizedPath('/commands/sed/', lang)} class="hover:text-emerald-400 transition-colors">man sed</a></li>
+              <li><a href={getLocalizedPath('/commands/awk/', lang)} class="hover:text-emerald-400 transition-colors">man awk</a></li>
             </ul>
           </div>
-          <div>
-            <h4 class="font-mono text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">Legal & Trust</h4>
-            <ul class="space-y-2 text-xs text-zinc-400">
+
+          <!-- Practice & Tutorials Column -->
+          <div class="space-y-3">
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Practice & Drills</h4>
+            <ul class="space-y-2 text-xs">
+              <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors flex items-center space-x-1.5"><span class="font-mono text-emerald-400">$</span><span>{t.navTerminal} Workspace</span></a></li>
+              <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTutorials} Hub</a></li>
+              <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">{t.navChallenges} Drills</a></li>
+              <li><a href={getLocalizedPath('/tutorials/basics/', lang)} class="hover:text-emerald-400 transition-colors">Navigation Basics</a></li>
+              <li><a href={getLocalizedPath('/challenges/find-hidden-flag/', lang)} class="hover:text-emerald-400 transition-colors">Secret Flag Drill</a></li>
+            </ul>
+          </div>
+
+          <!-- Trust & Legal Column -->
+          <div class="space-y-3">
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Trust & Legal</h4>
+            <ul class="space-y-2 text-xs">
               <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & EEAT</a></li>
+              <li><a href="/contact/" class="hover:text-emerald-400 transition-colors">Contact & Support</a></li>
               <li><a href="/privacy/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
               <li><a href="/terms/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+              <li><a href="/sitemap/" class="hover:text-emerald-400 transition-colors">HTML Directory Sitemap</a></li>
             </ul>
           </div>
         </div>
-        <div class="pt-8 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2">
-          <p>© 2026 OnlineLinuxTerminal.com. {t.footerRights}</p>
-          <p class="mt-2 sm:mt-0">{t.footerTagline}</p>
+
+        <!-- Global Language Switcher Strip -->
+        <div class="pt-6 border-t border-zinc-900 flex flex-wrap items-center justify-between gap-4 text-xs">
+          <span class="font-mono text-zinc-500 uppercase tracking-wider text-[11px]">Global Languages:</span>
+          <div class="flex flex-wrap items-center gap-3">
+            {LOCALES.map((l) => (
+              <a
+                href={getLocalizedPath(rawPath, l.code)}
+                class={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md border text-[11px] font-mono transition-colors ${
+                  l.code === lang
+                    ? 'border-emerald-800 bg-emerald-950/60 text-emerald-400 font-bold'
+                    : 'border-zinc-800/80 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                }`}
+              >
+                <span>{l.flag}</span>
+                <span>{l.name}</span>
+              </a>
+            ))}
+          </div>
         </div>
+
+        <!-- Bottom Copyright Bar -->
+        <div class="pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono gap-2 text-center sm:text-left">
+          <p>© 2026 OnlineLinuxTerminal.com. {t.footerRights}</p>
+          <p class="text-emerald-400/80 font-semibold">{t.footerTagline}</p>
+        </div>
+
       </div>
     </footer>
 

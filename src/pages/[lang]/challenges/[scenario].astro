@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { ChallengeRunner } from '../../../components/terminal/ChallengeRunner';
+import { AdSlot } from '../../../components/ads/AdSlot';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  const scenarios = [
+    {
+      slug: 'find-hidden-flag',
+      title: 'Challenge 1: Find the Secret Flag File',
+      difficulty: 'Easy',
+      points: '100 pts',
+      mission: 'A hidden flag file is stored inside the /etc/ directory tree. Your task is to inspect /etc/ files using cat to uncover the secret key.',
+      hint: 'Run "ls /etc" to see files in /etc, then read "os-release" or "hostname".',
+    },
+    {
+      slug: 'fix-log-permissions',
+      title: 'Challenge 2: Fix Log File Permissions',
+      difficulty: 'Medium',
+      points: '250 pts',
+      mission: 'The file /var/log/auth.log has restricted mode permissions. Change its permissions to 755 using chmod so all users can read it.',
+      hint: 'Run "chmod 755 /var/log/auth.log" and verify with "ls -l /var/log/auth.log".',
+    },
+    {
+      slug: 'extract-ip-grep',
+      title: 'Challenge 3: Extract IP Addresses with Grep',
+      difficulty: 'Hard',
+      points: '500 pts',
+      mission: 'Inspect /var/log/syslog and /var/log/auth.log to extract all occurrences of IP addresses matching 192.168 or 10.0.',
+      hint: 'Use "grep -i -n 192.168 /var/log/auth.log".',
+    },
+  ];
+
+  const paths: Array<{ params: { lang: SupportedLocale; scenario: string }; props: { data: typeof scenarios[0] } }> = [];
+  locales.forEach((l) => {
+    scenarios.forEach((sc) => {
+      paths.push({
+        params: { lang: l, scenario: sc.slug },
+        props: { data: sc },
+      });
+    });
+  });
+  return paths;
+}
+
+const { lang, scenario } = Astro.params as { lang: SupportedLocale; scenario: string };
+const { data } = Astro.props;
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${data.title} — ${t.navChallenges}`}
+  description={data.mission}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div class="space-y-2">
+      <div class="flex items-center space-x-3">
+        <a href={getLocalizedPath('/challenges/', lang)} class="text-xs font-mono text-emerald-400 hover:underline">← {t.navChallenges}</a>
+        <span class="text-zinc-600">•</span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
+          {data.difficulty}
+        </span>
+        <span class="text-xs font-mono text-amber-400 font-bold">{data.points}</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{data.title}</h1>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Challenge Interactive Runner Island -->
+    <ChallengeRunner
+      client:load
+      scenarioSlug={data.slug}
+      title={data.title}
+      points={data.points}
+      mission={data.mission}
+      hint={data.hint}
+    />
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

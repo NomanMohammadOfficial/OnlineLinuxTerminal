@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
+import { AdSlot } from '../../../components/ads/AdSlot';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  const lessons = [
+    {
+      slug: 'basics',
+      title: 'Linux Navigation Basics',
+      level: 'Beginner',
+      steps: [
+        { title: 'Step 1: Check Current Directory', instruction: 'Run `pwd` to print working directory path.' },
+        { title: 'Step 2: List Files in Detail', instruction: 'Run `ls -l` to inspect file permissions and size.' },
+        { title: 'Step 3: Read Welcome Notes', instruction: 'Run `cat welcome.txt` to read content.' },
+      ]
+    },
+    {
+      slug: 'file-management',
+      title: 'File & Directory Manipulation',
+      level: 'Beginner',
+      steps: [
+        { title: 'Step 1: Create a Folder', instruction: 'Run `mkdir lab` to create a directory.' },
+        { title: 'Step 2: Create a File', instruction: 'Run `echo "hello" > lab/test.txt`.' },
+        { title: 'Step 3: Verify Creation', instruction: 'Run `ls lab` to confirm file presence.' },
+      ]
+    },
+    {
+      slug: 'grep-text-search',
+      title: 'Text Searching & Regex with Grep',
+      level: 'Intermediate',
+      steps: [
+        { title: 'Step 1: Simple Pattern Match', instruction: 'Run `grep error /var/log/syslog`.' },
+        { title: 'Step 2: Line Numbering', instruction: 'Run `grep -n -i "accepted" /var/log/auth.log`.' },
+      ]
+    },
+    {
+      slug: 'permissions',
+      title: 'Linux Permissions & Chmod',
+      level: 'Intermediate',
+      steps: [
+        { title: 'Step 1: Inspect Permissions', instruction: 'Run `ls -l /var/log/auth.log`.' },
+        { title: 'Step 2: Update Mode Bits', instruction: 'Run `chmod 755 /home/user/projects/demo.sh`.' },
+      ]
+    }
+  ];
+
+  const paths: Array<{ params: { lang: SupportedLocale; lesson: string }; props: { lessonData: typeof lessons[0] } }> = [];
+  locales.forEach((l) => {
+    lessons.forEach((les) => {
+      paths.push({
+        params: { lang: l, lesson: les.slug },
+        props: { lessonData: les },
+      });
+    });
+  });
+  return paths;
+}
+
+const { lang, lesson } = Astro.params as { lang: SupportedLocale; lesson: string };
+const { lessonData } = Astro.props;
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${lessonData.title} — ${t.navTutorials}`}
+  description={`Interactive tutorial lesson: ${lessonData.title}. Practice live in browser.`}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div class="space-y-2">
+      <div class="flex items-center space-x-3">
+        <a href={getLocalizedPath('/tutorials/', lang)} class="text-xs font-mono text-emerald-400 hover:underline">← {t.navTutorials}</a>
+        <span class="text-zinc-600">•</span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+          {lessonData.level}
+        </span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{lessonData.title}</h1>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Workspace Split: Instructions & Terminal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1 space-y-4 bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <h2 class="font-bold text-base text-emerald-400">Lesson Objectives</h2>
+        <div class="space-y-4">
+          {lessonData.steps.map((s) => (
+            <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-lg space-y-1 text-xs">
+              <div class="font-semibold text-zinc-200">{s.title}</div>
+              <p class="text-zinc-400 leading-relaxed">{s.instruction}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <TerminalRunner client:load className="h-[520px]" />
+      </div>
+    </div>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

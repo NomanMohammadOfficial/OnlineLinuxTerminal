@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
+import { AdSlot } from '../../../components/ads/AdSlot';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  const commands = [
+    { name: 'ls', category: 'Navigation', desc: 'List directory contents with details and hidden files.', syntax: 'ls [options] [file...]', examples: ['ls -la', 'ls -l /var/log', 'ls -lh'] },
+    { name: 'cd', category: 'Navigation', desc: 'Change current working directory.', syntax: 'cd [directory]', examples: ['cd /etc', 'cd ..', 'cd /home/user'] },
+    { name: 'pwd', category: 'Navigation', desc: 'Print name of current working directory.', syntax: 'pwd', examples: ['pwd'] },
+    { name: 'tree', category: 'Navigation', desc: 'Display directory structure in a tree-like diagram.', syntax: 'tree [directory]', examples: ['tree', 'tree /etc'] },
+    { name: 'cat', category: 'File Operations', desc: 'Concatenate and print file contents to terminal.', syntax: 'cat [file...]', examples: ['cat welcome.txt', 'cat /etc/os-release'] },
+    { name: 'touch', category: 'File Operations', desc: 'Create empty files or update timestamps.', syntax: 'touch [file...]', examples: ['touch newfile.txt', 'touch app.py'] },
+    { name: 'mkdir', category: 'File Operations', desc: 'Create new directory folders.', syntax: 'mkdir [directory]', examples: ['mkdir projects', 'mkdir -p a/b/c'] },
+    { name: 'rm', category: 'File Operations', desc: 'Remove files or directories recursively.', syntax: 'rm [options] [file...]', examples: ['rm test.txt', 'rm -rf temp/'] },
+    { name: 'cp', category: 'File Operations', desc: 'Copy files or directories to new paths.', syntax: 'cp [source] [destination]', examples: ['cp file.txt backup.txt', 'cp -r dir1 dir2'] },
+    { name: 'mv', category: 'File Operations', desc: 'Move or rename files and directories.', syntax: 'mv [source] [destination]', examples: ['mv old.txt new.txt', 'mv file.txt /tmp/'] },
+    { name: 'grep', category: 'Text Processing', desc: 'Search text files using matching regular expressions.', syntax: 'grep [options] PATTERN [FILE...]', examples: ['grep -i "error" /var/log/syslog', 'grep -n "user" /etc/passwd'] },
+    { name: 'sed', category: 'Text Processing', desc: 'Stream editor for filtering and transforming text.', syntax: 'sed [options] \'script\' [file...]', examples: ['sed \'s/foo/bar/g\' file.txt'] },
+    { name: 'awk', category: 'Text Processing', desc: 'Pattern scanning and column processing language.', syntax: 'awk \'program\' [file...]', examples: ['awk \'{print $1}\' file.txt'] },
+    { name: 'head', category: 'Text Processing', desc: 'Output the first part of files.', syntax: 'head -n [lines] [file]', examples: ['head -n 10 /var/log/syslog'] },
+    { name: 'tail', category: 'Text Processing', desc: 'Output the last part of files.', syntax: 'tail -n [lines] [file]', examples: ['tail -n 20 /var/log/syslog'] },
+    { name: 'wc', category: 'Text Processing', desc: 'Print line, word, and byte counts for files.', syntax: 'wc [options] [file]', examples: ['wc -l /var/log/syslog'] },
+    { name: 'echo', category: 'Text Processing', desc: 'Print text or redirect content to files.', syntax: 'echo [string]', examples: ['echo "Hello World"', 'echo "test" > file.txt'] },
+    { name: 'chmod', category: 'Permissions', desc: 'Change file mode bits and access permissions.', syntax: 'chmod [mode] [file]', examples: ['chmod 755 script.sh', 'chmod 644 notes.txt'] },
+    { name: 'chown', category: 'Permissions', desc: 'Change file owner and group attributes.', syntax: 'chown [owner] [file]', examples: ['chown root:root file.txt'] },
+    { name: 'nano', category: 'Editors', desc: 'Launch simple text editor modal.', syntax: 'nano [file]', examples: ['nano script.py'] },
+    { name: 'vim', category: 'Editors', desc: 'Launch vi/vim text editor modal.', syntax: 'vim [file]', examples: ['vim config.json'] },
+    { name: 'curl', category: 'Networking', desc: 'Transfer data from or to a server URL.', syntax: 'curl [options] [URL]', examples: ['curl https://onlinelinuxterminal.com'] },
+    { name: 'tar', category: 'Archives', desc: 'Store and extract file archives in VFS.', syntax: 'tar [options] [archive] [files]', examples: ['tar -czvf archive.tar.gz dir/'] },
+    { name: 'gzip', category: 'Archives', desc: 'Compress or expand files in Virtual File System.', syntax: 'gzip [file]', examples: ['gzip file.txt'] },
+    { name: 'top', category: 'System', desc: 'Display simulated real-time Linux processes.', syntax: 'top', examples: ['top'] },
+    { name: 'python3', category: 'System', desc: 'Interactive Python 3 interpreter REPL.', syntax: 'python3 [script.py]', examples: ['python3', 'python3 script.py'] },
+    { name: 'apt', category: 'Packages', desc: 'Simulated package manager to install utilities.', syntax: 'apt install [package]', examples: ['apt install cowsay'] },
+    { name: 'whoami', category: 'System', desc: 'Print effective user ID name.', syntax: 'whoami', examples: ['whoami'] },
+    { name: 'date', category: 'System', desc: 'Display current system date and time.', syntax: 'date', examples: ['date'] },
+    { name: 'uname', category: 'System', desc: 'Print system information and kernel architecture.', syntax: 'uname -a', examples: ['uname -a'] },
+    { name: 'history', category: 'System', desc: 'Display list of executed terminal commands.', syntax: 'history', examples: ['history'] },
+  ];
+
+  const paths: Array<{ params: { lang: SupportedLocale; command: string }; props: { cmdData: typeof commands[0] } }> = [];
+  locales.forEach((l) => {
+    commands.forEach((c) => {
+      paths.push({
+        params: { lang: l, command: c.name },
+        props: { cmdData: c },
+      });
+    });
+  });
+  return paths;
+}
+
+const { lang, command } = Astro.params as { lang: SupportedLocale; command: string };
+const { cmdData } = Astro.props;
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${cmdData.name} Command Manual — ${t.heroHighlight}`}
+  description={`${cmdData.name} command syntax, flags, options, and live online terminal test.`}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div class="space-y-3">
+      <div class="flex items-center space-x-3">
+        <a href={getLocalizedPath('/commands/', lang)} class="text-xs font-mono text-emerald-400 hover:underline">← {t.navCommands}</a>
+        <span class="text-zinc-600">•</span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">{cmdData.category}</span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-zinc-100 font-mono">man {cmdData.name}</h1>
+      <p class="text-sm text-zinc-400 max-w-2xl">{cmdData.desc}</p>
+    </div>
+
+    <!-- Ad Placement Top -->
+    <AdSlot type="banner" client:idle />
+
+    <!-- Command Syntax Box -->
+    <div class="p-6 bg-zinc-900 border border-zinc-800 rounded-xl space-y-3">
+      <div class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Syntax</div>
+      <div class="p-4 bg-zinc-950 border border-zinc-800/80 rounded-lg font-mono text-sm text-emerald-300">
+        $ {cmdData.syntax}
+      </div>
+    </div>
+
+    <!-- Interactive Terminal Test Widget -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-bold text-zinc-100 font-sans">Try <code class="text-emerald-400">{cmdData.name}</code> Live in Terminal</h2>
+      <div class="rounded-xl border border-zinc-800 overflow-hidden">
+        <TerminalRunner client:load className="h-[450px]" />
+      </div>
+    </div>
+
+    <!-- Ad Placement Bottom -->
+    <AdSlot type="leaderboard" client:idle />
+  </div>
+</BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../components/terminal/TerminalRunner';
+import SeoFaq from '../components/seo/SeoFaq.astro';
 
 const homepageFaqSchema = {
   "@context": "https://schema.org",
@@ -238,39 +239,9 @@ const homepageFaqSchema = {
           Whether you are looking for a <strong>free online linux terminal practice</strong> tool during a university lab, preparing for technical interviews, or testing shell automation logic, our web-based terminal sandbox offers complete freedom, privacy, and speed.
         </p>
       </div>
-
-      <!-- FAQ Section -->
-      <div class="space-y-6 pt-8 border-t border-zinc-800">
-        <h3 class="text-2xl font-extrabold text-zinc-100 font-sans">
-          Frequently Asked Questions (FAQ)
-        </h3>
-        <div class="space-y-4 text-xs sm:text-sm">
-          <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <h4 class="font-bold text-zinc-100">Is this online linux terminal platform 100% free to use?</h4>
-            <p class="text-zinc-400 leading-relaxed">
-              Yes! OnlineLinuxTerminal.com provides a completely free online linux terminal in browser with zero subscription fees, mandatory account sign-ups, or usage caps.
-            </p>
-          </div>
-          <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <h4 class="font-bold text-zinc-100">How does this compare to Webminal online linux terminal practice?</h4>
-            <p class="text-zinc-400 leading-relaxed">
-              While Webminal online linux terminal relies on central server SSH connections that suffer from latency, OnlineLinuxTerminal.com runs client-side inside your browser for instant command execution and full session persistence.
-            </p>
-          </div>
-          <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <h4 class="font-bold text-zinc-100">Can I practice Ubuntu bash commands with root access simulation?</h4>
-            <p class="text-zinc-400 leading-relaxed">
-              Yes! Our online linux terminal ubuntu simulator includes simulated root access commands like chmod, chown, apt install, and system log analysis in a safe sandbox.
-            </p>
-          </div>
-          <div class="p-5 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <h4 class="font-bold text-zinc-100">Are my created files and bash command history saved?</h4>
-            <p class="text-zinc-400 leading-relaxed">
-              Yes. All created files, directory structures, and executed command histories are saved locally in your web browser via IndexedDB.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
+
+  <!-- SEO-Friendly FAQ Component with Accordions & FAQPage Schema -->
+  <SeoFaq />
 </BaseLayout>

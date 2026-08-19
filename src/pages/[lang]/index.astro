@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
+import SeoFaq from '../../components/seo/SeoFaq.astro';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
 
 export function getStaticPaths() {
@@ -12,6 +13,37 @@ export function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: SupportedLocale };
 const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const localizedFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": t.guideTitle,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": t.guideIntro
+      }
+    },
+    {
+      "@type": "Question",
+      "name": t.feature1Title,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": t.feature1Desc
+      }
+    },
+    {
+      "@type": "Question",
+      "name": t.feature2Title,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": t.feature2Desc
+      }
+    }
+  ]
+};
 ---
 
 <BaseLayout
@@ -19,7 +51,9 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
   title={`${t.heroHighlight} — ${t.heroBadge}`}
   description={t.heroSub}
 >
-  <!-- Hero Section with Embedded Terminal -->
+  <script type="application/ld+json" set:html={JSON.stringify(localizedFaqSchema)} />
+
+  <!-- Hero Section with Embedded Interactive Terminal -->
   <section class="relative overflow-hidden pt-12 pb-16 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
@@ -37,7 +71,7 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
           {t.heroSub}
         </p>
 
-        <!-- CTA Buttons -->
+        <!-- Call-to-Action Buttons -->
         <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
           <a
             href={getLocalizedPath('/terminal/', lang)}
@@ -61,7 +95,7 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
         </div>
       </div>
 
-      <!-- Live Terminal Canvas -->
+      <!-- Live Terminal Canvas React Island -->
       <div class="max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-b from-zinc-700/50 to-zinc-800/20 shadow-2xl">
         <TerminalRunner client:load className="h-[480px]" />
       </div>
@@ -71,8 +105,18 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
   <!-- Features Grid -->
   <section class="py-16 bg-zinc-950 border-t border-zinc-800/80">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          {t.heroBadge}
+        </h2>
+        <p class="text-sm text-zinc-400 mt-2">
+          {t.heroSub}
+        </p>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+        <!-- Feature 1 -->
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3 hover:border-emerald-800/50 transition-colors">
           <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
             AST
           </div>
@@ -80,7 +124,8 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
           <p class="text-xs text-zinc-400 leading-relaxed">{t.feature1Desc}</p>
         </div>
 
-        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+        <!-- Feature 2 -->
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3 hover:border-emerald-800/50 transition-colors">
           <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
             VFS
           </div>
@@ -88,7 +133,8 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
           <p class="text-xs text-zinc-400 leading-relaxed">{t.feature2Desc}</p>
         </div>
 
-        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3">
+        <!-- Feature 3 -->
+        <div class="p-6 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl space-y-3 hover:border-emerald-800/50 transition-colors">
           <div class="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg">
             ROOT
           </div>
@@ -99,11 +145,80 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
     </div>
   </section>
 
-  <!-- Localized SEO Guide Section -->
+  <!-- Comprehensive 1,100+ Word On-Page SEO Guide Section -->
   <section class="py-16 bg-zinc-900/40 border-t border-zinc-800/80">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-zinc-300">
-      <h2 class="text-3xl font-extrabold text-zinc-100">{t.guideTitle}</h2>
-      <p class="text-xs sm:text-sm leading-relaxed">{t.guideIntro}</p>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-zinc-300">
+      
+      <!-- Article Header -->
+      <div class="space-y-4">
+        <div class="inline-flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1 rounded-full">
+          <span>In-Depth Technical Guide</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 tracking-tight">
+          {t.guideTitle}
+        </h2>
+        <p class="text-sm leading-relaxed text-zinc-300">
+          {t.guideIntro}
+        </p>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="space-y-4">
+        <h3 class="text-2xl font-bold text-emerald-400 font-sans">
+          1. {t.feature1Title}
+        </h3>
+        <p class="text-xs sm:text-sm leading-relaxed text-zinc-300">
+          {t.feature1Desc}
+        </p>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="space-y-4">
+        <h3 class="text-2xl font-bold text-emerald-400 font-sans">
+          2. {t.feature2Title}
+        </h3>
+        <p class="text-xs sm:text-sm leading-relaxed text-zinc-300">
+          {t.feature2Desc}
+        </p>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="space-y-4">
+        <h3 class="text-2xl font-bold text-emerald-400 font-sans">
+          3. {t.feature3Title}
+        </h3>
+        <p class="text-xs sm:text-sm leading-relaxed text-zinc-300">
+          {t.feature3Desc}
+        </p>
+      </div>
+
+      <!-- Command Code Box Grid -->
+      <div class="space-y-4">
+        <h3 class="text-2xl font-bold text-emerald-400 font-sans">
+          4. Essential Command Line Practice Drills
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+          <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+            <div class="text-emerald-400 font-bold">$ ls -la -h</div>
+            <div class="text-zinc-400 font-sans text-[11px]">List all files in long format including hidden dotfiles.</div>
+          </div>
+          <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+            <div class="text-emerald-400 font-bold">$ grep -i -n "error" /var/log/syslog</div>
+            <div class="text-zinc-400 font-sans text-[11px]">Perform case-insensitive search for system errors with line numbers.</div>
+          </div>
+          <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+            <div class="text-emerald-400 font-bold">$ chmod 755 script.sh</div>
+            <div class="text-zinc-400 font-sans text-[11px]">Grant executable read/write/execute permissions to owner.</div>
+          </div>
+          <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+            <div class="text-emerald-400 font-bold">$ echo "hello linux" &gt; notes.txt</div>
+            <div class="text-zinc-400 font-sans text-[11px]">Redirect standard output text into a file in your Virtual File System.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- SEO-Friendly FAQ Component with Accordions & FAQPage Schema -->
+  <SeoFaq />
 </BaseLayout>
