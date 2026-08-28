@@ -709,6 +709,202 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
       break;
     }
 
+    case 'find': {
+      let searchPath = args[0] && !args[0].startsWith('-') ? args[0] : '.';
+      const resolved = resolvePath(env.PWD, searchPath, env);
+      const targetNode = getNodeAtPath(updatedVFS, resolved);
+      if (!targetNode) {
+        output = `find: '${searchPath}': No such file or directory`;
+        exitCode = 1;
+        break;
+      }
+      const nameFilterIdx = args.findIndex((a) => a === '-name' || a === '-iname');
+      let namePattern: string | null = null;
+      if (nameFilterIdx !== -1 && args[nameFilterIdx + 1]) {
+        namePattern = args[nameFilterIdx + 1].replace(/"/g, '').replace(/'/g, '');
+      }
+
+      const typeFilterIdx = args.findIndex((a) => a === '-type');
+      let typeFilter: string | null = null;
+      if (typeFilterIdx !== -1 && args[typeFilterIdx + 1]) {
+        typeFilter = args[typeFilterIdx + 1];
+      }
+
+      const results: string[] = [];
+      function traverse(node: VFSNode, currentDisplayPath: string) {
+        let matches = true;
+        if (namePattern) {
+          const isWildcard = namePattern.startsWith('*');
+          const cleanPattern = namePattern.replace(/^\*/, '').replace(/\*$/, '');
+          if (isWildcard && namePattern.endsWith('*')) {
+            matches = node.name.toLowerCase().includes(cleanPattern.toLowerCase());
+          } else if (isWildcard) {
+            matches = node.name.toLowerCase().endsWith(cleanPattern.toLowerCase());
+          } else if (namePattern.endsWith('*')) {
+            matches = node.name.toLowerCase().startsWith(cleanPattern.toLowerCase());
+          } else {
+            matches = node.name.toLowerCase() === namePattern.toLowerCase();
+          }
+        }
+        if (typeFilter) {
+          if (typeFilter === 'f' && node.type !== 'file') matches = false;
+          if (typeFilter === 'd' && node.type !== 'directory') matches = false;
+        }
+
+        if (matches) {
+          results.push(currentDisplayPath);
+        }
+
+        if (node.type === 'directory' && node.children) {
+          for (const child of node.children) {
+            const childPath = currentDisplayPath === '/' ? `/${child.name}` : `${currentDisplayPath}/${child.name}`;
+            traverse(child, childPath);
+          }
+        }
+      }
+
+      traverse(targetNode, resolved === '/' ? '/' : resolved);
+      output = results.join('\n');
+      break;
+    }
+
+    case 'tree': {
+      let target = args.find((a) => !a.startsWith('-')) || '.';
+      const resolved = resolvePath(env.PWD, target, env);
+      const node = getNodeAtPath(updatedVFS, resolved);
+      if (!node) {
+        output = `tree: ${target}: No such file or directory`;
+        exitCode = 1;
+        break;
+      }
+      const lines: string[] = [resolved];
+      let dirCount = 0;
+      let fileCount = 0;
+
+      function printTree(n: VFSNode, prefix = '') {
+        if (n.type !== 'directory' || !n.children) return;
+        const children = n.children;
+        children.forEach((child, idx) => {
+          const isLast = idx === children.length - 1;
+          const branch = isLast ? '└── ' : '├── ';
+          lines.push(`${prefix}${branch}${child.name}`);
+          if (child.type === 'directory') {
+            dirCount++;
+            printTree(child, prefix + (isLast ? '    ' : '│   '));
+          } else {
+            fileCount++;
+          }
+        });
+      }
+
+      printTree(node);
+      lines.push(`\n${dirCount} directories, ${fileCount} files`);
+      output = lines.join('\n');
+      break;
+    }
+
+    case 'ps': {
+      output = `  PID TTY          TIME CMD\n    1 ?        00:00:02 init\n  420 pts/0    00:00:00 bash\n 1337 pts/0    00:00:00 ps`;
+      break;
+    }
+
+    case 'kill': {
+      if (args.length === 0 || args.includes('-l')) {
+        output = ` 1) SIGHUP\t 2) SIGINT\t 3) SIGQUIT\t 9) SIGKILL\t15) SIGTERM`;
+      } else {
+        output = `[kill] Signal sent to process ${args[args.length - 1]}`;
+      }
+      break;
+    }
+
+    case 'df': {
+      output = `Filesystem     1K-blocks      Used Available Use% Mounted on\nudev             4006248         0   4006248   0% /dev\ntmpfs             805444      1440    804004   1% /run\n/dev/sda1       51464032  14820128  34013444  31% /\ntmpfs            4027208         0   4027208   0% /dev/shm`;
+      break;
+    }
+
+    case 'du': {
+      let target = args.find((a) => !a.startsWith('-')) || '.';
+      const resolved = resolvePath(env.PWD, target, env);
+      const node = getNodeAtPath(updatedVFS, resolved);
+      if (!node) {
+        output = `du: cannot access '${target}': No such file or directory`;
+        exitCode = 1;
+      } else {
+        output = `142M\t${target}`;
+      }
+      break;
+    }
+
+    case 'free': {
+      output = `               total        used        free      shared  buff/cache   available\nMem:         8054416     1420512     4210340       45120     2423564     6310240\nSwap:        2097148           0     2097148`;
+      break;
+    }
+
+    case 'which': {
+      if (!args[0]) {
+        exitCode = 1;
+        break;
+      }
+      const found = args.map((cmd) => `/usr/bin/${cmd}`);
+      output = found.join('\n');
+      break;
+    }
+
+    case 'sudo': {
+      if (args.length === 0) {
+        output = `usage: sudo -h | -K | -k | -V\nusage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]`;
+        break;
+      }
+      const subCmd = args.join(' ');
+      const subRes = await executeCommand(subCmd, updatedVFS, { ...env, USER: 'root' }, history);
+      return subRes;
+    }
+
+    case 'ping': {
+      const host = args.find((a) => !a.startsWith('-')) || 'onlinelinuxterminal.com';
+      output = `PING ${host} (104.21.72.10) 56(84) bytes of data.\n64 bytes from 104.21.72.10: icmp_seq=1 ttl=58 time=12.4 ms\n64 bytes from 104.21.72.10: icmp_seq=2 ttl=58 time=11.8 ms\n64 bytes from 104.21.72.10: icmp_seq=3 ttl=58 time=12.1 ms\n64 bytes from 104.21.72.10: icmp_seq=4 ttl=58 time=12.0 ms\n\n--- ${host} ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss, time 3004ms\nrtt min/avg/max/mdev = 11.802/12.075/12.412/0.218 ms`;
+      break;
+    }
+
+    case 'netstat': {
+      output = `Active Internet connections (only servers)\nProto Recv-Q Send-Q Local Address           Foreign Address         State\ntcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN\ntcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN\ntcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN\ntcp6       0      0 :::80                   :::*                    LISTEN\ntcp6       0      0 :::22                   :::*                    LISTEN`;
+      break;
+    }
+
+    case 'systemctl': {
+      const action = args[0] || 'status';
+      const unit = args[1] || 'nginx';
+      if (action === 'status') {
+        output = `● ${unit}.service - Web Server Service\n     Loaded: loaded (/lib/systemd/system/${unit}.service; enabled; vendor preset: enabled)\n     Active: active (running) since Sat 2026-08-29 00:00:00 UTC; 4h 20min ago\n   Main PID: 1234 (${unit})\n      Tasks: 4 (limit: 4652)\n     Memory: 28.4M\n        CPU: 1.230s\n     CGroup: /system.slice/${unit}.service`;
+      } else {
+        output = `[systemctl] Executed ${action} for unit ${unit}`;
+      }
+      break;
+    }
+
+    case 'crontab': {
+      if (args.includes('-l')) {
+        output = `# Edit this file to introduce tasks to be run by cron.\n# m h  dom mon dow   command\n0 2 * * * /home/user/projects/demo.sh > /dev/null 2>&1\n*/15 * * * * /usr/bin/curl -s https://onlinelinuxterminal.com > /dev/null`;
+      } else {
+        output = `crontab: use "crontab -l" to list or "crontab -e" to edit.`;
+      }
+      break;
+    }
+
+    case 'export': {
+      if (args.length === 0 || args.includes('-p')) {
+        output = `declare -x HOME="${env.HOME}"\ndeclare -x PATH="${env.PATH}"\ndeclare -x SHELL="${env.SHELL}"\ndeclare -x USER="${env.USER}"`;
+      } else {
+        output = ``;
+      }
+      break;
+    }
+
+    case 'env': {
+      output = `USER=${env.USER}\nHOME=${env.HOME}\nSHELL=${env.SHELL}\nTERM=${env.TERM}\nPATH=${env.PATH}\nPWD=${env.PWD}`;
+      break;
+    }
+
     case 'clear': {
       output = '\x1b[2J\x1b[3J\x1b[H';
       break;
@@ -717,14 +913,15 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
     case 'help': {
       output = `Online Linux Terminal - Supported AST Commands:
 ------------------------------------------------
-Navigation:     pwd, cd [dir], ls [-l -a -h], tree
-File Ops:       cat, touch, mkdir, rm [-r -f], cp, mv, tar, gzip
+Navigation:     pwd, cd [dir], ls [-l -a -h], tree, which [cmd]
+File Ops:       cat, touch, mkdir, rm [-r -f], cp, mv, tar, gzip, find
 Text Utilities: grep [-i -n -v], sed, awk, head, tail, wc, echo
 Editors:        nano [file], vim [file], vi [file]
-System & Info:  whoami, date, uname [-a], history, chmod, chown, top, python3
-Networking:     curl [url]
+System & Info:  whoami, date, uname [-a], history, chmod, chown, top, ps, kill, df, free
+Networking:     curl [url], ping [host], netstat
 Packages:       apt install <cowsay|figlet|sl>
-Environment:    clear, help, reset`;
+Services:       systemctl status [service], crontab -l
+Environment:    export, env, clear, help, reset`;
       break;
     }
 

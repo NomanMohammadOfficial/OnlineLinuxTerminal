@@ -2,187 +2,320 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
 import { AdSlot } from '../../components/ads/AdSlot';
+import { COMMANDS_DATA, type LinuxCommand } from '../../data/commandsData';
 
 export function getStaticPaths() {
-  const commandsData = [
-    {
-      name: 'grep',
-      category: 'Text Processing',
-      syntax: 'grep [OPTIONS] PATTERN [FILE...]',
-      description: 'Search for matching string patterns or regular expressions inside text files.',
-      details: 'Grep (Global Regular Expression Print) is the standard Unix search utility. It scans input lines matching a specified pattern and prints them to standard output.',
-      flags: [
-        { flag: '-i', desc: 'Ignore case distinctions in patterns and input files.' },
-        { flag: '-n', desc: 'Prefix each line of output with its 1-based line number.' },
-        { flag: '-v', desc: 'Invert match: select non-matching lines.' },
-        { flag: '-c', desc: 'Suppress normal output and print a count of matching lines.' },
-      ],
-      exampleCmd: 'grep -i -n "error" /var/log/syslog',
-    },
-    {
-      name: 'ls',
-      category: 'Navigation',
-      syntax: 'ls [OPTIONS] [FILE...]',
-      description: 'List directory contents including file sizes, permissions, and modification times.',
-      details: 'ls displays information about files and directories. By default, it lists files in the current working directory in alphabetical order.',
-      flags: [
-        { flag: '-l', desc: 'Use long listing format showing permissions, owner, size, and date.' },
-        { flag: '-a', desc: 'Do not ignore entries starting with dot (.) including hidden files.' },
-        { flag: '-h', desc: 'Print human readable sizes (e.g. 1K, 234M, 2G).' },
-      ],
-      exampleCmd: 'ls -l -a -h',
-    },
-    {
-      name: 'cd',
-      category: 'Navigation',
-      syntax: 'cd [DIRECTORY]',
-      description: 'Change current working directory in shell workspace.',
-      details: 'cd allows navigation across the virtual filesystem. Using "cd ~" returns to home, while "cd .." moves up to parent folder.',
-      flags: [
-        { flag: '~', desc: 'Navigate to user home directory (/home/user).' },
-        { flag: '..', desc: 'Navigate up to parent directory.' },
-      ],
-      exampleCmd: 'cd /etc',
-    },
-    {
-      name: 'cat',
-      category: 'File Operations',
-      syntax: 'cat [OPTIONS] [FILE...]',
-      description: 'Concatenate and print file contents to standard output.',
-      details: 'cat reads files sequentially, writing them to standard output. It is commonly used to inspect text files or combine multiple files.',
-      flags: [
-        { flag: '-n', desc: 'Number all output lines.' },
-      ],
-      exampleCmd: 'cat welcome.txt',
-    },
-    {
-      name: 'chmod',
-      category: 'Permissions',
-      syntax: 'chmod [OCTAL|MODE] FILE',
-      description: 'Change file permissions mode bits for owner, group, and others.',
-      details: 'chmod alters access permissions of files. Modes can be specified numerically using octal numbers (e.g., 755 or 644) or symbolically.',
-      flags: [
-        { flag: '755', desc: 'Read, write, execute for owner; read and execute for group/others.' },
-        { flag: '644', desc: 'Read and write for owner; read-only for group/others.' },
-      ],
-      exampleCmd: 'chmod 755 /home/user/projects/demo.sh',
-    },
-    {
-      name: 'mkdir',
-      category: 'File Operations',
-      syntax: 'mkdir [OPTIONS] DIRECTORY...',
-      description: 'Create new directories if they do not already exist.',
-      details: 'mkdir creates one or more new directory folders in the Virtual File System.',
-      flags: [
-        { flag: '-p', desc: 'Create parent directories as needed without throwing error if existing.' },
-      ],
-      exampleCmd: 'mkdir -p /home/user/docs/pdf',
-    },
-  ];
-
-  const allCmdNames = ['pwd', 'tree', 'touch', 'rm', 'cp', 'mv', 'head', 'tail', 'wc', 'echo', 'nano', 'vim', 'curl', 'apt', 'whoami', 'date', 'uname', 'history', 'sed', 'awk', 'tar', 'gzip', 'top', 'python3', 'chown'];
-
-  const fallbackData = allCmdNames.map((cmd) => ({
-    name: cmd,
-    category: 'System Utility',
-    syntax: `${cmd} [OPTIONS] [ARGS]`,
-    description: `Execute the ${cmd} command line utility in Linux.`,
-    details: `${cmd} is an essential tool in Linux terminal workflow for file processing and system control.`,
-    flags: [
-      { flag: '--help', desc: 'Display help documentation.' },
-    ],
-    exampleCmd: `${cmd} --help`,
-  }));
-
-  return [...commandsData, ...fallbackData].map((item) => ({
-    params: { command: item.name },
+  return COMMANDS_DATA.map((item) => ({
+    params: { command: item.slug },
     props: { data: item },
   }));
 }
 
+interface Props {
+  data: LinuxCommand;
+}
+
 const { data } = Astro.props;
 
+// Schemas for SEO
 const techArticleSchema = {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": `How to use the Linux ${data.name} command`,
-  "description": data.description,
+  "headline": `Linux ${data.name} Command Guide & Syntax Examples`,
+  "description": data.summary,
   "articleSection": data.category,
-  "publisher": {
+  "author": {
     "@type": "Organization",
     "name": "Online Linux Terminal",
     "url": "https://onlinelinuxterminal.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://onlinelinuxterminal.com/icon.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://onlinelinuxterminal.com/commands/${data.slug}/`
   }
 };
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://onlinelinuxterminal.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Commands",
+      "item": "https://onlinelinuxterminal.com/commands/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": data.name,
+      "item": `https://onlinelinuxterminal.com/commands/${data.slug}/`
+    }
+  ]
+};
+
+const faqSchema = data.faq && data.faq.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": data.faq.map((item) => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+} : null;
+
+// Find related command objects
+const relatedCommandsList = COMMANDS_DATA.filter((c) =>
+  data.relatedCommands?.includes(c.slug) || (c.category === data.category && c.slug !== data.slug)
+).slice(0, 6);
 ---
 
 <BaseLayout
-  title={`${data.name} Command Guide — Online Linux Terminal`}
-  description={`Learn how to use the Linux ${data.name} command. Syntax rules, options table, real-world examples, and live terminal testing in browser.`}
+  title={`Linux ${data.name} Command Guide — Examples, Syntax & Sandbox`}
+  description={`Master the Linux ${data.name} command. Learn syntax rules, options table, real-world examples, and test live in browser with our free online terminal simulator.`}
+  keywords={`linux ${data.name}, ${data.name} command, linux ${data.name} examples, ${data.name} syntax, online linux terminal ${data.name}, run ${data.name} in browser`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(techArticleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-    <!-- Header -->
-    <div class="space-y-3">
-      <div class="flex items-center space-x-3">
-        <a href="/commands/" class="text-xs font-mono text-emerald-400 hover:underline">← All Commands</a>
-        <span class="text-zinc-600">•</span>
-        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <!-- Breadcrumbs Navigation -->
+    <nav class="flex items-center space-x-2 text-xs font-mono text-zinc-400" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-emerald-400 transition-colors">Home</a>
+      <span>/</span>
+      <a href="/commands/" class="hover:text-emerald-400 transition-colors">Commands</a>
+      <span>/</span>
+      <span class="text-zinc-200 font-semibold">{data.name}</span>
+    </nav>
+
+    <!-- Header & Hero -->
+    <div class="space-y-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 font-medium">
           {data.category}
         </span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+          CLI Reference
+        </span>
       </div>
-      <h1 class="text-4xl font-extrabold text-zinc-100 font-mono flex items-center space-x-3">
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-mono tracking-tight flex items-center space-x-3">
         <span class="text-emerald-400">$</span>
         <span>{data.name}</span>
       </h1>
-      <p class="text-base text-zinc-300">{data.description}</p>
+
+      <p class="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-3xl">
+        {data.summary}
+      </p>
     </div>
 
     <!-- Ad Placement Top -->
     <AdSlot type="banner" client:idle />
 
-    <!-- Syntax Box -->
-    <div class="p-4 bg-zinc-900 border border-zinc-800 rounded-xl space-y-2 font-mono text-xs">
-      <div class="text-zinc-500 uppercase text-[10px] tracking-wider font-semibold">Command Syntax</div>
-      <div class="text-emerald-300 text-sm font-semibold">{data.syntax}</div>
+    <!-- Syntax Box with Quick Copy -->
+    <div class="p-5 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-2 font-mono shadow-xl relative group">
+      <div class="flex items-center justify-between text-zinc-400 text-xs font-sans">
+        <span class="uppercase tracking-wider text-[11px] font-semibold text-zinc-500">Syntax Definition</span>
+        <span class="text-xs text-zinc-500 font-mono">POSIX standard</span>
+      </div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800/80 text-emerald-300 text-sm font-semibold overflow-x-auto flex items-center justify-between">
+        <code>{data.syntax}</code>
+        <button
+          onclick={`navigator.clipboard.writeText('${data.syntax}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 2000)`}
+          class="ml-3 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition-colors shrink-0 font-sans cursor-pointer"
+        >
+          Copy
+        </button>
+      </div>
     </div>
 
-    <!-- Live Interactive Test Widget -->
-    <div class="space-y-3">
-      <h2 class="text-xl font-bold text-zinc-100 flex items-center space-x-2">
-        <span>Try `{data.name}` Live in Terminal</span>
+    <!-- Live Interactive Sandbox Island -->
+    <div class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-xl font-bold text-zinc-100 flex items-center space-x-2">
+            <span>Try `{data.name}` Live in Interactive Sandbox</span>
+          </h2>
+          <p class="text-xs text-zinc-400">Zero-install client simulation with real-time feedback.</p>
+        </div>
+        <a
+          href={`/terminal/?cmd=${encodeURIComponent(data.defaultSandboxCmd)}`}
+          class="inline-flex items-center space-x-1 text-xs font-mono text-emerald-400 hover:text-emerald-300 hover:underline shrink-0"
+        >
+          <span>Open in Fullscreen Workspace</span>
+          <span>↗</span>
+        </a>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-1 shadow-2xl">
+        <TerminalRunner client:load initialCommand={data.defaultSandboxCmd} className="h-[420px]" />
+      </div>
+    </div>
+
+    <!-- Overview & In-Depth Details -->
+    <div class="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl space-y-4 text-zinc-300 leading-relaxed text-sm sm:text-base">
+      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+        Overview & How {data.name} Works
       </h2>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-1">
-        <TerminalRunner client:load initialCommand={data.exampleCmd} className="h-[380px]" />
-      </div>
+      <p class="text-zinc-300 leading-relaxed">{data.description}</p>
     </div>
 
-    <!-- Detailed Guide & Options Table -->
-    <div class="space-y-6 text-zinc-300">
-      <h2 class="text-2xl font-bold text-zinc-100">Overview & Usage Details</h2>
-      <p class="text-sm leading-relaxed text-zinc-300">{data.details}</p>
-
-      <h3 class="text-lg font-bold text-emerald-400">Command Options & Flags</h3>
-      <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/60">
-        <table class="w-full text-left text-xs font-mono">
-          <thead class="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
-            <tr>
-              <th class="p-3">Option / Flag</th>
-              <th class="p-3">Description</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-zinc-800/80">
-            {data.flags.map((f) => (
+    <!-- Flags & Options Table -->
+    {data.flags && data.flags.length > 0 && (
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Common Flags & Command Options
+        </h2>
+        <div class="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-900/60 shadow-lg">
+          <table class="w-full text-left text-xs sm:text-sm font-mono">
+            <thead class="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
               <tr>
-                <td class="p-3 text-emerald-300 font-bold">{f.flag}</td>
-                <td class="p-3 text-zinc-300 font-sans text-xs">{f.desc}</td>
+                <th class="p-3.5 sm:p-4 w-1/4">Flag / Option</th>
+                <th class="p-3.5 sm:p-4">Description</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody class="divide-y divide-zinc-800/80">
+              {data.flags.map((f) => (
+                <tr class="hover:bg-zinc-800/30 transition-colors">
+                  <td class="p-3.5 sm:p-4 text-emerald-400 font-bold whitespace-nowrap">
+                    <span class="px-2 py-1 bg-zinc-950 rounded border border-zinc-800">{f.flag}</span>
+                  </td>
+                  <td class="p-3.5 sm:p-4 text-zinc-300 font-sans text-xs sm:text-sm">{f.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    )}
+
+    <!-- Real-World Examples with 1-Click Interactive Triggers -->
+    {data.examples && data.examples.length > 0 && (
+      <div class="space-y-6">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Practical Real-World Examples
+        </h2>
+
+        <div class="grid grid-cols-1 gap-5">
+          {data.examples.map((ex, index) => (
+            <div class="p-5 bg-zinc-900/70 border border-zinc-800 rounded-2xl space-y-3 shadow-md">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-emerald-400 font-semibold">Example #{index + 1}</span>
+                <span class="text-xs text-zinc-400 font-medium">{ex.title}</span>
+              </div>
+
+              <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-emerald-300 font-mono text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <code class="overflow-x-auto">{ex.cmd}</code>
+                <div class="flex items-center space-x-2 shrink-0 pt-1 sm:pt-0">
+                  <button
+                    onclick={`navigator.clipboard.writeText('${ex.cmd.replace(/'/g, "\\'")}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 2000)`}
+                    class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition-colors cursor-pointer font-sans"
+                  >
+                    Copy
+                  </button>
+                  <a
+                    href={`/terminal/?cmd=${encodeURIComponent(ex.cmd)}`}
+                    class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold rounded text-xs transition-colors flex items-center space-x-1 font-sans"
+                  >
+                    <span>Run in Sandbox ⚡</span>
+                  </a>
+                </div>
+              </div>
+
+              <p class="text-xs text-zinc-400 leading-relaxed font-sans">{ex.explanation}</p>
+
+              {ex.outputPreview && (
+                <div class="p-3 bg-zinc-950/80 rounded-xl border border-zinc-800/60 font-mono text-[11px] text-zinc-400 whitespace-pre-wrap">
+                  <div class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1 font-sans font-semibold">Sample Output:</div>
+                  {ex.outputPreview}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Common Errors & Solutions -->
+    {data.commonErrors && data.commonErrors.length > 0 && (
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Common Errors & Troubleshooting
+        </h2>
+        <div class="space-y-3">
+          {data.commonErrors.map((err) => (
+            <div class="p-4 bg-red-950/20 border border-red-900/50 rounded-xl space-y-2 text-xs sm:text-sm">
+              <div class="font-mono font-bold text-red-400">{err.error}</div>
+              <div class="text-zinc-400"><strong class="text-zinc-300">Cause:</strong> {err.cause}</div>
+              <div class="text-zinc-300"><strong class="text-emerald-400">Solution:</strong> {err.solution}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Frequently Asked Questions -->
+    {data.faq && data.faq.length > 0 && (
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-3">
+          {data.faq.map((f) => (
+            <div class="p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl space-y-1.5 text-xs sm:text-sm">
+              <h3 class="font-semibold text-zinc-100">{f.question}</h3>
+              <p class="text-zinc-400 leading-relaxed">{f.answer}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Related Commands Cross-Linking Grid -->
+    {relatedCommandsList.length > 0 && (
+      <div class="space-y-4 pt-4 border-t border-zinc-800">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans">
+          Related Linux Commands
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {relatedCommandsList.map((rel) => (
+            <a
+              href={`/commands/${rel.slug}/`}
+              class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 hover:bg-zinc-900 transition-all group block"
+            >
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono font-bold text-emerald-400 group-hover:text-emerald-300">
+                  ${rel.name}
+                </span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                  {rel.category}
+                </span>
+              </div>
+              <p class="text-xs text-zinc-400 line-clamp-2">{rel.summary}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
 
     <!-- Ad Placement Bottom -->
     <AdSlot type="leaderboard" client:idle />

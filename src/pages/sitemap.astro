@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { COMMANDS_LIST } from './commands/index.astro';
+import { COMMANDS_DATA } from '../data/commandsData';
 import { TUTORIALS_LIST } from './tutorials/index.astro';
 import { CHALLENGES_LIST } from './challenges/index.astro';
 import { LOCALES } from '../i18n/translations';
@@ -16,7 +16,7 @@ import { LOCALES } from '../i18n/translations';
         HTML Directory Sitemap
       </h1>
       <p class="text-xs sm:text-sm text-zinc-400">
-        Complete map of all routes, tutorial modules, command manuals, and language translations on Online Linux Terminal.
+        Complete map of all routes, tutorial modules, 50+ command manuals, and language translations on Online Linux Terminal.
       </p>
     </div>
 
@@ -39,11 +39,11 @@ import { LOCALES } from '../i18n/translations';
 
       <!-- Command Manual Pages -->
       <div class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-xl">
-        <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Command Manuals</h2>
-        <ul class="grid grid-cols-2 gap-1 text-xs font-mono">
-          {COMMANDS_LIST.map((cmd) => (
+        <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Command Manuals (50+)</h2>
+        <ul class="grid grid-cols-2 gap-1 text-xs font-mono max-h-[600px] overflow-y-auto pr-2">
+          {COMMANDS_DATA.map((cmd) => (
             <li>
-              <a href={`/commands/${cmd.name}/`} class="hover:text-emerald-400 transition-colors">
+              <a href={`/commands/${cmd.slug}/`} class="hover:text-emerald-400 transition-colors">
                 man {cmd.name}
               </a>
             </li>

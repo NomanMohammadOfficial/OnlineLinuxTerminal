@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { COMMANDS_LIST } from '../../commands/index.astro';
+import { COMMANDS_DATA } from '../../../data/commandsData';
 import { TRANSLATIONS, getLocalizedPath, type SupportedLocale } from '../../../i18n/translations';
+import { getLocalizedCommandData } from '../../../i18n/commandTranslations';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -12,6 +13,17 @@ export function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: SupportedLocale };
 const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const VIEW_MANUAL_LABELS: Record<SupportedLocale, string> = {
+  en: 'View Manual & Try Live',
+  ru: 'Смотреть мануал и запустить',
+  es: 'Ver manual y probar en vivo',
+  de: 'Handbuch ansehen & ausführen',
+  fr: 'Voir le manuel et tester',
+  zh: '查看手册并实时测试',
+};
+
+const viewLabel = VIEW_MANUAL_LABELS[lang] || VIEW_MANUAL_LABELS.en;
 ---
 
 <BaseLayout
@@ -28,29 +40,32 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {COMMANDS_LIST.map((cmd) => (
-        <a
-          href={getLocalizedPath(`/commands/${cmd.name}/`, lang)}
-          class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between"
-        >
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
-                {cmd.name}
-              </span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
-                {cmd.category}
-              </span>
+      {COMMANDS_DATA.map((cmd) => {
+        const localized = getLocalizedCommandData(cmd, lang);
+        return (
+          <a
+            href={getLocalizedPath(`/commands/${cmd.slug}/`, lang)}
+            class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between"
+          >
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
+                  ${cmd.name}
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                  {localized.category}
+                </span>
+              </div>
+              <p class="text-xs text-zinc-400 leading-relaxed line-clamp-2">{localized.summary}</p>
             </div>
-            <p class="text-xs text-zinc-400 leading-relaxed">{cmd.desc}</p>
-          </div>
 
-          <div class="pt-4 flex items-center justify-between text-xs font-mono text-emerald-400 font-semibold">
-            <span>View Manual & Try Live</span>
-            <span class="group-hover:translate-x-1 transition-transform">→</span>
-          </div>
-        </a>
-      ))}
+            <div class="pt-4 flex items-center justify-between text-xs font-mono text-emerald-400 font-semibold">
+              <span>{viewLabel}</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </div>
 </BaseLayout>

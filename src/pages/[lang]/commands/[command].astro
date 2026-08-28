@@ -3,48 +3,17 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
 import { AdSlot } from '../../../components/ads/AdSlot';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
+import { COMMANDS_DATA, type LinuxCommand } from '../../../data/commandsData';
+import { getLocalizedCommandData } from '../../../i18n/commandTranslations';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
-  const commands = [
-    { name: 'ls', category: 'Navigation', desc: 'List directory contents with details and hidden files.', syntax: 'ls [options] [file...]', examples: ['ls -la', 'ls -l /var/log', 'ls -lh'] },
-    { name: 'cd', category: 'Navigation', desc: 'Change current working directory.', syntax: 'cd [directory]', examples: ['cd /etc', 'cd ..', 'cd /home/user'] },
-    { name: 'pwd', category: 'Navigation', desc: 'Print name of current working directory.', syntax: 'pwd', examples: ['pwd'] },
-    { name: 'tree', category: 'Navigation', desc: 'Display directory structure in a tree-like diagram.', syntax: 'tree [directory]', examples: ['tree', 'tree /etc'] },
-    { name: 'cat', category: 'File Operations', desc: 'Concatenate and print file contents to terminal.', syntax: 'cat [file...]', examples: ['cat welcome.txt', 'cat /etc/os-release'] },
-    { name: 'touch', category: 'File Operations', desc: 'Create empty files or update timestamps.', syntax: 'touch [file...]', examples: ['touch newfile.txt', 'touch app.py'] },
-    { name: 'mkdir', category: 'File Operations', desc: 'Create new directory folders.', syntax: 'mkdir [directory]', examples: ['mkdir projects', 'mkdir -p a/b/c'] },
-    { name: 'rm', category: 'File Operations', desc: 'Remove files or directories recursively.', syntax: 'rm [options] [file...]', examples: ['rm test.txt', 'rm -rf temp/'] },
-    { name: 'cp', category: 'File Operations', desc: 'Copy files or directories to new paths.', syntax: 'cp [source] [destination]', examples: ['cp file.txt backup.txt', 'cp -r dir1 dir2'] },
-    { name: 'mv', category: 'File Operations', desc: 'Move or rename files and directories.', syntax: 'mv [source] [destination]', examples: ['mv old.txt new.txt', 'mv file.txt /tmp/'] },
-    { name: 'grep', category: 'Text Processing', desc: 'Search text files using matching regular expressions.', syntax: 'grep [options] PATTERN [FILE...]', examples: ['grep -i "error" /var/log/syslog', 'grep -n "user" /etc/passwd'] },
-    { name: 'sed', category: 'Text Processing', desc: 'Stream editor for filtering and transforming text.', syntax: 'sed [options] \'script\' [file...]', examples: ['sed \'s/foo/bar/g\' file.txt'] },
-    { name: 'awk', category: 'Text Processing', desc: 'Pattern scanning and column processing language.', syntax: 'awk \'program\' [file...]', examples: ['awk \'{print $1}\' file.txt'] },
-    { name: 'head', category: 'Text Processing', desc: 'Output the first part of files.', syntax: 'head -n [lines] [file]', examples: ['head -n 10 /var/log/syslog'] },
-    { name: 'tail', category: 'Text Processing', desc: 'Output the last part of files.', syntax: 'tail -n [lines] [file]', examples: ['tail -n 20 /var/log/syslog'] },
-    { name: 'wc', category: 'Text Processing', desc: 'Print line, word, and byte counts for files.', syntax: 'wc [options] [file]', examples: ['wc -l /var/log/syslog'] },
-    { name: 'echo', category: 'Text Processing', desc: 'Print text or redirect content to files.', syntax: 'echo [string]', examples: ['echo "Hello World"', 'echo "test" > file.txt'] },
-    { name: 'chmod', category: 'Permissions', desc: 'Change file mode bits and access permissions.', syntax: 'chmod [mode] [file]', examples: ['chmod 755 script.sh', 'chmod 644 notes.txt'] },
-    { name: 'chown', category: 'Permissions', desc: 'Change file owner and group attributes.', syntax: 'chown [owner] [file]', examples: ['chown root:root file.txt'] },
-    { name: 'nano', category: 'Editors', desc: 'Launch simple text editor modal.', syntax: 'nano [file]', examples: ['nano script.py'] },
-    { name: 'vim', category: 'Editors', desc: 'Launch vi/vim text editor modal.', syntax: 'vim [file]', examples: ['vim config.json'] },
-    { name: 'curl', category: 'Networking', desc: 'Transfer data from or to a server URL.', syntax: 'curl [options] [URL]', examples: ['curl https://onlinelinuxterminal.com'] },
-    { name: 'tar', category: 'Archives', desc: 'Store and extract file archives in VFS.', syntax: 'tar [options] [archive] [files]', examples: ['tar -czvf archive.tar.gz dir/'] },
-    { name: 'gzip', category: 'Archives', desc: 'Compress or expand files in Virtual File System.', syntax: 'gzip [file]', examples: ['gzip file.txt'] },
-    { name: 'top', category: 'System', desc: 'Display simulated real-time Linux processes.', syntax: 'top', examples: ['top'] },
-    { name: 'python3', category: 'System', desc: 'Interactive Python 3 interpreter REPL.', syntax: 'python3 [script.py]', examples: ['python3', 'python3 script.py'] },
-    { name: 'apt', category: 'Packages', desc: 'Simulated package manager to install utilities.', syntax: 'apt install [package]', examples: ['apt install cowsay'] },
-    { name: 'whoami', category: 'System', desc: 'Print effective user ID name.', syntax: 'whoami', examples: ['whoami'] },
-    { name: 'date', category: 'System', desc: 'Display current system date and time.', syntax: 'date', examples: ['date'] },
-    { name: 'uname', category: 'System', desc: 'Print system information and kernel architecture.', syntax: 'uname -a', examples: ['uname -a'] },
-    { name: 'history', category: 'System', desc: 'Display list of executed terminal commands.', syntax: 'history', examples: ['history'] },
-  ];
+  const paths: Array<{ params: { lang: SupportedLocale; command: string }; props: { cmdData: LinuxCommand } }> = [];
 
-  const paths: Array<{ params: { lang: SupportedLocale; command: string }; props: { cmdData: typeof commands[0] } }> = [];
   locales.forEach((l) => {
-    commands.forEach((c) => {
+    COMMANDS_DATA.forEach((c) => {
       paths.push({
-        params: { lang: l, command: c.name },
+        params: { lang: l, command: c.slug },
         props: { cmdData: c },
       });
     });
@@ -55,42 +24,244 @@ export function getStaticPaths() {
 const { lang, command } = Astro.params as { lang: SupportedLocale; command: string };
 const { cmdData } = Astro.props;
 const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+const localized = getLocalizedCommandData(cmdData, lang);
+
+const techArticleSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": `${localized.name} — ${t.navCommands}`,
+  "description": localized.summary,
+  "articleSection": localized.category,
+  "inLanguage": lang,
+  "author": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com"
+  }
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": t.heroHighlight,
+      "item": `https://onlinelinuxterminal.com/${lang}/`
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": t.navCommands,
+      "item": `https://onlinelinuxterminal.com/${lang}/commands/`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": localized.name,
+      "item": `https://onlinelinuxterminal.com/${lang}/commands/${localized.slug}/`
+    }
+  ]
+};
+
+const relatedCommandsList = COMMANDS_DATA.filter((c) =>
+  cmdData.relatedCommands?.includes(c.slug) || (c.category === cmdData.category && c.slug !== cmdData.slug)
+).slice(0, 6);
 ---
 
 <BaseLayout
   lang={lang}
-  title={`${cmdData.name} Command Manual — ${t.heroHighlight}`}
-  description={`${cmdData.name} command syntax, flags, options, and live online terminal test.`}
+  title={`${localized.name} — ${localized.summary} | ${t.heroHighlight}`}
+  description={`${localized.name} Linux: ${localized.summary}`}
 >
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-    <div class="space-y-3">
-      <div class="flex items-center space-x-3">
-        <a href={getLocalizedPath('/commands/', lang)} class="text-xs font-mono text-emerald-400 hover:underline">← {t.navCommands}</a>
-        <span class="text-zinc-600">•</span>
-        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">{cmdData.category}</span>
+  <script type="application/ld+json" set:html={JSON.stringify(techArticleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <!-- Breadcrumbs Navigation -->
+    <nav class="flex items-center space-x-2 text-xs font-mono text-zinc-400" aria-label="Breadcrumb">
+      <a href={getLocalizedPath('/', lang)} class="hover:text-emerald-400 transition-colors">{t.heroHighlight}</a>
+      <span>/</span>
+      <a href={getLocalizedPath('/commands/', lang)} class="hover:text-emerald-400 transition-colors">{t.navCommands}</a>
+      <span>/</span>
+      <span class="text-zinc-200 font-semibold">{localized.name}</span>
+    </nav>
+
+    <!-- Header & Hero -->
+    <div class="space-y-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 font-medium">
+          {localized.category}
+        </span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+          CLI Manual
+        </span>
       </div>
-      <h1 class="text-4xl font-extrabold text-zinc-100 font-mono">man {cmdData.name}</h1>
-      <p class="text-sm text-zinc-400 max-w-2xl">{cmdData.desc}</p>
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-mono tracking-tight flex items-center space-x-3">
+        <span class="text-emerald-400">$</span>
+        <span>{localized.name}</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-3xl">
+        {localized.summary}
+      </p>
     </div>
 
     <!-- Ad Placement Top -->
     <AdSlot type="banner" client:idle />
 
-    <!-- Command Syntax Box -->
-    <div class="p-6 bg-zinc-900 border border-zinc-800 rounded-xl space-y-3">
-      <div class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Syntax</div>
-      <div class="p-4 bg-zinc-950 border border-zinc-800/80 rounded-lg font-mono text-sm text-emerald-300">
-        $ {cmdData.syntax}
+    <!-- Syntax Box with Quick Copy -->
+    <div class="p-5 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-2 font-mono shadow-xl relative group">
+      <div class="flex items-center justify-between text-zinc-400 text-xs font-sans">
+        <span class="uppercase tracking-wider text-[11px] font-semibold text-zinc-500">{localized.labels.syntaxLabel}</span>
+        <span class="text-xs text-zinc-500 font-mono">POSIX Standard</span>
+      </div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800/80 text-emerald-300 text-sm font-semibold overflow-x-auto flex items-center justify-between">
+        <code>{localized.syntax}</code>
+        <button
+          onclick={`navigator.clipboard.writeText('${localized.syntax}'); this.innerText = '${localized.labels.copiedBtn}'; setTimeout(() => this.innerText = '${localized.labels.copyBtn}', 2000)`}
+          class="ml-3 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition-colors shrink-0 font-sans cursor-pointer"
+        >
+          {localized.labels.copyBtn}
+        </button>
       </div>
     </div>
 
-    <!-- Interactive Terminal Test Widget -->
+    <!-- Live Interactive Sandbox Island -->
     <div class="space-y-4">
-      <h2 class="text-xl font-bold text-zinc-100 font-sans">Try <code class="text-emerald-400">{cmdData.name}</code> Live in Terminal</h2>
-      <div class="rounded-xl border border-zinc-800 overflow-hidden">
-        <TerminalRunner client:load className="h-[450px]" />
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-xl font-bold text-zinc-100 flex items-center space-x-2">
+            <span>{localized.labels.sandboxTitle}</span>
+          </h2>
+          <p class="text-xs text-zinc-400">{localized.labels.sandboxSubtitle}</p>
+        </div>
+        <a
+          href={getLocalizedPath(`/terminal/?cmd=${encodeURIComponent(localized.defaultSandboxCmd)}`, lang)}
+          class="inline-flex items-center space-x-1 text-xs font-mono text-emerald-400 hover:text-emerald-300 hover:underline shrink-0"
+        >
+          <span>{localized.labels.fullWorkspaceBtn}</span>
+        </a>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-1 shadow-2xl">
+        <TerminalRunner client:load initialCommand={localized.defaultSandboxCmd} className="h-[420px]" />
       </div>
     </div>
+
+    <!-- Overview & In-Depth Details -->
+    <div class="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl space-y-4 text-zinc-300 leading-relaxed text-sm sm:text-base">
+      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+        {localized.labels.overviewTitle}
+      </h2>
+      <p class="text-zinc-300 leading-relaxed">{localized.description}</p>
+    </div>
+
+    <!-- Flags & Options Table -->
+    {localized.flags && localized.flags.length > 0 && (
+      <div class="space-y-4">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          {localized.labels.flagsTitle}
+        </h2>
+        <div class="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-900/60 shadow-lg">
+          <table class="w-full text-left text-xs sm:text-sm font-mono">
+            <thead class="bg-zinc-950 text-zinc-400 border-b border-zinc-800">
+              <tr>
+                <th class="p-3.5 sm:p-4 w-1/4">Flag / Option</th>
+                <th class="p-3.5 sm:p-4">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-800/80">
+              {localized.flags.map((f) => (
+                <tr class="hover:bg-zinc-800/30 transition-colors">
+                  <td class="p-3.5 sm:p-4 text-emerald-400 font-bold whitespace-nowrap">
+                    <span class="px-2 py-1 bg-zinc-950 rounded border border-zinc-800">{f.flag}</span>
+                  </td>
+                  <td class="p-3.5 sm:p-4 text-zinc-300 font-sans text-xs sm:text-sm">{f.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <!-- Real-World Examples -->
+    {localized.examples && localized.examples.length > 0 && (
+      <div class="space-y-6">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          {localized.labels.examplesTitle}
+        </h2>
+
+        <div class="grid grid-cols-1 gap-5">
+          {localized.examples.map((ex, index) => (
+            <div class="p-5 bg-zinc-900/70 border border-zinc-800 rounded-2xl space-y-3 shadow-md">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-emerald-400 font-semibold">#{index + 1}</span>
+                <span class="text-xs text-zinc-400 font-medium">{ex.title}</span>
+              </div>
+
+              <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-emerald-300 font-mono text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <code class="overflow-x-auto">{ex.cmd}</code>
+                <div class="flex items-center space-x-2 shrink-0 pt-1 sm:pt-0">
+                  <button
+                    onclick={`navigator.clipboard.writeText('${ex.cmd.replace(/'/g, "\\'")}'); this.innerText = '${localized.labels.copiedBtn}'; setTimeout(() => this.innerText = '${localized.labels.copyBtn}', 2000)`}
+                    class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition-colors cursor-pointer font-sans"
+                  >
+                    {localized.labels.copyBtn}
+                  </button>
+                  <a
+                    href={getLocalizedPath(`/terminal/?cmd=${encodeURIComponent(ex.cmd)}`, lang)}
+                    class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold rounded text-xs transition-colors flex items-center space-x-1 font-sans"
+                  >
+                    <span>{localized.labels.runBtn}</span>
+                  </a>
+                </div>
+              </div>
+
+              <p class="text-xs text-zinc-400 leading-relaxed font-sans">{ex.explanation}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Related Commands Cross-Linking Grid -->
+    {relatedCommandsList.length > 0 && (
+      <div class="space-y-4 pt-4 border-t border-zinc-800">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans">
+          {localized.labels.relatedTitle}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {relatedCommandsList.map((rel) => {
+            const relLocalized = getLocalizedCommandData(rel, lang);
+            return (
+              <a
+                href={getLocalizedPath(`/commands/${rel.slug}/`, lang)}
+                class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 hover:bg-zinc-900 transition-all group block"
+              >
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono font-bold text-emerald-400 group-hover:text-emerald-300">
+                    ${rel.name}
+                  </span>
+                  <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                    {relLocalized.category}
+                  </span>
+                </div>
+                <p class="text-xs text-zinc-400 line-clamp-2">{relLocalized.summary}</p>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
 
     <!-- Ad Placement Bottom -->
     <AdSlot type="leaderboard" client:idle />

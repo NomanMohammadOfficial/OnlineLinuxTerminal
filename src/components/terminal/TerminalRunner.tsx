@@ -164,14 +164,32 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
       let currentLine = '';
 
-      if (initialCommand) {
-        term.write(initialCommand);
-        currentLine = initialCommand;
-        setTimeout(() => {
-          runCommandInternal(initialCommand, term);
-          currentLine = '';
-        }, 300);
+      let targetCmd = initialCommand;
+      if (!targetCmd && typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryCmd = urlParams.get('cmd');
+        if (queryCmd) {
+          targetCmd = queryCmd;
+        }
       }
+
+      if (targetCmd) {
+        term.write(targetCmd);
+        currentLine = targetCmd;
+        setTimeout(() => {
+          runCommandInternal(targetCmd!, term);
+          currentLine = '';
+        }, 350);
+      }
+
+      const handleExternalCommand = (e: any) => {
+        const cmdToRun = e.detail?.cmd;
+        if (cmdToRun && term) {
+          term.write(cmdToRun);
+          runCommandInternal(cmdToRun, term);
+        }
+      };
+      window.addEventListener('terminal:run-command', handleExternalCommand);
 
       term.onData((data: string) => {
         if (data === '\r') {

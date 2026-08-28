@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
+import { Globe, ChevronDown, Check } from 'lucide-react';
 import { LOCALES, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
 
 interface LanguageSwitcherProps {
@@ -30,7 +30,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 rounded-lg text-xs font-mono transition-colors min-h-[44px]"
+        className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 rounded-lg text-xs font-mono transition-colors min-h-[44px] cursor-pointer"
         aria-label="Select Language"
         aria-expanded={isOpen}
       >
@@ -41,7 +41,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 py-1.5 animate-in fade-in duration-150">
+        <div className="absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 py-1.5 animate-in fade-in duration-150">
           <div className="px-3 py-1.5 text-[10px] font-mono text-zinc-500 uppercase tracking-wider border-b border-zinc-800">
             Select Language
           </div>
@@ -52,12 +52,15 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               <a
                 key={locale.code}
                 href={targetUrl}
-                className={`flex items-center space-x-2.5 px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-800 ${
+                className={`flex items-center justify-between px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-800 cursor-pointer ${
                   isSelected ? 'text-emerald-400 font-semibold bg-emerald-950/40' : 'text-zinc-300'
                 }`}
               >
-                <span className="text-base">{locale.flag}</span>
-                <span>{locale.name}</span>
+                <div className="flex items-center space-x-2.5">
+                  <span className="text-base">{locale.flag}</span>
+                  <span>{locale.name}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400" />}
               </a>
             );
           })}

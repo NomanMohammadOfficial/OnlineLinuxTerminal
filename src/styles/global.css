@@ -37,3 +37,41 @@
 .terminal-container .xterm-viewport {
   border-radius: 0 0 0.5rem 0.5rem;
 }
+
+/* Google Translate UI Cleanup & Integration */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#google_translate_element {
+  display: none !important;
+}
+
+/* Prevent translation of terminal code & command syntax */
+.notranslate,
+.xterm,
+code,
+pre,
+kbd {
+  translate: no;
+}
