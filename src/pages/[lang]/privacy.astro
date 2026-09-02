@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+
+const I18N_PRIVACY_TITLES: Record<SupportedLocale, { title: string; h1: string; sub: string }> = {
+  en: {
+    title: "Privacy Policy — Online Linux Terminal",
+    h1: "Privacy Policy",
+    sub: "Comprehensive data protection, Google AdSense cookies, GDPR, and CCPA privacy disclosures."
+  },
+  ru: {
+    title: "Политика конфиденциальности — Онлайн Терминал Linux",
+    h1: "Политика конфиденциальности",
+    sub: "Подробная информация о защите данных, cookie Google AdSense, GDPR и конфиденциальности IndexedDB."
+  },
+  es: {
+    title: "Política de Privacidad — Terminal Linux Online",
+    h1: "Política de Privacidad",
+    sub: "Protección de datos, cookies de Google AdSense, derechos RGPD/CCPA y almacenamiento local."
+  },
+  de: {
+    title: "Datenschutzerklärung — Online Linux Terminal",
+    h1: "Datenschutzerklärung",
+    sub: "Umfassender Datenschutz, Google AdSense Cookies, DSGVO-Rechte und lokale Speicherung."
+  },
+  fr: {
+    title: "Politique de Confidentialité — Terminal Linux en Ligne",
+    h1: "Politique de Confidentialité",
+    sub: "Protection des données, cookies publicitaires Google AdSense, droits RGPD et stockage local."
+  },
+  zh: {
+    title: "隐私政策 — 在线 Linux 终端",
+    h1: "隐私政策",
+    sub: "关于数据保护、Google AdSense 广告 Cookie、GDPR 权利以及 IndexedDB 本地隐私的详细说明。"
+  }
+};
+
+const privInfo = I18N_PRIVACY_TITLES[lang] || I18N_PRIVACY_TITLES.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={privInfo.title}
+  description={privInfo.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Privacy & Legal Compliance</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {privInfo.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        {privInfo.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Google AdSense & DoubleClick Cookies</h2>
+        <p>
+          We use Google AdSense to serve advertisements. Google uses cookies to serve ads based on user visits to this and other websites. Users may opt out of personalized advertising by visiting <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Google Ads Settings</a> or <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">optout.networkadvertising.org</a>.
+        </p>
+      </section>
+
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># In-Browser Sandbox & Zero Server Tracking</h2>
+        <p>
+          All terminal commands, created scripts, and virtual filesystem states execute locally inside your web browser via IndexedDB. Your simulated files and command history are never uploaded to or analyzed on our remote servers.
+        </p>
+      </section>
+
+      <section class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-xs">
+          For full legal provisions, please review the <a href="/privacy/" class="text-emerald-400 hover:underline font-bold">Master English Privacy Policy</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const I18N_COOKIE_TITLES: Record<SupportedLocale, { title: string; h1: string; sub: string }> = {
+  en: {
+    title: "Cookie Policy — Online Linux Terminal",
+    h1: "Cookie Policy",
+    sub: "Information regarding our use of essential, performance, and Google AdSense advertising cookies."
+  },
+  ru: {
+    title: "Политика использования файлов Cookie — Онлайн Терминал Linux",
+    h1: "Политика использования файлов Cookie",
+    sub: "Информация об использовании обязательных, аналитических и рекламных cookie Google AdSense."
+  },
+  es: {
+    title: "Política de Cookies — Terminal Linux Online",
+    h1: "Política de Cookies",
+    sub: "Información sobre el uso de cookies esenciales, analíticas y publicitarias de Google AdSense."
+  },
+  de: {
+    title: "Cookie-Richtlinie — Online Linux Terminal",
+    h1: "Cookie-Richtlinie",
+    sub: "Informationen über die Verwendung von Cookies, Analyse-Tools und Google AdSense Werbung."
+  },
+  fr: {
+    title: "Politique relative aux Cookies — Terminal Linux en Ligne",
+    h1: "Politique relative aux Cookies",
+    sub: "Informations sur l'utilisation des cookies essentiels, de performance et de publicité Google AdSense."
+  },
+  zh: {
+    title: "Cookie 政策 — 在线 Linux 终端",
+    h1: "Cookie 政策",
+    sub: "关于本站使用必要 Cookie、性能分析及 Google AdSense 广告 Cookie 的详细说明。"
+  }
+};
+
+const cookieInfo = I18N_COOKIE_TITLES[lang] || I18N_COOKIE_TITLES.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={cookieInfo.title}
+  description={cookieInfo.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Cookie & Tracking Disclosures</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {cookieInfo.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        {cookieInfo.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Google Advertising Cookies (DoubleClick)</h2>
+        <p>
+          Google AdSense uses cookies to serve relevant ads across our website. You can customize or disable personalized advertising anytime in your <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Google Ads Settings</a>.
+        </p>
+      </section>
+
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Managing Browser Cookies</h2>
+        <p>
+          You can block or delete cookies in your browser settings (Chrome, Firefox, Safari, Edge) without affecting your ability to use our in-browser Linux terminal simulator.
+        </p>
+      </section>
+
+      <section class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-xs">
+          For full legal details, see the <a href="/cookies/" class="text-emerald-400 hover:underline">Master Cookie Policy</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

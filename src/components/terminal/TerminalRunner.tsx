@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { RefreshCw, Maximize2, Minimize2, Copy, Trash2, Edit3, Terminal as TerminalIcon, ShieldCheck } from 'lucide-react';
+import { RefreshCw, Maximize2, Minimize2, Copy, Check, Trash2, Edit3, Terminal as TerminalIcon, ShieldCheck } from 'lucide-react';
 import type { VFSNode, ShellEnv } from '../../lib/vfs/types';
 import { getStoredVFS, saveVFS, resetVFS, getStoredHistory, saveStoredHistory } from '../../lib/vfs/store';
-import { executeCommand, getNodeAtPath } from '../../lib/shell/executor';
+import { executeCommand, getNodeAtPath, getParentNodeAndName, resolvePath } from '../../lib/shell/executor';
 import { EditorModal } from './EditorModal';
 
 interface TerminalRunnerProps {
@@ -21,10 +21,23 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
   const fitAddonInstance = useRef<any>(null);
 
   const [vfs, setVfs] = useState<VFSNode | null>(null);
+  const vfsRef = useRef<VFSNode | null>(null);
+  vfsRef.current = vfs;
+
   const [history, setHistory] = useState<string[]>([]);
+  const historyRef = useRef<string[]>([]);
+  historyRef.current = history;
+
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const historyIndexRef = useRef<number>(-1);
+  historyIndexRef.current = historyIndex;
+
   const [currentInput, setCurrentInput] = useState<string>('');
+  const currentLineRef = useRef<string>('');
+
+  const [copied, setCopied] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
   const [env, setEnv] = useState<ShellEnv>({
     USER: 'user',
     HOME: '/home/user',
@@ -33,6 +46,8 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     TERM: 'xterm-256color',
     PWD: '/home/user',
   });
+  const envRef = useRef<ShellEnv>(env);
+  envRef.current = env;
 
   const [editorState, setEditorState] = useState<{
     isOpen: boolean;
@@ -52,62 +67,166 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     return `\x1b[1;32muser@linux-box\x1b[0m:\x1b[1;34m${displayPwd}\x1b[0m$ `;
   }, []);
 
+  const runCommandRef = useRef<(cmdStr: string, term: any) => Promise<void>>();
+
+  const runCommandInternal = async (cmdStr: string, term: any) => {
+    const currentVfs = vfsRef.current;
+    if (!currentVfs) return;
+
+    const trimmed = cmdStr.trim();
+    if (!trimmed) {
+      term.write('\r\n' + getPrompt(envRef.current.PWD));
+      return;
+    }
+
+    const newHist = [...historyRef.current, trimmed];
+    historyRef.current = newHist;
+    setHistory(newHist);
+    setHistoryIndex(-1);
+    historyIndexRef.current = -1;
+    saveStoredHistory(newHist);
+
+    const { result, updatedVFS } = await executeCommand(trimmed, currentVfs, envRef.current, newHist);
+
+    vfsRef.current = updatedVFS;
+    setVfs(updatedVFS);
+    await saveVFS(updatedVFS);
+
+    if (result.newPwd && result.newPwd !== envRef.current.PWD) {
+      const updatedEnv = { ...envRef.current, PWD: result.newPwd };
+      envRef.current = updatedEnv;
+      setEnv(updatedEnv);
+    }
+
+    if (onCommandRun) {
+      onCommandRun(trimmed, result.output);
+    }
+
+    if (result.openEditor) {
+      setEditorState({
+        isOpen: true,
+        filename: result.openEditor.filename,
+        content: result.openEditor.content,
+      });
+    }
+
+    if (result.output) {
+      const formattedOutput = result.output.replace(/\n/g, '\r\n');
+      term.write('\r\n' + formattedOutput);
+    }
+
+    const activePwd = result.newPwd || envRef.current.PWD;
+    term.write('\r\n' + getPrompt(activePwd));
+  };
+
+  runCommandRef.current = runCommandInternal;
+
+  const processInput = (data: string) => {
+    const term = xtermInstance.current;
+    if (!term) return;
+
+    if (data === '\r') {
+      const cmdToRun = currentLineRef.current;
+      currentLineRef.current = '';
+      setCurrentInput('');
+      if (runCommandRef.current) {
+        runCommandRef.current(cmdToRun, term);
+      }
+    } else if (data === '\x7f' || data === '\b') {
+      if (currentLineRef.current.length > 0) {
+        currentLineRef.current = currentLineRef.current.slice(0, -1);
+        setCurrentInput(currentLineRef.current);
+        term.write('\b \b');
+      }
+    } else if (data === '\x03') {
+      term.write('^C\r\n' + getPrompt(envRef.current.PWD));
+      currentLineRef.current = '';
+      setCurrentInput('');
+    } else if (data === '\x0c') {
+      term.write('\x1b[2J\x1b[3J\x1b[H');
+      term.write(getPrompt(envRef.current.PWD) + currentLineRef.current);
+    } else if (data === '\x1b[A') {
+      const hist = historyRef.current;
+      if (hist.length > 0) {
+        const nextIdx = historyIndexRef.current < hist.length - 1 ? historyIndexRef.current + 1 : historyIndexRef.current;
+        historyIndexRef.current = nextIdx;
+        setHistoryIndex(nextIdx);
+        const cmdFromHist = hist[hist.length - 1 - (nextIdx < 0 ? 0 : nextIdx)] || '';
+        while (currentLineRef.current.length > 0) {
+          term.write('\b \b');
+          currentLineRef.current = currentLineRef.current.slice(0, -1);
+        }
+        term.write(cmdFromHist);
+        currentLineRef.current = cmdFromHist;
+        setCurrentInput(cmdFromHist);
+      }
+    } else if (data === '\x1b[B') {
+      const hist = historyRef.current;
+      if (historyIndexRef.current > 0) {
+        const nextIdx = historyIndexRef.current - 1;
+        historyIndexRef.current = nextIdx;
+        setHistoryIndex(nextIdx);
+        const cmdFromHist = hist[hist.length - 1 - nextIdx] || '';
+        while (currentLineRef.current.length > 0) {
+          term.write('\b \b');
+          currentLineRef.current = currentLineRef.current.slice(0, -1);
+        }
+        term.write(cmdFromHist);
+        currentLineRef.current = cmdFromHist;
+        setCurrentInput(cmdFromHist);
+      } else if (historyIndexRef.current === 0) {
+        historyIndexRef.current = -1;
+        setHistoryIndex(-1);
+        while (currentLineRef.current.length > 0) {
+          term.write('\b \b');
+          currentLineRef.current = currentLineRef.current.slice(0, -1);
+        }
+        currentLineRef.current = '';
+        setCurrentInput('');
+      }
+    } else if (data === '\t') {
+      if (currentLineRef.current.trim()) {
+        const parts = currentLineRef.current.split(' ');
+        const lastPart = parts[parts.length - 1];
+        const currentVFS = vfsRef.current;
+        if (currentVFS) {
+          const node = getNodeAtPath(currentVFS, envRef.current.PWD);
+          if (node && node.children) {
+            const matches = node.children
+              .map((c) => c.name)
+              .filter((n) => n.startsWith(lastPart));
+            if (matches.length === 1) {
+              const completion = matches[0].slice(lastPart.length);
+              term.write(completion);
+              currentLineRef.current += completion;
+              setCurrentInput(currentLineRef.current);
+            } else if (matches.length > 1) {
+              term.write('\r\n' + matches.join('  ') + '\r\n' + getPrompt(envRef.current.PWD) + currentLineRef.current);
+            }
+          }
+        }
+      }
+    } else if (data >= ' ' || data === '\n') {
+      currentLineRef.current += data;
+      setCurrentInput(currentLineRef.current);
+      term.write(data);
+    }
+  };
+
+  const processInputRef = useRef<(data: string) => void>(processInput);
+  processInputRef.current = processInput;
+
   useEffect(() => {
     async function initStorage() {
       const storedVFS = await getStoredVFS();
       const storedHist = await getStoredHistory();
+      vfsRef.current = storedVFS;
       setVfs(storedVFS);
+      historyRef.current = storedHist;
       setHistory(storedHist);
     }
     initStorage();
   }, []);
-
-  const runCommandInternal = useCallback(
-    async (cmdStr: string, term: any) => {
-      if (!vfs) return;
-
-      const trimmed = cmdStr.trim();
-      if (!trimmed) {
-        term.write('\r\n' + getPrompt(env.PWD));
-        return;
-      }
-
-      const newHist = [...history, trimmed];
-      setHistory(newHist);
-      setHistoryIndex(-1);
-      saveStoredHistory(newHist);
-
-      const { result, updatedVFS } = await executeCommand(trimmed, vfs, env, newHist);
-
-      setVfs(updatedVFS);
-      saveVFS(updatedVFS);
-
-      if (result.newPwd && result.newPwd !== env.PWD) {
-        setEnv((prev) => ({ ...prev, PWD: result.newPwd! }));
-      }
-
-      if (onCommandRun) {
-        onCommandRun(trimmed, result.output);
-      }
-
-      if (result.openEditor) {
-        setEditorState({
-          isOpen: true,
-          filename: result.openEditor.filename,
-          content: result.openEditor.content,
-        });
-      }
-
-      if (result.output) {
-        const formattedOutput = result.output.replace(/\n/g, '\r\n');
-        term.write('\r\n' + formattedOutput);
-      }
-
-      const activePwd = result.newPwd || env.PWD;
-      term.write('\r\n' + getPrompt(activePwd));
-    },
-    [vfs, env, history, getPrompt, onCommandRun]
-  );
 
   useEffect(() => {
     if (!terminalRef.current || !vfs) return;
@@ -160,9 +279,9 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
       term.writeln('\x1b[1;32mWelcome to Online Linux Terminal AST Sandbox (onlinelinuxterminal.com)\x1b[0m');
       term.writeln('\x1b[90mType \x1b[1;37m"help"\x1b[90m for commands or \x1b[1;37m"cat welcome.txt"\x1b[90m to start.\x1b[0m');
-      term.write(getPrompt(env.PWD));
+      term.write(getPrompt(envRef.current.PWD));
 
-      let currentLine = '';
+      currentLineRef.current = '';
 
       let targetCmd = initialCommand;
       if (!targetCmd && typeof window !== 'undefined') {
@@ -175,10 +294,11 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
       if (targetCmd) {
         term.write(targetCmd);
-        currentLine = targetCmd;
+        currentLineRef.current = targetCmd;
         setTimeout(() => {
-          runCommandInternal(targetCmd!, term);
-          currentLine = '';
+          if (processInputRef.current) {
+            processInputRef.current('\r');
+          }
         }, 350);
       }
 
@@ -186,86 +306,17 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
         const cmdToRun = e.detail?.cmd;
         if (cmdToRun && term) {
           term.write(cmdToRun);
-          runCommandInternal(cmdToRun, term);
+          currentLineRef.current = cmdToRun;
+          if (processInputRef.current) {
+            processInputRef.current('\r');
+          }
         }
       };
       window.addEventListener('terminal:run-command', handleExternalCommand);
 
       term.onData((data: string) => {
-        if (data === '\r') {
-          runCommandInternal(currentLine, term);
-          currentLine = '';
-          setCurrentInput('');
-        } else if (data === '\x7f') {
-          if (currentLine.length > 0) {
-            currentLine = currentLine.slice(0, -1);
-            setCurrentInput(currentLine);
-            term.write('\b \b');
-          }
-        } else if (data === '\x03') {
-          term.write('^C\r\n' + getPrompt(env.PWD));
-          currentLine = '';
-          setCurrentInput('');
-        } else if (data === '\x0c') {
-          term.clear();
-          term.write(getPrompt(env.PWD) + currentLine);
-        } else if (data === '\x1b[A') {
-          if (history.length > 0) {
-            const nextIdx = historyIndex < history.length - 1 ? historyIndex + 1 : historyIndex;
-            setHistoryIndex(nextIdx);
-            const cmdFromHist = history[history.length - 1 - (nextIdx < 0 ? 0 : nextIdx)] || '';
-            while (currentLine.length > 0) {
-              term.write('\b \b');
-              currentLine = currentLine.slice(0, -1);
-            }
-            term.write(cmdFromHist);
-            currentLine = cmdFromHist;
-            setCurrentInput(cmdFromHist);
-          }
-        } else if (data === '\x1b[B') {
-          if (historyIndex > 0) {
-            const nextIdx = historyIndex - 1;
-            setHistoryIndex(nextIdx);
-            const cmdFromHist = history[history.length - 1 - nextIdx] || '';
-            while (currentLine.length > 0) {
-              term.write('\b \b');
-              currentLine = currentLine.slice(0, -1);
-            }
-            term.write(cmdFromHist);
-            currentLine = cmdFromHist;
-            setCurrentInput(cmdFromHist);
-          } else if (historyIndex === 0) {
-            setHistoryIndex(-1);
-            while (currentLine.length > 0) {
-              term.write('\b \b');
-              currentLine = currentLine.slice(0, -1);
-            }
-            currentLine = '';
-            setCurrentInput('');
-          }
-        } else if (data === '\t') {
-          if (currentLine.trim()) {
-            const parts = currentLine.split(' ');
-            const lastPart = parts[parts.length - 1];
-            const node = getNodeAtPath(vfs, env.PWD);
-            if (node && node.children) {
-              const matches = node.children
-                .map((c) => c.name)
-                .filter((n) => n.startsWith(lastPart));
-              if (matches.length === 1) {
-                const completion = matches[0].slice(lastPart.length);
-                term.write(completion);
-                currentLine += completion;
-                setCurrentInput(currentLine);
-              } else if (matches.length > 1) {
-                term.write('\r\n' + matches.join('  ') + '\r\n' + getPrompt(env.PWD) + currentLine);
-              }
-            }
-          }
-        } else if (data >= ' ' || data === '\n') {
-          currentLine += data;
-          setCurrentInput(currentLine);
-          term.write(data);
+        if (processInputRef.current) {
+          processInputRef.current(data);
         }
       });
 
@@ -289,11 +340,18 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
   const handleResetSession = async () => {
     const freshVFS = await resetVFS();
+    vfsRef.current = freshVFS;
     setVfs(freshVFS);
+    historyRef.current = [];
     setHistory([]);
+    historyIndexRef.current = -1;
+    setHistoryIndex(-1);
+    currentLineRef.current = '';
+    setCurrentInput('');
+    envRef.current = { ...envRef.current, PWD: '/home/user' };
     setEnv((prev) => ({ ...prev, PWD: '/home/user' }));
     if (xtermInstance.current) {
-      xtermInstance.current.clear();
+      xtermInstance.current.write('\x1b[2J\x1b[3J\x1b[H');
       xtermInstance.current.writeln('\x1b[1;33m[Session Reset Completed]\x1b[0m');
       xtermInstance.current.write(getPrompt('/home/user'));
     }
@@ -301,14 +359,38 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
   const handleClearScreen = () => {
     if (xtermInstance.current) {
-      xtermInstance.current.clear();
-      xtermInstance.current.write(getPrompt(env.PWD));
+      currentLineRef.current = '';
+      setCurrentInput('');
+      xtermInstance.current.write('\x1b[2J\x1b[3J\x1b[H');
+      xtermInstance.current.write(getPrompt(envRef.current.PWD));
     }
   };
 
-  const handleCopySelection = () => {
-    if (xtermInstance.current && xtermInstance.current.hasSelection()) {
-      navigator.clipboard.writeText(xtermInstance.current.getSelection());
+  const handleCopySelection = async () => {
+    if (!xtermInstance.current) return;
+    try {
+      let textToCopy = '';
+      if (xtermInstance.current.hasSelection()) {
+        textToCopy = xtermInstance.current.getSelection();
+      } else {
+        const buffer = xtermInstance.current.buffer.active;
+        const lines: string[] = [];
+        for (let i = 0; i < buffer.length; i++) {
+          const line = buffer.getLine(i);
+          if (line) {
+            lines.push(line.translateToString(true));
+          }
+        }
+        textToCopy = lines.join('\n').trim();
+      }
+
+      if (textToCopy) {
+        await navigator.clipboard.writeText(textToCopy);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (e) {
+      console.warn('Clipboard copy error:', e);
     }
   };
 
@@ -316,31 +398,65 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     if (!xtermInstance.current) return;
     const term = xtermInstance.current;
     if (key === 'TAB') {
-      term.onData('\t');
+      processInput('\t');
     } else if (key === 'CTRL+C') {
-      term.onData('\x03');
+      processInput('\x03');
     } else if (key === 'ESC') {
-      term.onData('\x1b');
+      processInput('\x1b');
     } else if (key === 'CLEAR') {
       handleClearScreen();
     } else if (key === 'UP') {
-      term.onData('\x1b[A');
+      processInput('\x1b[A');
     } else if (key === 'DOWN') {
-      term.onData('\x1b[B');
-    } else {
+      processInput('\x1b[B');
+    } else if (key === 'cd ..' || key === 'ls -l') {
       term.write(key);
+      currentLineRef.current = key;
+      processInput('\r');
+    } else {
+      processInput(key);
     }
   };
 
   const saveEditorFile = async (filename: string, content: string) => {
-    if (!vfs) return;
-    const { updatedVFS } = await executeCommand(`echo "${content.replace(/"/g, '\\"')}" > ${filename}`, vfs, env, history);
-    setVfs(updatedVFS);
-    saveVFS(updatedVFS);
+    const currentVfs = vfsRef.current;
+    if (!currentVfs) return;
+
+    const resolved = resolvePath(envRef.current.PWD, filename, envRef.current);
+    const newVFS: VFSNode = JSON.parse(JSON.stringify(currentVfs));
+    const { parent, name } = getParentNodeAndName(newVFS, resolved);
+
+    if (parent && parent.type === 'directory') {
+      parent.children = parent.children || [];
+      const existing = parent.children.find((c) => c.name === name);
+      const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
+      if (existing) {
+        existing.content = content;
+        existing.size = new TextEncoder().encode(content).length;
+        existing.updatedAt = now;
+      } else {
+        parent.children.push({
+          id: 'file-' + Math.random().toString(36).substr(2, 9),
+          name,
+          type: 'file',
+          permissions: 'rw-r--r--',
+          owner: envRef.current.USER || 'user',
+          group: envRef.current.USER || 'user',
+          size: new TextEncoder().encode(content).length,
+          updatedAt: now,
+          content,
+        });
+      }
+    }
+
+    vfsRef.current = newVFS;
+    setVfs(newVFS);
+    await saveVFS(newVFS);
     setEditorState({ isOpen: false, filename: '', content: '' });
+
     if (xtermInstance.current) {
-      xtermInstance.current.writeln(`\r\n\x1b[1;32m[Saved ${filename} successfully]\x1b[0m`);
-      xtermInstance.current.write(getPrompt(env.PWD));
+      xtermInstance.current.writeln(`\r\n\x1b[1;32m[Saved ${resolved} successfully]\x1b[0m`);
+      xtermInstance.current.write(getPrompt(envRef.current.PWD));
     }
   };
 
@@ -375,15 +491,19 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
           </button>
           <button
             onClick={handleCopySelection}
-            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
-            title="Copy Selection"
+            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center relative"
+            title={copied ? 'Copied to Clipboard!' : 'Copy Selection or Terminal Output'}
           >
-            <Copy className="w-3.5 h-3.5" />
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-400 transition-transform scale-110" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
           </button>
           <button
             onClick={handleClearScreen}
             className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
-            title="Clear Terminal"
+            title="Clear Terminal Screen (Ctrl+L)"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

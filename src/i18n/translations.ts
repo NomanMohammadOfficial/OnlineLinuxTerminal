@@ -22,9 +22,11 @@ export interface FaqEntry {
 
 export interface TranslationDictionary {
   navTerminal: string;
+  navCompiler: string;
   navCommands: string;
   navTutorials: string;
   navChallenges: string;
+  navCheatSheet: string;
   heroBadge: string;
   heroTitle: string;
   heroHighlight: string;
@@ -50,9 +52,11 @@ export interface TranslationDictionary {
 export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
   en: {
     navTerminal: 'Terminal',
+    navCompiler: 'Compiler',
     navCommands: 'Commands',
     navTutorials: 'Tutorials',
     navChallenges: 'Challenges',
+    navCheatSheet: 'Cheat Sheet',
     heroBadge: 'Free Online Linux Terminal Platform & Simulator',
     heroTitle: 'The Best',
     heroHighlight: 'Online Linux Terminal',
@@ -93,9 +97,11 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
   },
   ru: {
     navTerminal: 'Терминал',
+    navCompiler: 'Компилятор',
     navCommands: 'Команды',
     navTutorials: 'Обучение',
     navChallenges: 'Задачи',
+    navCheatSheet: 'Шпаргалка',
     heroBadge: 'Бесплатный онлайн терминал Linux и симулятор',
     heroTitle: 'Лучший',
     heroHighlight: 'Онлайн Терминал Linux',
@@ -119,164 +125,172 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
         answer: "OnlineLinuxTerminal.com — это лучший онлайн терминал Linux прямо в браузере. Он оснащен клиенским AST-симулятором с нулевой задержкой, файловой системой IndexedDB и интерактивными уроками."
       },
       {
-        question: "Чем этот онлайн терминал отличается от Webminal?",
-        answer: "В отличие от Webminal, требующего подключения к серверу с задержками SSH, OnlineLinuxTerminal.com выполняет команды прямо в вашем браузере с мгновенным откликом."
+        question: "Чем OnlineLinuxTerminal отличается от Webminal?",
+        answer: "В отличие от устаревших сервисов вроде Webminal, требующих создания учетной записи на сервере и подверженных задержкам SSH, наш инструмент запускается локально в браузере с мгновенным откликом."
       },
       {
-        question: "Могу ли я практиковать команды Ubuntu с симуляцией root доступа?",
-        answer: "Да! Симулятор Ubuntu позволяет выполнять команды с правами root (chmod, chown, apt install) в безопасной песочнице."
+        question: "Могу ли я практиковать команды Ubuntu с правами root?",
+        answer: "Да! Симулятор позволяет тестировать системные команды администрирования, включая chmod, chown и apt install, в безопасной изолированной песочнице."
       },
       {
-        question: "Сохраняются ли мои файлы и история команд?",
-        answer: "Да, все созданные файлы, каталоги и история выполненных команд автоматически сохраняются локально в вашем браузере с помощью IndexedDB."
+        question: "Сохраняются ли мои файлы и история сессий?",
+        answer: "Да, все изменения файловой системы и введенные команды надежно сохраняются в IndexedDB вашего браузера."
       }
     ],
     footerRights: 'Все права защищены.',
-    footerTagline: 'Бесплатная платформа онлайн терминала Linux',
+    footerTagline: 'Бесплатная платформа и симулятор онлайн терминала Linux',
   },
   es: {
     navTerminal: 'Terminal',
+    navCompiler: 'Compilador',
     navCommands: 'Comandos',
     navTutorials: 'Tutoriales',
     navChallenges: 'Desafíos',
-    heroBadge: 'Plataforma y Simulador Gratis de Terminal Linux en Línea',
+    navCheatSheet: 'Chuleta',
+    heroBadge: 'Plataforma y simulador gratuito de terminal Linux en línea',
     heroTitle: 'La Mejor',
-    heroHighlight: 'Terminal Linux en Línea',
-    heroSub: 'Experimente una terminal Linux gratis en su navegador. Practique comandos bash de Ubuntu, inspeccione sistemas de archivos virtuales y ejecute tutoriales.',
-    ctaTerminal: 'Iniciar Terminal Linux Gratis',
-    ctaCommands: 'Manual de Comandos Linux',
-    ctaTutorials: 'Iniciar Ejercicios de Práctica',
-    feature1Title: 'Shell de Navegador Sin Retardo',
-    feature1Desc: 'Ejecuta comandos Linux en el navegador con un analizador AST sin demoras de red ni colas SSH.',
-    feature2Title: 'Entorno Guardado con IndexedDB',
-    feature2Desc: 'Sus archivos, directorios e historial permanecen guardados en el almacenamiento de su navegador.',
+    heroHighlight: 'Terminal Linux Online',
+    heroSub: 'Ejecute una terminal Linux en línea directamente en su navegador. Practique comandos bash de Ubuntu, inspeccione archivos y complete tutoriales interactivos.',
+    ctaTerminal: 'Iniciar Terminal Linux Online',
+    ctaCommands: 'Ver Manual de Comandos',
+    ctaTutorials: 'Iniciar Ejercicios Prácticos',
+    feature1Title: 'Shell en Navegador sin Retardo',
+    feature1Desc: 'Ejecuta comandos del lado del cliente mediante un analizador AST con cero latencia de red.',
+    feature2Title: 'Persistencia con IndexedDB',
+    feature2Desc: 'Sus archivos, carpetas e historial permanecen guardados localmente en su navegador.',
     feature3Title: 'Acceso Root Simulado',
-    feature3Desc: 'Practique administración de sistemas con acceso root simulado para chmod, chown y apt install.',
-    guideTitle: 'Dominando la Línea de Comandos con una Terminal Linux en Línea',
-    guideIntro: 'El sistema operativo Linux impulsa la infraestructura en la nube. Practicar comandos en una terminal web elimina la complicación de instalación.',
+    feature3Desc: 'Practique tareas de administración del sistema con permisos root simulados para chmod, chown y apt.',
+    guideTitle: 'Domine la línea de comandos con una Terminal Linux Online',
+    guideIntro: 'Linux impulsa más del 90% de los servidores en la nube. Practicar en una terminal web elimina la fricción de instalación.',
     faqHeaderTitle: 'Preguntas Frecuentes (FAQ)',
-    faqHeaderSub: 'Todo lo que necesita saber sobre la práctica de Linux en su navegador web.',
+    faqHeaderSub: 'Todo lo que necesita saber para practicar Linux en su navegador web.',
     faqs: [
       {
-        question: "¿Cuál es la mejor terminal Linux en línea gratuita para practicar?",
-        answer: "OnlineLinuxTerminal.com ofrece la mejor terminal Linux en línea gratuita en su navegador con ejecuciones sin latencia, IndexedDB y tutoriales interactivos."
+        question: "¿Cuál es la mejor terminal Linux online gratuita para practicar?",
+        answer: "OnlineLinuxTerminal.com es la mejor opción en navegador, con un motor AST rápido, persistencia IndexedDB y tutoriales guiados."
       },
       {
-        question: "¿Cómo se compara con Webminal terminal Linux en línea?",
-        answer: "A diferencia de Webminal que requiere conexiones SSH a servidores con retardos, nuestra plataforma ejecuta comandos en el navegador con respuesta instantánea."
+        question: "¿Cómo se compara con Webminal?",
+        answer: "A diferencia de Webminal, nuestro simulador se ejecuta 100% en el navegador, eliminando colas de espera y cortes de conexión SSH."
       },
       {
-        question: "¿Puedo practicar comandos de Ubuntu con acceso root simulado?",
-        answer: "¡Sí! Puede practicar administración con acceso root simulado para chmod, chown y apt install en un entorno seguro."
+        question: "¿Puedo practicar comandos de Ubuntu con privilegios root?",
+        answer: "Sí, puede practicar chmod, chown y gestión de paquetes simulada en un entorno totalmente seguro."
       },
       {
-        question: "¿Se guardan mis archivos e historial de comandos?",
-        answer: "Sí. Todos sus archivos e historial se guardan localmente en su navegador mediante IndexedDB."
+        question: "¿Se guardan mis archivos y mi historial?",
+        answer: "Sí, todos los archivos creados se guardan en el almacenamiento local IndexedDB de su navegador."
       }
     ],
     footerRights: 'Todos los derechos reservados.',
-    footerTagline: 'Plataforma y Simulador Gratis de Terminal Linux',
+    footerTagline: 'Plataforma y simulador gratuito de terminal Linux en línea',
   },
   de: {
     navTerminal: 'Terminal',
+    navCompiler: 'Compiler',
     navCommands: 'Befehle',
     navTutorials: 'Tutorials',
-    navChallenges: 'Aufgaben',
-    heroBadge: 'Kostenloses Online Linux Terminal & Simulator',
-    heroTitle: 'Das Beste',
+    navChallenges: 'Übungen',
+    navCheatSheet: 'Spickzettel',
+    heroBadge: 'Kostenloses Online-Linux-Terminal & Simulator',
+    heroTitle: 'Das beste',
     heroHighlight: 'Online Linux Terminal',
-    heroSub: 'Erleben Sie ein kostenloses Online Linux Terminal im Browser. Üben Sie Ubuntu Bash-Befehle, prüfen Sie virtuelle Dateisysteme und absolvieren Sie Übungen.',
-    ctaTerminal: 'Kostenloses Linux Terminal Starten',
-    ctaCommands: 'Linux Befehlshandbuch',
-    ctaTutorials: 'Praxis-Übungen Starten',
-    feature1Title: 'Sofortige Browser-Shell',
-    feature1Desc: 'Führt Befehle im Browser mit einem AST-Parser ohne Netzwerkverzögerungen oder SSH-Warteschlangen aus.',
-    feature2Title: 'Speicherbarer IndexedDB-Sandbox',
-    feature2Desc: 'Ihre Dateien, Verzeichnisse und Historie bleiben sicher im Browser gespeichert.',
+    heroSub: 'Nutzen Sie ein kostenloses Online-Linux-Terminal direkt im Browser. Üben Sie Ubuntu-Bash-Befehle, untersuchen Sie Dateisysteme und lösen Sie interaktive Aufgaben.',
+    ctaTerminal: 'Online-Linux-Terminal starten',
+    ctaCommands: 'Befehlshandbuch durchsuchen',
+    ctaTutorials: 'Praktische Übungen beginnen',
+    feature1Title: 'Verzögerungsfreie Browser-Shell',
+    feature1Desc: 'Führt Befehle clientseitig über einen AST-Parser ohne Netzwerkverzögerungen oder SSH-Wartezeiten aus.',
+    feature2Title: 'Persistente IndexedDB-Sandbox',
+    feature2Desc: 'Ihre Dateien, Verzeichnisse und der Befehlsverlauf bleiben lokal im Browser gespeichert.',
     feature3Title: 'Simulierter Root-Zugriff',
-    feature3Desc: 'Üben Sie Systemadministration mit simuliertem Root-Zugriff für chmod, chown und apt install.',
-    guideTitle: 'Befehlszeilenkenntnisse mit einem Online Linux Terminal Meistern',
-    guideIntro: 'Das Linux-Betriebssystem treibt über 90 % der Cloud-Infrastruktur an. Das Üben im Browser beseitigt alle Installationshürden.',
+    feature3Desc: 'Üben Sie privilegierte Systemadministration mit Root-Zugriff für chmod, chown und apt install.',
+    guideTitle: 'Kommandozeilen-Fähigkeiten im Online-Linux-Terminal meistern',
+    guideIntro: 'Linux treibt über 90 % aller Cloud-Server an. Das Üben im Browser eliminiert aufwändige lokale Setups.',
     faqHeaderTitle: 'Häufig gestellte Fragen (FAQ)',
-    faqHeaderSub: 'Alles, was Sie über das Üben von Linux in Ihrem Browser wissen müssen.',
+    faqHeaderSub: 'Alles, was Sie über das Üben von Linux im Webbrowser wissen müssen.',
     faqs: [
       {
         question: "Was ist das beste kostenlose Online-Linux-Terminal zum Üben?",
-        answer: "OnlineLinuxTerminal.com bietet das beste kostenlose Online-Linux-Terminal im Browser mit sofortiger Ausführung und IndexedDB-Speicherung."
+        answer: "OnlineLinuxTerminal.com bietet ein schnelles, browserbasiertes Terminal mit IndexedDB-Dateisystem und interaktiven Übungen."
       },
       {
-        question: "Wie unterscheidet es sich von Webminal?",
-        answer: "Im Gegensatz zu Webminal führt unsere Plattform Befehle direkt im Browser ohne SSH-Verzögerungen aus."
+        question: "Wie unterscheidet sich die Plattform von Webminal?",
+        answer: "Im Gegensatz zu Webminal läuft unsere Lösung direkt im Client-Browser – ganz ohne SSH-Verbindungsabbrüche oder Server-Warteschlangen."
       },
       {
-        question: "Kann ich Ubuntu-Befehle mit simuliertem Root-Zugriff üben?",
-        answer: "Ja! Sie können Systemadministration mit simuliertem Root-Zugriff für chmod, chown und apt install üben."
+        question: "Kann ich Ubuntu-Befehle mit Root-Rechten testen?",
+        answer: "Ja! Sie können chmod, chown und apt-Installationen in einer sicheren Simulationsumgebung üben."
       },
       {
-        question: "Werden meine Dateien und der Befehlsverlauf gespeichert?",
-        answer: "Ja, alle Dateien und der Verlauf werden lokal über IndexedDB gespeichert."
+        question: "Werden meine Dateien und mein Verlauf gespeichert?",
+        answer: "Ja, alle erstellten Dateien und Befehle werden lokal in der IndexedDB Ihres Browsers gesichert."
       }
     ],
     footerRights: 'Alle Rechte vorbehalten.',
-    footerTagline: 'Kostenlose Online-Linux-Terminal-Plattform',
+    footerTagline: 'Kostenlose Online-Linux-Terminal-Plattform und Simulator',
   },
   fr: {
     navTerminal: 'Terminal',
+    navCompiler: 'Compilateur',
     navCommands: 'Commandes',
     navTutorials: 'Tutoriels',
     navChallenges: 'Défis',
-    heroBadge: 'Plateforme et Simulateur Gratuit de Terminal Linux en Ligne',
+    navCheatSheet: 'Aide-mémoire',
+    heroBadge: 'Terminal Linux en ligne gratuit et simulateur',
     heroTitle: 'Le Meilleur',
     heroHighlight: 'Terminal Linux en Ligne',
-    heroSub: 'Utilisez un terminal Linux gratuit directement dans votre navigateur. Pratiquez les commandes bash Ubuntu, inspectez des systèmes de fichiers et suivez des cours.',
-    ctaTerminal: 'Lancer le Terminal Linux Gratuit',
-    ctaCommands: 'Manuel des Commandes Linux',
-    ctaTutorials: 'Démarrer les Exercices',
-    feature1Title: 'Shell Navigateur Instantané',
-    feature1Desc: 'Exécute les commandes Linux côté client grâce à un analyseur AST sans délai réseau ni file d\'attente SSH.',
-    feature2Title: 'Environnement Persistant IndexedDB',
-    feature2Desc: 'Vos fichiers, dossiers et l\'historique restent sauvegardés dans votre navigateur.',
+    heroSub: 'Découvrez un terminal Linux en ligne gratuit dans votre navigateur. Entraînez-vous aux commandes bash Ubuntu et suivez des tutoriels interactifs.',
+    ctaTerminal: 'Lancer le Terminal Linux en Ligne',
+    ctaCommands: 'Consulter le Manuel des Commandes',
+    ctaTutorials: 'Commencer les Exercices Pratiques',
+    feature1Title: 'Shell Navigateur Ultra-Rapide',
+    feature1Desc: 'Exécute les commandes côté client grâce à un interpréteur AST sans latence réseau.',
+    feature2Title: 'Bac à Sable Persistant IndexedDB',
+    feature2Desc: 'Vos fichiers, dossiers et historiques restent enregistrés localement dans votre navigateur.',
     feature3Title: 'Accès Root Simulé',
-    feature3Desc: 'Pratiquez l\'administration système avec un accès root simulé pour chmod, chown et apt install.',
-    guideTitle: 'Maîtriser la Ligne de Commande avec un Terminal Linux en Ligne',
-    guideIntro: 'Le système Linux alimente les serveurs web et l\'infrastructure cloud. S\'entraîner dans un terminal web élimine tout besoin d\'installation.',
+    feature3Desc: 'Pratiquez l’administration système avec des droits root simulés pour chmod, chown et apt.',
+    guideTitle: 'Maîtriser la ligne de commande avec un Terminal Linux en Ligne',
+    guideIntro: 'Linux alimente plus de 90 % des serveurs cloud. Pratiquer dans un terminal web supprime toute difficulté d’installation.',
     faqHeaderTitle: 'Foire Aux Questions (FAQ)',
-    faqHeaderSub: 'Tout ce que vous devez savoir sur la pratique de Linux dans votre navigateur.',
+    faqHeaderSub: 'Tout ce que vous devez savoir pour pratiquer Linux dans votre navigateur.',
     faqs: [
       {
         question: "Quel est le meilleur terminal Linux en ligne gratuit pour s'entraîner ?",
-        answer: "OnlineLinuxTerminal.com offre le meilleur terminal Linux gratuit en ligne directement dans votre navigateur avec exécution instantanée et stockage IndexedDB."
+        answer: "OnlineLinuxTerminal.com est la meilleure solution en ligne, combinant moteur AST rapide, persistance locale et tutoriels guidés."
       },
       {
-        question: "Comment se compare-t-il à Webminal ?",
-        answer: "Contrairement à Webminal qui dépend de serveurs SSH distants, notre plateforme exécute les commandes côté client sans délai."
+        question: "Quelle est la différence avec Webminal ?",
+        answer: "Contrairement à Webminal qui dépend d'un serveur distant, notre terminal s'exécute directement dans votre navigateur sans latence SSH."
       },
       {
-        question: "Puis-je pratiquer des commandes Ubuntu avec un accès root simulé ?",
-        answer: "Oui ! Vous pouvez pratiquer les commandes d'administration root telles que chmod, chown et apt install en toute sécurité."
+        question: "Puis-je pratiquer les commandes Ubuntu avec les droits root ?",
+        answer: "Oui, vous pouvez tester chmod, chown et apt install en toute sécurité dans notre bac à sable."
       },
       {
-        question: "Mes fichiers et mon historique de commandes sont-ils sauvegardés ?",
-        answer: "Oui, tous vos fichiers et votre historique sont sauvegardés localement via IndexedDB."
+        question: "Mes fichiers et commandes sont-ils enregistrés ?",
+        answer: "Oui, toutes vos données de session sont automatiquement conservées dans l'IndexedDB de votre navigateur."
       }
     ],
     footerRights: 'Tous droits réservés.',
-    footerTagline: 'Plateforme et Simulateur Gratuit de Terminal Linux',
+    footerTagline: 'Plateforme et simulateur de terminal Linux en ligne gratuit',
   },
   zh: {
     navTerminal: '终端',
-    navCommands: '命令大全',
-    navTutorials: '互动教程',
-    navChallenges: '实战挑战',
+    navCompiler: '编译器',
+    navCommands: '命令手册',
+    navTutorials: '实战教程',
+    navChallenges: '场景练习',
+    navCheatSheet: '速查表',
     heroBadge: '免费在线 Linux 终端平台与模拟器',
-    heroTitle: '优秀的',
+    heroTitle: '最优质的',
     heroHighlight: '在线 Linux 终端',
-    heroSub: '在浏览器中免费使用在线 Linux 终端。练习 Ubuntu bash 命令，查看虚拟文件系统并完成互动教程。',
-    ctaTerminal: '启动免费在线 Linux 终端',
-    ctaCommands: '查看 Linux 命令手册',
-    ctaTutorials: '开始 Linux 实战练习',
+    heroSub: '在浏览器中直接体验即开即用的免费在线 Linux 终端。练习 Ubuntu bash 命令，探索虚拟文件系统，完成互动教程。',
+    ctaTerminal: '立即启动在线 Linux 终端',
+    ctaCommands: '浏览 Linux 命令手册',
+    ctaTutorials: '开始在线实战练习',
     feature1Title: '零延迟浏览器 Shell',
-    feature1Desc: '使用 AST 解析器在客户端直接运行 Linux 命令，无需 SSH 排队或网络延迟。',
+    feature1Desc: '利用 AST 解析器在客户端浏览器内执行命令，无需等待服务器或 SSH 连接排队。',
     feature2Title: 'IndexedDB 持久化沙盒',
     feature2Desc: '创建的文件、目录及历史记录将通过 IndexedDB 安全保存在浏览器中。',
     feature3Title: '模拟 Root 权限访问',

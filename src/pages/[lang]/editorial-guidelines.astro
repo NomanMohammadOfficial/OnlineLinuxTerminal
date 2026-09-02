@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+
+const I18N_EDIT_TITLES: Record<SupportedLocale, { title: string; h1: string; sub: string }> = {
+  en: {
+    title: "Editorial Guidelines & Technical Standards — Online Linux Terminal",
+    h1: "Editorial Guidelines",
+    sub: "Our technical standards, fact-checking processes, and anti-hallucination protocols."
+  },
+  ru: {
+    title: "Редакционные стандарты — Онлайн Терминал Linux",
+    h1: "Редакционные стандарты",
+    sub: "Наши стандарты проверки фактов, точности данных и противодействия недостоверной информации."
+  },
+  es: {
+    title: "Directrices Editoriales y Rigor Técnico — Terminal Linux Online",
+    h1: "Directrices Editoriales",
+    sub: "Nuestros estándares técnicos, verificación de hechos y protocolos contra errores."
+  },
+  de: {
+    title: "Redaktionelle Richtlinien — Online Linux Terminal",
+    h1: "Redaktionelle Richtlinien",
+    sub: "Unsere technischen Standards, Faktencheck-Prozesse und Qualitätsanforderungen."
+  },
+  fr: {
+    title: "Ligne Éditoriale & Rigueur Technique — Terminal Linux en Ligne",
+    h1: "Ligne Éditoriale",
+    sub: "Nos normes techniques, processus de vérification des faits et protocoles de qualité."
+  },
+  zh: {
+    title: "编辑准则与技术规范 — 在线 Linux 终端",
+    h1: "编辑准则与事实核查",
+    sub: "我们关于技术文档审核、标准对齐以及防技术虚构的严谨流程规范。"
+  }
+};
+
+const editInfo = I18N_EDIT_TITLES[lang] || I18N_EDIT_TITLES.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={editInfo.title}
+  description={editInfo.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>E-E-A-T & Editorial Quality</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {editInfo.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        {editInfo.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Fact-Checking & Technical Verification</h2>
+        <p>
+          All command syntax, parameter flags, and terminal tutorials published on OnlineLinuxTerminal.com are empirically validated against official GNU coreutils manuals, Linux man pages, and POSIX IEEE specifications.
+        </p>
+      </section>
+
+      <section class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-xs">
+          For full editorial protocols, please review the <a href="/editorial-guidelines/" class="text-emerald-400 hover:underline font-bold">Master English Editorial Guidelines</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

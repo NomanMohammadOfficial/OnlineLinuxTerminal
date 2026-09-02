@@ -40,11 +40,11 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
     </div>
 
     <!-- Workspace Main Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-250px)] min-h-[500px]">
-      <div class="lg:col-span-2 h-[450px] sm:h-[500px] lg:h-full">
-        <TerminalRunner client:load className="h-full" />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[500px]">
+      <div class="lg:col-span-2 min-h-[480px] sm:min-h-[540px] flex flex-col">
+        <TerminalRunner client:load className="flex-1 min-h-[480px] sm:min-h-[540px]" />
       </div>
-      <div class="lg:col-span-1 h-full min-h-[350px]">
+      <div class="lg:col-span-1 min-h-[380px] sm:min-h-[540px] flex flex-col">
         <LearningPanel client:load />
       </div>
     </div>

@@ -53,20 +53,20 @@ const workspaceSchema = {
     <AdSlot type="banner" client:idle />
 
     <!-- Workspace Main Layout: Terminal + Interactive Learning Panel -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-270px)] min-h-[500px]">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[500px]">
       <!-- Terminal Window -->
-      <div class="lg:col-span-2 h-[450px] sm:h-[500px] lg:h-full">
-        <TerminalRunner client:load className="h-full" />
+      <div class="lg:col-span-2 min-h-[480px] sm:min-h-[540px] flex flex-col">
+        <TerminalRunner client:load className="flex-1 min-h-[480px] sm:min-h-[540px]" />
       </div>
 
       <!-- Learning Panel Sidebar -->
-      <div class="lg:col-span-1 h-full min-h-[350px]">
+      <div class="lg:col-span-1 min-h-[380px] sm:min-h-[540px] flex flex-col">
         <LearningPanel client:load />
       </div>
     </div>
 
     <!-- 500+ Word SEO Guide Section -->
-    <section class="mt-12 p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
+    <section class="mt-8 sm:mt-12 p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
       <h2 class="text-2xl font-bold text-zinc-100 font-sans">
         About the Online Linux Terminal Full Shell Workspace
       </h2>

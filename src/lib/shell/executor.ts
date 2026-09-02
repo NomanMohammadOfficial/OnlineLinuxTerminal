@@ -1,5 +1,6 @@
 import type { VFSNode, ShellEnv, ExecutionResult } from '../vfs/types';
 import { addInstalledPackage, getInstalledPackages } from '../vfs/store';
+import { COMMANDS_DATA } from '../../data/commandsData';
 
 export function resolvePath(currentPwd: string, targetPath: string, env: ShellEnv): string {
   if (!targetPath || targetPath === '.') return currentPwd;
@@ -51,28 +52,91 @@ export function getParentNodeAndName(root: VFSNode, path: string): { parent: VFS
   return { parent, name };
 }
 
+export function ensureDirectoriesRecursive(root: VFSNode, dirPath: string, env: ShellEnv): VFSNode | null {
+  const parts = dirPath.split('/').filter(Boolean);
+  let current: VFSNode = root;
+
+  for (const part of parts) {
+    current.children = current.children || [];
+    let child = current.children.find((c) => c.name === part);
+    if (!child) {
+      child = {
+        id: 'dir-' + Math.random().toString(36).substr(2, 9),
+        name: part,
+        type: 'directory',
+        permissions: 'rwxr-xr-x',
+        owner: env.USER || 'user',
+        group: env.USER || 'user',
+        size: 4096,
+        updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        children: [],
+      };
+      current.children.push(child);
+    } else if (child.type !== 'directory') {
+      return null;
+    }
+    current = child;
+  }
+  return current;
+}
+
 export async function executeCommand(
   cmdLine: string,
   rootVFS: VFSNode,
   env: ShellEnv,
-  history: string[]
+  history: string[],
+  stdin: string = ''
 ): Promise<{ result: ExecutionResult; updatedVFS: VFSNode }> {
   const trimmed = cmdLine.trim();
   if (!trimmed) {
     return { result: { output: '', exitCode: 0 }, updatedVFS: rootVFS };
   }
 
-  // Handle Pipe (|) chaining basics
+  // Handle Command Chaining (&&)
+  if (trimmed.includes(' && ')) {
+    const parts = trimmed.split(' && ');
+    let currentVFS = rootVFS;
+    const outputs: string[] = [];
+    let finalExitCode = 0;
+
+    for (const subCmd of parts) {
+      const res = await executeCommand(subCmd.trim(), currentVFS, env, history, stdin);
+      currentVFS = res.updatedVFS;
+      if (res.result.output) outputs.push(res.result.output);
+      finalExitCode = res.result.exitCode;
+      if (res.result.exitCode !== 0) break;
+    }
+    return { result: { output: outputs.join('\n'), exitCode: finalExitCode }, updatedVFS: currentVFS };
+  }
+
+  // Handle Command Chaining (;)
+  if (trimmed.includes(';') && !trimmed.includes('sed ') && !trimmed.includes('awk ')) {
+    const parts = trimmed.split(';');
+    let currentVFS = rootVFS;
+    const outputs: string[] = [];
+    let finalExitCode = 0;
+
+    for (const subCmd of parts) {
+      if (!subCmd.trim()) continue;
+      const res = await executeCommand(subCmd.trim(), currentVFS, env, history, stdin);
+      currentVFS = res.updatedVFS;
+      if (res.result.output) outputs.push(res.result.output);
+      finalExitCode = res.result.exitCode;
+    }
+    return { result: { output: outputs.join('\n'), exitCode: finalExitCode }, updatedVFS: currentVFS };
+  }
+
+  // Handle Pipe (|) chaining
   if (trimmed.includes(' | ')) {
     const pipeParts = trimmed.split(' | ');
-    let currentInputText = '';
+    let currentInputText = stdin;
     let currentVFS = rootVFS;
     let finalOutput = '';
     let finalExitCode = 0;
 
     for (let i = 0; i < pipeParts.length; i++) {
       const subCmd = pipeParts[i].trim();
-      const res = await executeCommand(subCmd, currentVFS, env, history);
+      const res = await executeCommand(subCmd, currentVFS, env, history, currentInputText);
       currentVFS = res.updatedVFS;
       currentInputText = res.result.output;
       finalExitCode = res.result.exitCode;
@@ -148,33 +212,31 @@ export async function executeCommand(
     case 'ls': {
       const showAll = args.some((a) => a.includes('a'));
       const showLong = args.some((a) => a.includes('l'));
-      const showHuman = args.some((a) => a.includes('h'));
+      const targetArg = args.find((a) => !a.startsWith('-')) || '.';
+      const resolved = resolvePath(env.PWD, targetArg, env);
+      const targetNode = getNodeAtPath(updatedVFS, resolved);
 
-      const pathArg = args.find((a) => !a.startsWith('-')) || '.';
-      const targetPath = resolvePath(env.PWD, pathArg, env);
-      const node = getNodeAtPath(updatedVFS, targetPath);
-
-      if (!node) {
-        output = `ls: cannot access '${pathArg}': No such file or directory`;
+      if (!targetNode) {
+        output = `ls: cannot access '${targetArg}': No such file or directory`;
         exitCode = 2;
-      } else if (node.type === 'file') {
-        output = showLong ? `${node.permissions} 1 ${node.owner} ${node.group} ${node.size} ${node.updatedAt} ${node.name}` : node.name;
+      } else if (targetNode.type === 'file') {
+        output = showLong ? `${targetNode.permissions}  1 ${targetNode.owner} ${targetNode.group} ${formatSize(targetNode.size)} ${targetNode.updatedAt} ${targetNode.name}` : targetNode.name;
       } else {
-        let items = node.children || [];
-        if (!showAll) {
-          items = items.filter((item) => !item.name.startsWith('.'));
-        }
-
+        const children = (targetNode.children || []).filter((child) => showAll || !child.name.startsWith('.'));
         if (showLong) {
-          const lines = items.map((item) => {
-            const prefix = item.type === 'directory' ? 'd' : '-';
-            const perms = prefix + item.permissions;
-            const sizeStr = showHuman ? formatSize(item.size) : item.size.toString().padStart(6);
-            return `${perms} 1 ${item.owner.padEnd(6)} ${item.group.padEnd(6)} ${sizeStr} ${item.updatedAt} ${item.name}${item.type === 'directory' ? '/' : ''}`;
-          });
-          output = `total ${items.length}\n` + lines.join('\n');
+          const totalBlocks = Math.ceil(children.reduce((acc, c) => acc + (c.size || 0), 0) / 1024);
+          const lines = [`total ${totalBlocks}`];
+          for (const c of children) {
+            const isDir = c.type === 'directory';
+            const perms = isDir ? 'd' + c.permissions : '-' + c.permissions;
+            const links = isDir ? '2' : '1';
+            const sizeStr = formatSize(c.size).padStart(6, ' ');
+            const dateStr = c.updatedAt.slice(5, 16);
+            lines.push(`${perms} ${links} ${c.owner} ${c.group} ${sizeStr} ${dateStr} ${c.name}`);
+          }
+          output = lines.join('\n');
         } else {
-          output = items.map((item) => item.name + (item.type === 'directory' ? '/' : '')).join('  ');
+          output = children.map((c) => c.name).join('  ');
         }
       }
       break;
@@ -182,11 +244,13 @@ export async function executeCommand(
 
     case 'cat': {
       if (args.length === 0) {
-        output = 'cat: missing operand';
-        exitCode = 1;
+        output = stdin || 'cat: missing operand';
+        if (!stdin) exitCode = 1;
       } else {
+        const showLineNums = args.includes('-n');
+        const fileArgs = args.filter((a) => !a.startsWith('-'));
         const fileOutputs: string[] = [];
-        for (const arg of args) {
+        for (const arg of fileArgs) {
           const resolved = resolvePath(env.PWD, arg, env);
           const node = getNodeAtPath(updatedVFS, resolved);
           if (!node) {
@@ -196,7 +260,14 @@ export async function executeCommand(
             fileOutputs.push(`cat: ${arg}: Is a directory`);
             exitCode = 1;
           } else {
-            fileOutputs.push(node.content || '');
+            let content = node.content || '';
+            if (showLineNums) {
+              content = content
+                .split('\n')
+                .map((l, idx) => `     ${idx + 1}  ${l}`)
+                .join('\n');
+            }
+            fileOutputs.push(content);
           }
         }
         output = fileOutputs.join('\n');
@@ -210,32 +281,42 @@ export async function executeCommand(
     }
 
     case 'mkdir': {
-      if (args.length === 0) {
+      const recursive = args.includes('-p');
+      const targets = args.filter((a) => !a.startsWith('-'));
+      if (targets.length === 0) {
         output = 'mkdir: missing operand';
         exitCode = 1;
       } else {
-        for (const arg of args.filter((a) => !a.startsWith('-'))) {
+        for (const arg of targets) {
           const resolved = resolvePath(env.PWD, arg, env);
-          const { parent, name } = getParentNodeAndName(updatedVFS, resolved);
-          if (!parent || parent.type !== 'directory') {
-            output = `mkdir: cannot create directory '${arg}': No such file or directory`;
-            exitCode = 1;
-          } else if (parent.children?.some((c) => c.name === name)) {
-            output = `mkdir: cannot create directory '${arg}': File exists`;
-            exitCode = 1;
+          if (recursive) {
+            const res = ensureDirectoriesRecursive(updatedVFS, resolved, env);
+            if (!res) {
+              output = `mkdir: cannot create directory '${arg}': Not a directory in path`;
+              exitCode = 1;
+            }
           } else {
-            parent.children = parent.children || [];
-            parent.children.push({
-              id: 'dir-' + Math.random().toString(36).substr(2, 9),
-              name,
-              type: 'directory',
-              permissions: 'rwxr-xr-x',
-              owner: env.USER || 'user',
-              group: env.USER || 'user',
-              size: 4096,
-              updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
-              children: [],
-            });
+            const { parent, name } = getParentNodeAndName(updatedVFS, resolved);
+            if (!parent || parent.type !== 'directory') {
+              output = `mkdir: cannot create directory '${arg}': No such file or directory`;
+              exitCode = 1;
+            } else if (parent.children?.some((c) => c.name === name)) {
+              output = `mkdir: cannot create directory '${arg}': File exists`;
+              exitCode = 1;
+            } else {
+              parent.children = parent.children || [];
+              parent.children.push({
+                id: 'dir-' + Math.random().toString(36).substr(2, 9),
+                name,
+                type: 'directory',
+                permissions: 'rwxr-xr-x',
+                owner: env.USER || 'user',
+                group: env.USER || 'user',
+                size: 4096,
+                updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                children: [],
+              });
+            }
           }
         }
       }
@@ -271,6 +352,122 @@ export async function executeCommand(
                 updatedAt: now,
                 content: '',
               });
+            }
+          }
+        }
+      }
+      break;
+    }
+
+    case 'cp': {
+      const recursive = args.some((a) => a.includes('r') || a.includes('R'));
+      const nonFlags = args.filter((a) => !a.startsWith('-'));
+      if (nonFlags.length < 2) {
+        output = 'cp: missing file operand. Usage: cp [-r] <source> <dest>';
+        exitCode = 1;
+      } else {
+        const srcPath = resolvePath(env.PWD, nonFlags[0], env);
+        const destPath = resolvePath(env.PWD, nonFlags[1], env);
+        const srcNode = getNodeAtPath(updatedVFS, srcPath);
+        if (!srcNode) {
+          output = `cp: cannot stat '${nonFlags[0]}': No such file or directory`;
+          exitCode = 1;
+        } else if (srcNode.type === 'directory' && !recursive) {
+          output = `cp: -r not specified; omitting directory '${nonFlags[0]}'`;
+          exitCode = 1;
+        } else {
+          const destNode = getNodeAtPath(updatedVFS, destPath);
+          let targetParent: VFSNode | null = null;
+          let targetName = '';
+
+          if (destNode && destNode.type === 'directory') {
+            targetParent = destNode;
+            targetName = srcNode.name;
+          } else {
+            const p = getParentNodeAndName(updatedVFS, destPath);
+            targetParent = p.parent;
+            targetName = p.name;
+          }
+
+          if (!targetParent || targetParent.type !== 'directory') {
+            output = `cp: cannot create '${nonFlags[1]}': No such file or directory`;
+            exitCode = 1;
+          } else {
+            function deepCloneNode(node: VFSNode, newName: string): VFSNode {
+              const clone: VFSNode = {
+                id: (node.type === 'directory' ? 'dir-' : 'file-') + Math.random().toString(36).substr(2, 9),
+                name: newName,
+                type: node.type,
+                permissions: node.permissions,
+                owner: env.USER || 'user',
+                group: env.USER || 'user',
+                size: node.size,
+                updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                content: node.content,
+              };
+              if (node.children) {
+                clone.children = node.children.map((c) => deepCloneNode(c, c.name));
+              }
+              return clone;
+            }
+
+            targetParent.children = targetParent.children || [];
+            const existingIdx = targetParent.children.findIndex((c) => c.name === targetName);
+            const cloned = deepCloneNode(srcNode, targetName);
+            if (existingIdx !== -1) {
+              targetParent.children[existingIdx] = cloned;
+            } else {
+              targetParent.children.push(cloned);
+            }
+          }
+        }
+      }
+      break;
+    }
+
+    case 'mv': {
+      const nonFlags = args.filter((a) => !a.startsWith('-'));
+      if (nonFlags.length < 2) {
+        output = 'mv: missing file operand. Usage: mv <source> <dest>';
+        exitCode = 1;
+      } else {
+        const srcPath = resolvePath(env.PWD, nonFlags[0], env);
+        const destPath = resolvePath(env.PWD, nonFlags[1], env);
+        const srcParentInfo = getParentNodeAndName(updatedVFS, srcPath);
+        const srcNode = getNodeAtPath(updatedVFS, srcPath);
+
+        if (!srcNode || !srcParentInfo.parent || !srcParentInfo.parent.children) {
+          output = `mv: cannot stat '${nonFlags[0]}': No such file or directory`;
+          exitCode = 1;
+        } else {
+          const destNode = getNodeAtPath(updatedVFS, destPath);
+          let targetParent: VFSNode | null = null;
+          let targetName = '';
+
+          if (destNode && destNode.type === 'directory') {
+            targetParent = destNode;
+            targetName = srcNode.name;
+          } else {
+            const p = getParentNodeAndName(updatedVFS, destPath);
+            targetParent = p.parent;
+            targetName = p.name;
+          }
+
+          if (!targetParent || targetParent.type !== 'directory') {
+            output = `mv: cannot move to '${nonFlags[1]}': No such file or directory`;
+            exitCode = 1;
+          } else {
+            const srcIdx = srcParentInfo.parent.children.findIndex((c) => c.name === srcParentInfo.name);
+            if (srcIdx !== -1) {
+              srcParentInfo.parent.children.splice(srcIdx, 1);
+            }
+            srcNode.name = targetName;
+            targetParent.children = targetParent.children || [];
+            const existingIdx = targetParent.children.findIndex((c) => c.name === targetName);
+            if (existingIdx !== -1) {
+              targetParent.children[existingIdx] = srcNode;
+            } else {
+              targetParent.children.push(srcNode);
             }
           }
         }
@@ -321,6 +518,7 @@ export async function executeCommand(
       const ignoreCase = args.includes('-i');
       const lineNumbers = args.includes('-n');
       const invertMatch = args.includes('-v');
+      const countOnly = args.includes('-c');
 
       const nonFlags = args.filter((a) => !a.startsWith('-'));
       if (nonFlags.length < 1) {
@@ -329,11 +527,18 @@ export async function executeCommand(
       } else {
         const patternStr = nonFlags[0];
         const fileArgs = nonFlags.slice(1);
-        let linesToSearch: { line: string; source: string; lineNo: number }[] = [];
+        const linesToSearch: { line: string; source: string; lineNo: number }[] = [];
 
         if (fileArgs.length === 0) {
-          output = 'grep: missing target file';
-          exitCode = 2;
+          if (stdin) {
+            const stdinLines = stdin.split('\n');
+            stdinLines.forEach((l, idx) => {
+              linesToSearch.push({ line: l, source: '', lineNo: idx + 1 });
+            });
+          } else {
+            output = 'grep: missing target file';
+            exitCode = 2;
+          }
         } else {
           for (const fileArg of fileArgs) {
             const resolved = resolvePath(env.PWD, fileArg, env);
@@ -351,7 +556,9 @@ export async function executeCommand(
               });
             }
           }
+        }
 
+        if (linesToSearch.length > 0) {
           const matched: string[] = [];
           const flags = ignoreCase ? 'i' : '';
           const regex = new RegExp(patternStr, flags);
@@ -363,18 +570,17 @@ export async function executeCommand(
               matched.push(`${prefix}${item.line}`);
             }
           }
-          output = matched.join('\n');
+          output = countOnly ? `${matched.length}` : matched.join('\n');
         }
       }
       break;
     }
 
     case 'sed': {
-      // Basic sed substitution parsing: sed 's/old/new/g' filename
       const expr = args.find((a) => a.startsWith('s/') || a.startsWith("'s/") || a.startsWith('"s/'));
       const fileArg = args.find((a) => a !== expr && !a.startsWith('-'));
 
-      if (!expr || !fileArg) {
+      if (!expr) {
         output = 'sed: usage: sed \'s/find/replace/g\' filename';
         exitCode = 1;
       } else {
@@ -387,79 +593,322 @@ export async function executeCommand(
           const findStr = parts[1];
           const replaceStr = parts[2];
           const global = parts[3] === 'g';
+          let inputContent = stdin;
 
-          const resolved = resolvePath(env.PWD, fileArg, env);
-          const node = getNodeAtPath(updatedVFS, resolved);
-          if (!node || node.type !== 'file') {
-            output = `sed: can't read ${fileArg}: No such file or directory`;
-            exitCode = 2;
-          } else {
-            const regex = new RegExp(findStr, global ? 'g' : '');
-            output = (node.content || '').replace(regex, replaceStr);
+          if (fileArg) {
+            const resolved = resolvePath(env.PWD, fileArg, env);
+            const node = getNodeAtPath(updatedVFS, resolved);
+            if (!node || node.type !== 'file') {
+              output = `sed: can't read ${fileArg}: No such file or directory`;
+              exitCode = 2;
+              break;
+            }
+            inputContent = node.content || '';
           }
+
+          const regex = new RegExp(findStr, global ? 'g' : '');
+          output = inputContent.replace(regex, replaceStr);
         }
       }
       break;
     }
 
     case 'awk': {
-      // Basic awk column print: awk '{print $1}' filename
       const printExpr = args.find((a) => a.includes('print'));
       const fileArg = args.find((a) => a !== printExpr && !a.startsWith('-'));
+      let inputContent = stdin;
 
-      if (!fileArg) {
-        output = 'awk: usage: awk \'{print $1}\' filename';
-        exitCode = 1;
-      } else {
+      if (fileArg) {
         const resolved = resolvePath(env.PWD, fileArg, env);
         const node = getNodeAtPath(updatedVFS, resolved);
         if (!node || node.type !== 'file') {
           output = `awk: cannot open file ${fileArg}`;
           exitCode = 2;
-        } else {
-          const lines = (node.content || '').split('\n');
-          let colIdx = 1;
-          const matchCol = printExpr ? printExpr.match(/\$([0-9]+)/) : null;
-          if (matchCol) {
-            colIdx = parseInt(matchCol[1], 10);
-          }
-          output = lines
-            .map((line) => {
-              if (colIdx === 0) return line;
-              const cols = line.trim().split(/\s+|,/);
-              return cols[colIdx - 1] || '';
-            })
-            .join('\n');
+          break;
         }
+        inputContent = node.content || '';
+      }
+
+      if (!inputContent && !printExpr) {
+        output = 'awk: usage: awk \'{print $1}\' filename';
+        exitCode = 1;
+      } else {
+        const lines = inputContent.split('\n');
+        let colIdx = 1;
+        const matchCol = printExpr ? printExpr.match(/\$([0-9]+)/) : null;
+        if (matchCol) {
+          colIdx = parseInt(matchCol[1], 10);
+        }
+        output = lines
+          .map((line) => {
+            if (colIdx === 0) return line;
+            const cols = line.trim().split(/\s+|,/);
+            return cols[colIdx - 1] || '';
+          })
+          .join('\n');
       }
       break;
     }
 
     case 'tar': {
-      // Simulated tar: tar -czvf archive.tar.gz file or tar -xzvf archive.tar.gz
       const flagsArg = args[0] || '';
-      if (flagsArg.includes('c') && args.length >= 3) {
-        const archiveName = args[1];
-        const sourceFile = args[2];
-        output = `a ${sourceFile}\nArchive ${archiveName} created successfully.`;
-      } else if (flagsArg.includes('x') && args.length >= 2) {
-        const archiveName = args[1];
-        output = `x welcome.txt\nArchive ${archiveName} extracted successfully.`;
+      const isCreate = flagsArg.includes('c');
+      const isExtract = flagsArg.includes('x');
+      const isList = flagsArg.includes('t');
+      const isVerbose = flagsArg.includes('v');
+      const nonFlags = args.slice(1);
+
+      if (isCreate && nonFlags.length >= 2) {
+        const archiveName = nonFlags[0];
+        const sources = nonFlags.slice(1);
+        const archiveResolved = resolvePath(env.PWD, archiveName, env);
+        const { parent, name } = getParentNodeAndName(updatedVFS, archiveResolved);
+        if (parent && parent.type === 'directory') {
+          parent.children = parent.children || [];
+          const existing = parent.children.find((c) => c.name === name);
+          const tarContent = `[TAR ARCHIVE CONTAINING: ${sources.join(', ')}]`;
+          if (existing) {
+            existing.content = tarContent;
+            existing.size = 1024 * sources.length;
+          } else {
+            parent.children.push({
+              id: 'file-' + Math.random().toString(36).substr(2, 9),
+              name,
+              type: 'file',
+              permissions: 'rw-r--r--',
+              owner: env.USER || 'user',
+              group: env.USER || 'user',
+              size: 1024 * sources.length,
+              updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+              content: tarContent,
+            });
+          }
+        }
+        output = sources.map((s) => `a ${s}`).join('\n');
+        if (!isVerbose) output = `Archive ${archiveName} created successfully.`;
+      } else if (isExtract && nonFlags.length >= 1) {
+        const archiveName = nonFlags[0];
+        output = `x welcome.txt\nx projects/\nx projects/demo.sh\nArchive ${archiveName} extracted successfully.`;
+      } else if (isList && nonFlags.length >= 1) {
+        const archiveName = nonFlags[0];
+        output = `-rw-r--r-- user/user 1024 2026-08-28 10:00 welcome.txt\ndrwxr-xr-x user/user 4096 2026-08-28 10:00 projects/`;
       } else {
-        output = 'tar: usage: tar -czvf archive.tar.gz filename OR tar -xzvf archive.tar.gz';
+        output = 'tar: usage: tar -czvf archive.tar.gz file OR tar -xzvf archive.tar.gz';
         exitCode = 1;
       }
       break;
     }
 
     case 'gzip': {
-      if (args.length === 0) {
+      const decompress = args.includes('-d');
+      const target = args.find((a) => !a.startsWith('-'));
+      if (!target) {
         output = 'gzip: missing operand';
         exitCode = 1;
       } else {
-        const target = args[0];
-        output = `${target} compressed to ${target}.gz`;
+        const resolved = resolvePath(env.PWD, target, env);
+        const node = getNodeAtPath(updatedVFS, resolved);
+        if (!node) {
+          output = `gzip: ${target}: No such file or directory`;
+          exitCode = 1;
+        } else if (decompress || node.name.endsWith('.gz')) {
+          node.name = node.name.replace(/\.gz$/, '');
+          output = '';
+        } else {
+          node.name = `${node.name}.gz`;
+          output = '';
+        }
       }
+      break;
+    }
+
+    case 'gunzip': {
+      const target = args.find((a) => !a.startsWith('-'));
+      if (!target) {
+        output = 'gunzip: missing operand. Usage: gunzip <file.gz>';
+        exitCode = 1;
+      } else {
+        let resolved = resolvePath(env.PWD, target, env);
+        let node = getNodeAtPath(updatedVFS, resolved);
+        if (!node && !target.endsWith('.gz')) {
+          resolved = resolvePath(env.PWD, `${target}.gz`, env);
+          node = getNodeAtPath(updatedVFS, resolved);
+        }
+        if (!node) {
+          output = `gunzip: ${target}: No such file or directory`;
+          exitCode = 1;
+        } else {
+          node.name = node.name.replace(/\.gz$/, '');
+          output = '';
+        }
+      }
+      break;
+    }
+
+    case 'sort': {
+      const reverse = args.includes('-r');
+      const numeric = args.includes('-n');
+      const unique = args.includes('-u');
+      const fileArg = args.find((a) => !a.startsWith('-'));
+      let lines: string[] = [];
+
+      if (fileArg) {
+        const resolved = resolvePath(env.PWD, fileArg, env);
+        const node = getNodeAtPath(updatedVFS, resolved);
+        if (!node || node.type !== 'file') {
+          output = `sort: cannot read: ${fileArg}: No such file or directory`;
+          exitCode = 2;
+          break;
+        }
+        lines = (node.content || '').split('\n').filter(Boolean);
+      } else if (stdin) {
+        lines = stdin.split('\n').filter(Boolean);
+      }
+
+      lines.sort((a, b) => {
+        if (numeric) {
+          const numA = parseFloat(a) || 0;
+          const numB = parseFloat(b) || 0;
+          return numA - numB;
+        }
+        return a.localeCompare(b);
+      });
+
+      if (reverse) lines.reverse();
+      if (unique) lines = Array.from(new Set(lines));
+      output = lines.join('\n');
+      break;
+    }
+
+    case 'uniq': {
+      const count = args.includes('-c');
+      const fileArg = args.find((a) => !a.startsWith('-'));
+      let lines: string[] = [];
+
+      if (fileArg) {
+        const resolved = resolvePath(env.PWD, fileArg, env);
+        const node = getNodeAtPath(updatedVFS, resolved);
+        if (!node || node.type !== 'file') {
+          output = `uniq: ${fileArg}: No such file or directory`;
+          exitCode = 1;
+          break;
+        }
+        lines = (node.content || '').split('\n');
+      } else if (stdin) {
+        lines = stdin.split('\n');
+      }
+
+      const result: string[] = [];
+      let prev = '';
+      let countNum = 0;
+
+      for (let i = 0; i < lines.length; i++) {
+        const cur = lines[i];
+        if (cur === prev) {
+          countNum++;
+        } else {
+          if (prev !== '') {
+            result.push(count ? `   ${countNum} ${prev}` : prev);
+          }
+          prev = cur;
+          countNum = 1;
+        }
+      }
+      if (prev !== '') {
+        result.push(count ? `   ${countNum} ${prev}` : prev);
+      }
+      output = result.join('\n');
+      break;
+    }
+
+    case 'cut': {
+      let delim = '\t';
+      let field = 1;
+      for (let i = 0; i < args.length; i++) {
+        if (args[i].startsWith('-d')) {
+          delim = args[i].replace('-d', '') || args[i + 1] || '\t';
+        } else if (args[i].startsWith('-f')) {
+          field = parseInt(args[i].replace('-f', '') || args[i + 1] || '1', 10);
+        }
+      }
+      const fileArg = args.find((a) => !a.startsWith('-') && a !== delim && a !== String(field));
+      let lines: string[] = [];
+
+      if (fileArg) {
+        const resolved = resolvePath(env.PWD, fileArg, env);
+        const node = getNodeAtPath(updatedVFS, resolved);
+        if (!node || node.type !== 'file') {
+          output = `cut: ${fileArg}: No such file or directory`;
+          exitCode = 1;
+          break;
+        }
+        lines = (node.content || '').split('\n');
+      } else if (stdin) {
+        lines = stdin.split('\n');
+      }
+
+      output = lines.map((l) => l.split(delim)[field - 1] || '').join('\n');
+      break;
+    }
+
+    case 'tr': {
+      if (args.length < 2) {
+        output = 'tr: missing operand. Usage: tr SET1 SET2';
+        exitCode = 1;
+      } else {
+        const from = args[0].replace(/['"]/g, '');
+        const to = args[1].replace(/['"]/g, '');
+        const targetText = stdin || output;
+        if (from === 'a-z' && to === 'A-Z') {
+          output = targetText.toUpperCase();
+        } else if (from === 'A-Z' && to === 'a-z') {
+          output = targetText.toLowerCase();
+        } else {
+          output = targetText.split(from).join(to);
+        }
+      }
+      break;
+    }
+
+    case 'diff': {
+      if (args.length < 2) {
+        output = 'diff: missing operand. Usage: diff <file1> <file2>';
+        exitCode = 2;
+      } else {
+        const f1 = resolvePath(env.PWD, args[0], env);
+        const f2 = resolvePath(env.PWD, args[1], env);
+        const n1 = getNodeAtPath(updatedVFS, f1);
+        const n2 = getNodeAtPath(updatedVFS, f2);
+        if (!n1 || !n2) {
+          output = `diff: ${!n1 ? args[0] : args[1]}: No such file or directory`;
+          exitCode = 2;
+        } else if (n1.content === n2.content) {
+          output = '';
+        } else {
+          output = `1c1\n< ${n1.content?.slice(0, 50) || ''}\n---\n> ${n2.content?.slice(0, 50) || ''}`;
+          exitCode = 1;
+        }
+      }
+      break;
+    }
+
+    case 'uptime': {
+      output = ' 13:30:00 up 4 days,  3:12,  1 user,  load average: 0.08, 0.04, 0.01';
+      break;
+    }
+
+    case 'hostname': {
+      output = 'linux-terminal-box';
+      break;
+    }
+
+    case 'id': {
+      output = 'uid=1000(user) gid=1000(user) groups=1000(user),27(sudo),100(users)';
+      break;
+    }
+
+    case 'groups': {
+      output = 'user sudo users';
       break;
     }
 
@@ -485,6 +934,30 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> print("Hello from Online Linux Terminal!")
 Hello from Online Linux Terminal!
 >>> `;
+      break;
+    }
+
+    case 'bash':
+    case 'sh': {
+      const scriptArg = args.find((a) => !a.startsWith('-'));
+      if (!scriptArg) {
+        output = 'bash: interactive subshell ready.';
+      } else {
+        const resolved = resolvePath(env.PWD, scriptArg, env);
+        const node = getNodeAtPath(updatedVFS, resolved);
+        if (!node || node.type !== 'file') {
+          output = `bash: ${scriptArg}: No such file or directory`;
+          exitCode = 127;
+        } else {
+          const lines = (node.content || '').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
+          const outputs: string[] = [];
+          for (const line of lines) {
+            const subRes = await executeCommand(line, updatedVFS, env, history, stdin);
+            if (subRes.result.output) outputs.push(subRes.result.output);
+          }
+          output = outputs.join('\n');
+        }
+      }
       break;
     }
 
@@ -522,8 +995,13 @@ Hello from Online Linux Terminal!
       }
 
       if (fileArgs.length === 0) {
-        output = `${command}: missing file operand`;
-        exitCode = 1;
+        if (stdin) {
+          const lines = stdin.split('\n');
+          output = command === 'head' ? lines.slice(0, numLines).join('\n') : lines.slice(-numLines).join('\n');
+        } else {
+          output = `${command}: missing file operand`;
+          exitCode = 1;
+        }
       } else {
         const resolved = resolvePath(env.PWD, fileArgs[0], env);
         const node = getNodeAtPath(updatedVFS, resolved);
@@ -539,28 +1017,29 @@ Hello from Online Linux Terminal!
     }
 
     case 'wc': {
-      if (args.length === 0) {
-        output = 'wc: missing file operand';
-        exitCode = 1;
-      } else {
-        const file = args.find((a) => !a.startsWith('-'));
-        if (!file) {
-          output = 'wc: missing file operand';
-          exitCode = 1;
-        } else {
+      let content = stdin;
+      let file = '';
+      if (args.length > 0) {
+        file = args.find((a) => !a.startsWith('-')) || '';
+        if (file) {
           const resolved = resolvePath(env.PWD, file, env);
           const node = getNodeAtPath(updatedVFS, resolved);
           if (!node || node.type !== 'file') {
             output = `wc: ${file}: No such file or directory`;
             exitCode = 1;
-          } else {
-            const content = node.content || '';
-            const lines = content.split('\n').length;
-            const words = content.trim() ? content.trim().split(/\s+/).length : 0;
-            const bytes = new TextEncoder().encode(content).length;
-            output = ` ${lines}  ${words} ${bytes} ${file}`;
+            break;
           }
+          content = node.content || '';
         }
+      }
+      if (!content && !file) {
+        output = 'wc: missing file operand';
+        exitCode = 1;
+      } else {
+        const lines = content ? content.split('\n').length : 0;
+        const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+        const bytes = new TextEncoder().encode(content).length;
+        output = ` ${lines}  ${words} ${bytes}${file ? ' ' + file : ''}`;
       }
       break;
     }
@@ -705,6 +1184,84 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
             output = `HTTP/1.1 200 OK\nServer: OnlineLinuxTerminal-Mock\nContent-Type: text/plain\n\nFetched response from ${url} (CORS fetch simulated)`;
           }
         }
+      }
+      break;
+    }
+
+    case 'wget': {
+      if (args.length === 0) {
+        output = 'wget: missing URL\nUsage: wget [OPTION]... [URL]...';
+        exitCode = 1;
+      } else {
+        const url = args.find((a) => a.startsWith('http://') || a.startsWith('https://')) || args[0];
+        const outFlagIdx = args.findIndex((a) => a === '-O' || a === '-o');
+        let outName = 'index.html';
+        if (outFlagIdx !== -1 && args[outFlagIdx + 1]) {
+          outName = args[outFlagIdx + 1];
+        } else {
+          const parts = url.split('/');
+          const last = parts[parts.length - 1];
+          if (last && !last.includes('?')) outName = last;
+        }
+        const resolved = resolvePath(env.PWD, outName, env);
+        const { parent, name } = getParentNodeAndName(updatedVFS, resolved);
+        if (parent && parent.type === 'directory') {
+          parent.children = parent.children || [];
+          const existing = parent.children.find((c) => c.name === name);
+          const downloadContent = `<!DOCTYPE html>\n<html>\n<head><title>Downloaded from ${url}</title></head>\n<body>\n<h1>Resource from ${url}</h1>\n<p>Saved via Online Linux Terminal wget.</p>\n</body>\n</html>`;
+          if (existing) {
+            existing.content = downloadContent;
+          } else {
+            parent.children.push({
+              id: 'file-' + Math.random().toString(36).substr(2, 9),
+              name,
+              type: 'file',
+              permissions: 'rw-r--r--',
+              owner: env.USER || 'user',
+              group: env.USER || 'user',
+              size: 512,
+              updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+              content: downloadContent,
+            });
+          }
+        }
+        output = `--2026-08-28 12:00:00--  ${url}\nResolving host... 104.21.72.10\nConnecting... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 512 [text/html]\nSaving to: '${outName}'\n\n${outName}             100%[===================>]     512  --.-KB/s    in 0.001s\n\n2026-08-28 12:00:01 (512 KB/s) - '${outName}' saved [512/512]`;
+      }
+      break;
+    }
+
+    case 'ssh': {
+      if (args.length === 0) {
+        output = 'usage: ssh [-46AaCfGgKkMNnqsTtVvXxYy] [-B bind_interface] [user@]hostname [command]';
+        exitCode = 1;
+      } else {
+        const target = args.find((a) => !a.startsWith('-')) || 'remote-server';
+        output = `Warning: Permanently added '${target}' (ED25519) to the list of known hosts.\nAuthenticated with publickey (id_rsa).\nLinux remote-server 6.8.0-cloud #1 SMP Debian GNU/Linux\nLast login: Fri Aug 28 10:00:00 2026 from 192.168.1.50\n(SSH session simulated in sandbox)`;
+      }
+      break;
+    }
+
+    case 'scp': {
+      if (args.length < 2) {
+        output = 'usage: scp [-346ABCOpqRrsTv] source ... target';
+        exitCode = 1;
+      } else {
+        const src = args[0];
+        const dst = args[1];
+        output = `${src}                                          100% 1024KB   4.2MB/s   00:00\nTransferred ${src} to ${dst} via encrypted SSH tunnel.`;
+      }
+      break;
+    }
+
+    case 'rsync': {
+      if (args.length < 2) {
+        output = 'rsync  version 3.2.7  protocol version 31\nUsage: rsync [OPTION...] SRC... [DEST]';
+        exitCode = 1;
+      } else {
+        const nonFlags = args.filter((a) => !a.startsWith('-'));
+        const src = nonFlags[0] || 'src/';
+        const dst = nonFlags[1] || 'dst/';
+        output = `sending incremental file list\n${src}\n\nsent 1,024 bytes  received 35 bytes  2,118.00 bytes/sec\ntotal size is 4,096  speedup is 3.87`;
       }
       break;
     }
@@ -856,7 +1413,7 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
         break;
       }
       const subCmd = args.join(' ');
-      const subRes = await executeCommand(subCmd, updatedVFS, { ...env, USER: 'root' }, history);
+      const subRes = await executeCommand(subCmd, updatedVFS, { ...env, USER: 'root' }, history, stdin);
       return subRes;
     }
 
@@ -891,6 +1448,44 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
       break;
     }
 
+    case 'man': {
+      if (args.length === 0) {
+        output = 'What manual page do you want? (e.g. man grep, man find, man chmod, man tar)';
+        exitCode = 1;
+      } else {
+        const target = args[0].toLowerCase();
+        const cmdEntry = COMMANDS_DATA.find((c) => c.name.toLowerCase() === target || c.slug === target);
+        if (cmdEntry) {
+          const flagsText = cmdEntry.flags.map((f) => `       ${f.flag}\n              ${f.desc}`).join('\n\n');
+          output = `${cmdEntry.name.toUpperCase()}(1)                   User Commands                  ${cmdEntry.name.toUpperCase()}(1)
+
+NAME
+       ${cmdEntry.name} - ${cmdEntry.summary}
+
+SYNOPSIS
+       ${cmdEntry.syntax}
+
+DESCRIPTION
+       ${cmdEntry.description}
+
+OPTIONS
+${flagsText}
+
+EXAMPLES
+       ${cmdEntry.examples.map((e) => `# ${e.title}\n       $ ${e.cmd}\n       ${e.explanation}`).join('\n\n')}
+
+SEE ALSO
+       ${cmdEntry.relatedCommands.join(', ')}
+
+Online Linux Terminal Manual                     2026-08-28`;
+        } else {
+          output = `No manual entry for ${target}\nType 'help' for a list of available simulator commands.`;
+          exitCode = 16;
+        }
+      }
+      break;
+    }
+
     case 'export': {
       if (args.length === 0 || args.includes('-p')) {
         output = `declare -x HOME="${env.HOME}"\ndeclare -x PATH="${env.PATH}"\ndeclare -x SHELL="${env.SHELL}"\ndeclare -x USER="${env.USER}"`;
@@ -911,14 +1506,15 @@ Usage: apt install <package_name> (e.g. apt install cowsay, figlet, sl)`;
     }
 
     case 'help': {
-      output = `Online Linux Terminal - Supported AST Commands:
-------------------------------------------------
+      output = `Online Linux Terminal - Supported AST Commands (50+ Utilities):
+----------------------------------------------------------------------
 Navigation:     pwd, cd [dir], ls [-l -a -h], tree, which [cmd]
-File Ops:       cat, touch, mkdir, rm [-r -f], cp, mv, tar, gzip, find
-Text Utilities: grep [-i -n -v], sed, awk, head, tail, wc, echo
+File Ops:       cat [-n], touch, mkdir [-p], rm [-r -f], cp [-r], mv, tar [-czvf|-xzvf], gzip, gunzip, find
+Text Utilities: grep [-i -n -v -c], sed, awk, head [-n], tail [-n], wc, sort [-r -n -u], uniq [-c], cut [-d -f], tr, diff, echo
 Editors:        nano [file], vim [file], vi [file]
-System & Info:  whoami, date, uname [-a], history, chmod, chown, top, ps, kill, df, free
-Networking:     curl [url], ping [host], netstat
+System & Info:  whoami, date, uname [-a], history, chmod, chown, top, htop, ps, kill, df, du, free, uptime, hostname, id, groups, man [cmd]
+Networking:     curl [url], wget [url], ping [host], netstat, ssh [host], scp, rsync
+Shell & Exec:   bash [script.sh], sh [script.sh], python3, sudo [cmd]
 Packages:       apt install <cowsay|figlet|sl>
 Services:       systemctl status [service], crontab -l
 Environment:    export, env, clear, help, reset`;

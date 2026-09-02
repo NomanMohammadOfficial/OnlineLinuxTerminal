@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const I18N_ABOUT_CONTENT: Record<SupportedLocale, {
+  title: string;
+  badge: string;
+  h1: string;
+  sub: string;
+  missionTitle: string;
+  missionP1: string;
+  missionP2: string;
+  archTitle: string;
+  archP1: string;
+  eeatTitle: string;
+  eeatP1: string;
+}> = {
+  en: {
+    title: "About Us & Engineering Architecture — Online Linux Terminal",
+    badge: "Engineering & E-E-A-T Standards",
+    h1: "About Online Linux Terminal",
+    sub: "Democratizing command-line education through instant, zero-friction, client-side browser terminal simulation.",
+    missionTitle: "Our Mission: Zero-Friction Linux Learning",
+    missionP1: "Linux powers cloud compute instances, container clusters, and mission-critical databases. We built Online Linux Terminal to eliminate local setup friction.",
+    missionP2: "Our platform delivers a 100% free, zero-install Linux terminal sandbox paired with deeply vetted technical documentation.",
+    archTitle: "Engineering Architecture: How It Works",
+    archP1: "Online Linux Terminal uses a client-side JavaScript AST parser, IndexedDB Virtual File System, and xterm.js canvas rendering.",
+    eeatTitle: "E-E-A-T & Quality Guardrails",
+    eeatP1: "Every command guide, flag table, and tutorial is verified against GNU coreutils manuals and POSIX standards."
+  },
+  ru: {
+    title: "О нас и архитектура — Онлайн Терминал Linux",
+    badge: "Инженерные стандарты и качество E-E-A-T",
+    h1: "О проекте Online Linux Terminal",
+    sub: "Демократизация обучения командной строке с помощью мгновенной симуляции терминала прямо в браузере.",
+    missionTitle: "Наша миссия: Простое и доступное изучение Linux",
+    missionP1: "Linux управляет облачными серверами, кластерами Kubernetes и базами данных. Мы создали онлайн терминал, чтобы устранить сложность локальной установки.",
+    missionP2: "Платформа предоставляет бесплатную песочницу без установки ПО, дополненную проверенной технической документацией.",
+    archTitle: "Архитектура и технологии",
+    archP1: "Online Linux Terminal использует клиентский AST парсер на JavaScript, виртуальную файловую систему в IndexedDB и холст xterm.js.",
+    eeatTitle: "Стандарты качества и достоверности",
+    eeatP1: "Каждое руководство по командам и практический сценарий проверяются на соответствие стандартам GNU coreutils и POSIX."
+  },
+  es: {
+    title: "Sobre Nosotros y Arquitectura — Terminal Linux Online",
+    badge: "Estándares de ingeniería y calidad E-E-A-T",
+    h1: "Sobre Online Linux Terminal",
+    sub: "Democratizando la enseñanza de la línea de comandos mediante simulación de terminal en navegador sin fricción.",
+    missionTitle: "Nuestra Misión: Aprendizaje de Linux sin Barreras",
+    missionP1: "Linux impulsa la infraestructura en la nube y los contenedores. Creamos esta plataforma para que cualquiera pueda practicar sin configurar máquinas virtuales.",
+    missionP2: "Ofrecemos un entorno seguro, 100% gratuito y sin descargas con documentación técnica verificada.",
+    archTitle: "Arquitectura de Ingeniería",
+    archP1: "Utilizamos un analizador sintáctico AST en JavaScript, un sistema de archivos virtual en IndexedDB y el motor xterm.js.",
+    eeatTitle: "Estándares E-E-A-T y Rigor Técnico",
+    eeatP1: "Cada manual y ejercicio se valida rigurosamente contra los estándares POSIX y las especificaciones GNU coreutils."
+  },
+  de: {
+    title: "Über uns & Architektur — Online Linux Terminal",
+    badge: "Engineering & E-E-A-T Qualitätsstandards",
+    h1: "Über Online Linux Terminal",
+    sub: "Zugängliche Kommandozeilen-Bildung durch sofortige, browserbasierte Terminal-Simulation.",
+    missionTitle: "Unsere Mission: Reibungsloses Linux-Lernen",
+    missionP1: "Linux treibt moderne Cloud-Infrastrukturen an. Wir haben dieses Projekt ins Leben gerufen, um den Einstieg ohne aufwändige lokale Setups zu ermöglichen.",
+    missionP2: "Wir bieten eine kostenlose Sandbox im Webbrowser mit verifizierten Praxisanleitungen und Befehlshandbüchern.",
+    archTitle: "Technische Architektur",
+    archP1: "Basierend auf einem clientseitigen AST-Parser, IndexedDB-Dateisystem und hochperformantem xterm.js-Rendering.",
+    eeatTitle: "E-E-A-T & Verlässlichkeit",
+    eeatP1: "Alle Dokumentationen und Beispiele werden anhand von POSIX-Standards und GNU-coreutils-Spezifikationen geprüft."
+  },
+  fr: {
+    title: "À Propos & Architecture — Terminal Linux en Ligne",
+    badge: "Normes d'ingénierie et qualité E-E-A-T",
+    h1: "À Propos d'Online Linux Terminal",
+    sub: "Démocratiser l'apprentissage de la ligne de commande grâce à une simulation fluide et instantanée dans le navigateur.",
+    missionTitle: "Notre Mission : Apprendre Linux sans Friction",
+    missionP1: "Linux fait fonctionner l'Internet mondial. Nous avons conçu ce terminal pour permettre à chacun de s'entraîner sans installer de machine virtuelle.",
+    missionP2: "Un bac à sable 100 % gratuit, sans installation, associé à des manuels techniques détaillés et vérifiés.",
+    archTitle: "Architecture Technique",
+    archP1: "Propulsé par un interpréteur AST en JavaScript côté client, un système de fichiers virtuel dans IndexedDB et xterm.js.",
+    eeatTitle: "Normes E-E-A-T et Intégrité",
+    eeatP1: "Chaque commande et tutoriel est validé selon les normes GNU coreutils et les spécifications POSIX."
+  },
+  zh: {
+    title: "关于我们与工程架构 — 在线 Linux 终端",
+    badge: "工程规范与 E-E-A-T 质量准则",
+    h1: "关于 Online Linux Terminal",
+    sub: "通过即开即用的浏览器端 Linux 终端模拟器，让命令行技术学习更简单、更纯粹。",
+    missionTitle: "我们的使命：零门槛掌握 Linux 技能",
+    missionP1: "Linux 驱动着全球云计算与容器集群。我们打造该平台旨在免去本地安装虚拟机或配置 WSL 的繁琐步骤。",
+    missionP2: "提供 100% 免费、免安装的浏览器沙盒，并配合经过严格技术审核的命令手册与实战教程。",
+    archTitle: "工程技术架构",
+    archP1: "基于纯客户端 JavaScript AST 解析器、IndexedDB 虚拟文件系统以及业界标准的 xterm.js 渲染画布。",
+    eeatTitle: "E-E-A-T 权威性与内容质量",
+    eeatP1: "所有命令参数表、实战案例与常见错误排查均严格参照 GNU coreutils 与 POSIX IEEE 标准进行事实核查。"
+  }
+};
+
+const aboutData = I18N_ABOUT_CONTENT[lang] || I18N_ABOUT_CONTENT.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={aboutData.title}
+  description={aboutData.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>{aboutData.badge}</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {aboutData.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 leading-relaxed max-w-2xl">
+        {aboutData.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
+      <!-- Mission -->
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400 font-mono">#</span>
+          <span>{aboutData.missionTitle}</span>
+        </h2>
+        <p>{aboutData.missionP1}</p>
+        <p>{aboutData.missionP2}</p>
+      </section>
+
+      <!-- Architecture -->
+      <section class="space-y-4">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400 font-mono">#</span>
+          <span>{aboutData.archTitle}</span>
+        </h2>
+        <p>{aboutData.archP1}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1.5">
+            <span class="text-emerald-400 font-bold font-mono text-xs">AST Parser</span>
+            <p class="text-xs text-zinc-400">Client-side command execution without server latency.</p>
+          </div>
+          <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1.5">
+            <span class="text-emerald-400 font-bold font-mono text-xs">IndexedDB VFS</span>
+            <p class="text-xs text-zinc-400">Persistent local storage keeping files across refreshes.</p>
+          </div>
+          <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-1.5">
+            <span class="text-emerald-400 font-bold font-mono text-xs">xterm.js Canvas</span>
+            <p class="text-xs text-zinc-400">High performance ANSI rendering with keyboard hotkeys.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- EEAT -->
+      <section class="space-y-3">
+        <h2 class="text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400 font-mono">#</span>
+          <span>{aboutData.eeatTitle}</span>
+        </h2>
+        <p>{aboutData.eeatP1}</p>
+      </section>
+
+      <!-- Trust Links -->
+      <section class="border-t border-zinc-800 pt-6">
+        <div class="flex flex-wrap gap-4 text-xs font-mono">
+          <a href="/about/" class="text-emerald-400 hover:underline">English Master About Page →</a>
+          <a href="/contact/" class="text-zinc-400 hover:text-zinc-200">Contact & Support →</a>
+          <a href="/privacy/" class="text-zinc-400 hover:text-zinc-200">Privacy Policy →</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

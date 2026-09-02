@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+
+const I18N_DISC_TITLES: Record<SupportedLocale, { title: string; h1: string; sub: string }> = {
+  en: {
+    title: "Educational Simulator Disclaimer — Online Linux Terminal",
+    h1: "Educational Disclaimer",
+    sub: "Important notices regarding educational simulation boundaries and trademark attributions."
+  },
+  ru: {
+    title: "Отказ от ответственности — Онлайн Терминал Linux",
+    h1: "Отказ от ответственности",
+    sub: "Важные уведомления о границах симулятора и товарных знаках."
+  },
+  es: {
+    title: "Descargo de Responsabilidad — Terminal Linux Online",
+    h1: "Descargo de Responsabilidad",
+    sub: "Avisos importantes sobre los límites de la simulación educativa y marcas registradas."
+  },
+  de: {
+    title: "Haftungsausschluss — Online Linux Terminal",
+    h1: "Haftungsausschluss",
+    sub: "Wichtige Hinweise zu den Grenzen der Bildungssimulation und Markenzeichen."
+  },
+  fr: {
+    title: "Avis de Non-Responsabilité — Terminal Linux en Ligne",
+    h1: "Avis de Non-Responsabilité",
+    sub: "Avertissements importants concernant les limites de la simulation éducative et les marques."
+  },
+  zh: {
+    title: "免责声明 — 在线 Linux 终端",
+    h1: "免责声明",
+    sub: "关于教育模拟器运行边界、商标权属及使用安全的免责声明。"
+  }
+};
+
+const discInfo = I18N_DISC_TITLES[lang] || I18N_DISC_TITLES.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={discInfo.title}
+  description={discInfo.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Educational Boundaries & Disclaimers</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {discInfo.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        {discInfo.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Simulation Nature</h2>
+        <p>
+          OnlineLinuxTerminal.com is a simulated environment intended strictly for learning and educational practice. Commands executed on this site do not alter physical host machines or remote production environments.
+        </p>
+      </section>
+
+      <section class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-xs">
+          For full legal provisions, please review the <a href="/disclaimer/" class="text-emerald-400 hover:underline font-bold">Master English Disclaimer</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

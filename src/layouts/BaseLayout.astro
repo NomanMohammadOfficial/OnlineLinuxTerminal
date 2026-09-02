@@ -152,10 +152,13 @@ LOCALES.forEach((l) => {
 
         <!-- Desktop Navigation Links & Language Switcher -->
         <div class="flex items-center space-x-3 sm:space-x-4">
-          <nav class="hidden md:flex items-center space-x-5 text-sm font-medium">
+          <nav class="hidden md:flex items-center space-x-4 text-sm font-medium">
             <a href={getLocalizedPath('/terminal/', lang)} class="px-3 py-1.5 rounded-lg text-emerald-400 hover:bg-zinc-900 transition-colors flex items-center space-x-1.5 border border-emerald-800/50 bg-emerald-950/40 min-h-[40px]">
               <span class="font-mono font-bold">$</span>
               <span>{t.navTerminal}</span>
+            </a>
+            <a href={getLocalizedPath('/linux-online-compiler/', lang)} class="px-2.5 py-1.5 rounded-lg text-emerald-300 hover:text-emerald-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center font-mono text-xs font-bold border border-emerald-800/40 bg-emerald-950/30">
+              {t.navCompiler} ⚡
             </a>
             <a href={getLocalizedPath('/commands/', lang)} class="px-2.5 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               {t.navCommands}
@@ -166,8 +169,8 @@ LOCALES.forEach((l) => {
             <a href={getLocalizedPath('/challenges/', lang)} class="px-2.5 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               {t.navChallenges}
             </a>
-            <a href="/cheat-sheet/" class="px-2.5 py-1.5 rounded-lg text-emerald-300 hover:text-emerald-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center font-mono text-xs font-semibold">
-              Cheat Sheet ⚡
+            <a href={getLocalizedPath('/cheat-sheet/', lang)} class="px-2.5 py-1.5 rounded-lg text-emerald-300 hover:text-emerald-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center font-mono text-xs font-semibold">
+              {t.navCheatSheet}
             </a>
             <a href="/faq/" class="px-2.5 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               FAQ
@@ -201,6 +204,9 @@ LOCALES.forEach((l) => {
           <span class="font-mono">$</span>
           <span>{t.navTerminal}</span>
         </a>
+        <a href={getLocalizedPath('/linux-online-compiler/', lang)} class="flex items-center px-4 py-3 rounded-xl text-emerald-300 bg-emerald-950/30 hover:bg-zinc-900 text-sm font-bold border border-emerald-800/60 min-h-[48px] font-mono">
+          {t.navCompiler} ⚡
+        </a>
         <a href={getLocalizedPath('/commands/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
           {t.navCommands}
         </a>
@@ -210,8 +216,8 @@ LOCALES.forEach((l) => {
         <a href={getLocalizedPath('/challenges/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
           {t.navChallenges}
         </a>
-        <a href="/cheat-sheet/" class="flex items-center px-4 py-3 rounded-xl text-emerald-300 hover:bg-zinc-900 text-sm font-semibold border border-zinc-800/60 min-h-[48px] font-mono">
-          Cheat Sheet ⚡
+        <a href={getLocalizedPath('/cheat-sheet/', lang)} class="flex items-center px-4 py-3 rounded-xl text-emerald-300 hover:bg-zinc-900 text-sm font-semibold border border-zinc-800/60 min-h-[48px] font-mono">
+          {t.navCheatSheet} ⚡
         </a>
         <a href="/faq/" class="flex items-center px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
           FAQ / Help Center
@@ -267,6 +273,7 @@ LOCALES.forEach((l) => {
           <div class="space-y-3">
             <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Learning & Practice</h4>
             <ul class="space-y-2 text-xs">
+              <li><a href="/linux-online-compiler/" class="hover:text-emerald-400 transition-colors font-mono text-emerald-400 font-bold">Linux Online Compiler ⚡</a></li>
               <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors flex items-center space-x-1.5"><span class="font-mono text-emerald-400">$</span><span>Terminal Workspace</span></a></li>
               <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">Interactive Tutorials Hub</a></li>
               <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">Scenario Challenges</a></li>

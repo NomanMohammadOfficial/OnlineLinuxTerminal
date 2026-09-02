@@ -1,0 +1,256 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((l) => ({
+    params: { lang: l },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const I18N_CHEAT_TITLES: Record<SupportedLocale, { title: string; badge: string; h1: string; sub: string; desc: string }> = {
+  en: {
+    title: "Ultimate Linux Command Cheat Sheet — 100+ Commands & Syntax Reference",
+    badge: "Developer & Sysadmin Reference Guide",
+    h1: "The Ultimate Linux Command Cheat Sheet",
+    sub: "A curated, high-density reference guide covering 100+ essential Linux commands, chmod octal permission matrices, grep regex patterns, and bash shortcuts.",
+    desc: "Comprehensive Linux command cheat sheet with syntax rules, option flags, octal permission calculator tables, and 1-click interactive sandbox."
+  },
+  ru: {
+    title: "Полная шпаргалка по командам Linux — 100+ команд и синтаксис",
+    badge: "Справочное руководство для разработчиков и DevOps",
+    h1: "Полная шпаргалка по командам Linux",
+    sub: "Подробный справочник по более чем 100 командам Linux, таблице прав chmod, регулярным выражениям grep и горячим клавишам bash.",
+    desc: "Шпаргалка по командам Linux: синтаксис, флаги, калькулятор прав доступа chmod и мгновенный запуск в браузере."
+  },
+  es: {
+    title: "La Mejor Chuleta de Comandos Linux — 100+ Comandos y Sintaxis",
+    badge: "Guía de referencia para desarrolladores y SysAdmins",
+    h1: "La Mejor Chuleta de Comandos Linux",
+    sub: "Guía de referencia de alta densidad con más de 100 comandos esenciales de Linux, matriz de permisos chmod y atajos de bash.",
+    desc: "Chuleta completa de comandos Linux con sintaxis, opciones, calculadora de permisos octales chmod y pruebas interactivas en navegador."
+  },
+  de: {
+    title: "Ultimatives Linux-Befehle-Cheat-Sheet — 100+ Befehle & Referenz",
+    badge: "Referenzhandbuch für Entwickler & Sysadmins",
+    h1: "Das ultimative Linux-Befehle-Cheat-Sheet",
+    sub: "Kompakte Referenz mit über 100 Linux-Befehlen, Chmod-Rechte-Matrix, Grep-Regex-Mustern und Tastenkürzeln.",
+    desc: "Vollständiges Linux-Befehle-Cheat-Sheet mit Syntax, Parametern, Chmod-Kalkulationstabelle und 1-Klick-Terminal-Sandbox."
+  },
+  fr: {
+    title: "Aide-mémoire Ultime des Commandes Linux — 100+ Commandes et Syntaxe",
+    badge: "Guide de référence Développeurs & Sysadmin",
+    h1: "L'Aide-mémoire Ultime des Commandes Linux",
+    sub: "Guide de référence complet couvrant plus de 100 commandes Linux essentielles, matrice de permissions chmod et raccourcis bash.",
+    desc: "Aide-mémoire complet des commandes Linux avec règles de syntaxe, options, tableau des permissions chmod et bac à sable interactif."
+  },
+  zh: {
+    title: "终极 Linux 命令速查表 — 100+ 核心命令与语法参考",
+    badge: "开发者与运维工程师实战参考指南",
+    h1: "终极 Linux 命令速查表",
+    sub: "精选高密度 Linux 命令手册，涵盖 100+ 核心命令、chmod 八进制权限矩阵、grep 正则过滤与 Bash 快捷键。",
+    desc: "全面的 Linux 命令速查表，包含详细语法规则、参数选项、chmod 权限计算表与一键浏览器沙盒运行。"
+  }
+};
+
+const pageInfo = I18N_CHEAT_TITLES[lang] || I18N_CHEAT_TITLES.en;
+
+const CHEAT_CATEGORIES = [
+  {
+    name: "1. Navigation & Traversal",
+    items: [
+      { cmd: "pwd", desc: "Print current working directory absolute path", example: "pwd" },
+      { cmd: "ls -la", desc: "List all files including hidden dotfiles in detailed format", example: "ls -la /var/log" },
+      { cmd: "cd ..", desc: "Navigate up one parent directory level", example: "cd .." },
+      { cmd: "cd ~", desc: "Jump directly to user home directory", example: "cd ~" },
+      { cmd: "tree -L 2", desc: "Display directory structure as a visual tree up to 2 levels", example: "tree -L 2" },
+      { cmd: "which <app>", desc: "Locate executable binary path in system PATH", example: "which bash" },
+    ]
+  },
+  {
+    name: "2. File & Directory Operations",
+    items: [
+      { cmd: "touch <file>", desc: "Create empty file or update timestamp", example: "touch script.sh" },
+      { cmd: "mkdir -p <dir>", desc: "Create parent and sub-directories in a single command", example: "mkdir -p /home/user/projects/web" },
+      { cmd: "cp -r <src> <dest>", desc: "Copy directory recursively with all subfolders", example: "cp -r /home/user/projects /tmp/backup" },
+      { cmd: "mv <old> <new>", desc: "Move or rename files and directories", example: "mv old_name.txt new_name.txt" },
+      { cmd: "cat <file>", desc: "Concatenate and print file contents to terminal stdout", example: "cat /var/log/syslog" },
+      { cmd: "head -n 20 <file>", desc: "Output first 20 lines of a file", example: "head -n 20 /var/log/syslog" },
+      { cmd: "tail -n 20 -f <file>", desc: "Output last 20 lines and follow live file growth", example: "tail -n 20 /var/log/auth.log" },
+      { cmd: "wc -l <file>", desc: "Count total number of lines in a file", example: "wc -l /var/log/syslog" },
+    ]
+  },
+  {
+    name: "3. Text Searching & Pattern Filtering",
+    items: [
+      { cmd: "grep -i 'pattern' <file>", desc: "Case-insensitive search for string pattern in file", example: "grep -i 'error' /var/log/syslog" },
+      { cmd: "grep -r -n 'pattern' .", desc: "Recursively search all files with line numbers", example: "grep -r -n 'TODO' ." },
+      { cmd: "find . -name '*.log'", desc: "Recursively locate files by wildcard filename pattern", example: "find /var/log -name '*.log'" },
+      { cmd: "sed 's/old/new/g' <file>", desc: "Stream editor search and replace all instances of string", example: "sed 's/localhost/127.0.0.1/g' /etc/hosts" },
+      { cmd: "awk '{print $1, $3}' <file>", desc: "Extract and print specific space-delimited columns", example: "awk '{print $1, $3}' /var/log/auth.log" },
+    ]
+  },
+  {
+    name: "4. Permissions & Ownership",
+    items: [
+      { cmd: "chmod 755 <script>", desc: "Owner: Read/Write/Execute (7); Others: Read/Execute (5)", example: "chmod 755 deploy.sh" },
+      { cmd: "chmod 644 <file>", desc: "Owner: Read/Write (6); Others: Read-Only (4)", example: "chmod 644 config.txt" },
+      { cmd: "chmod 600 <key>", desc: "Owner: Read/Write (6); Others: No access (0)", example: "chmod 600 id_rsa" },
+      { cmd: "chown user:group <file>", desc: "Change owner user and group of file or directory", example: "chown user:user deploy.sh" },
+    ]
+  },
+  {
+    name: "5. System, Memory & Processes",
+    items: [
+      { cmd: "top", desc: "Interactive real-time process manager and system metrics", example: "top" },
+      { cmd: "ps aux", desc: "Snapshot of all active processes running on the OS", example: "ps aux" },
+      { cmd: "free -h", desc: "Display total, used, and available RAM in human-readable GB/MB", example: "free -h" },
+      { cmd: "uname -a", desc: "Print Linux kernel version, architecture, and hostname", example: "uname -a" },
+    ]
+  },
+  {
+    name: "6. Archiving & Compression",
+    items: [
+      { cmd: "tar -czvf archive.tar.gz /path", desc: "Create gzipped tarball archive of target directory", example: "tar -czvf backup.tar.gz /home/user/projects" },
+      { cmd: "tar -xzvf archive.tar.gz", desc: "Extract gzipped tarball archive into current directory", example: "tar -xzvf backup.tar.gz" },
+      { cmd: "gzip <file>", desc: "Compress file into .gz format and replace original", example: "gzip server.log" },
+      { cmd: "gunzip <file.gz>", desc: "Decompress .gz file back to original file", example: "gunzip server.log.gz" },
+    ]
+  }
+];
+---
+
+<BaseLayout
+  lang={lang}
+  title={pageInfo.title}
+  description={pageInfo.desc}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+    <!-- Header Hero -->
+    <div class="text-center max-w-4xl mx-auto space-y-4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>{pageInfo.badge}</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-sans tracking-tight">
+        {pageInfo.h1}
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+        {pageInfo.sub}
+      </p>
+    </div>
+
+    <!-- Categorized Command Reference Sections -->
+    <div class="space-y-12">
+      {CHEAT_CATEGORIES.map((cat, catIdx) => (
+        <section class="space-y-4 pt-4">
+          <div class="border-b border-zinc-800 pb-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+              <span class="text-emerald-400 font-mono">#</span>
+              <span>{cat.name}</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {cat.items.map((item) => (
+              <div class="p-4 sm:p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl flex flex-col justify-between space-y-3 hover:border-zinc-700 transition-colors">
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <span class="font-mono text-emerald-300 font-bold text-sm bg-zinc-950 px-2.5 py-1 rounded-lg border border-zinc-800">
+                      {item.cmd}
+                    </span>
+                    <button
+                      onclick={`navigator.clipboard.writeText('${item.example.replace(/'/g, "\\'")}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 2000)`}
+                      class="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-[11px] transition-colors cursor-pointer font-sans"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <p class="text-xs text-zinc-300 leading-relaxed font-sans pt-1">{item.desc}</p>
+                </div>
+
+                <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono">
+                  <span class="text-zinc-500 text-[11px] truncate max-w-[200px]">$ {item.example}</span>
+                  <a
+                    href={getLocalizedPath(`/terminal/?cmd=${encodeURIComponent(item.example)}`, lang)}
+                    class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-zinc-950 font-bold rounded-lg border border-emerald-800/60 transition-colors flex items-center space-x-1 shrink-0 font-sans text-[11px]"
+                  >
+                    <span>Run in Sandbox ⚡</span>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Chmod Octal Calculator Matrix Section -->
+    <section class="p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-6">
+      <div class="space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          Linux File Permissions & Chmod Matrix
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400">
+          User (Owner), Group, and Others calculated by summing: Read (4), Write (2), and Execute (1).
+        </p>
+      </div>
+
+      <div class="overflow-x-auto border border-zinc-800 rounded-2xl shadow-lg">
+        <table class="w-full text-left text-xs sm:text-sm font-mono bg-zinc-950">
+          <thead class="bg-zinc-900 text-zinc-300 border-b border-zinc-800">
+            <tr>
+              <th class="p-3.5 sm:p-4">Octal Mode</th>
+              <th class="p-3.5 sm:p-4">Symbolic</th>
+              <th class="p-3.5 sm:p-4">Owner</th>
+              <th class="p-3.5 sm:p-4">Group</th>
+              <th class="p-3.5 sm:p-4">Others</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-800/80 text-zinc-300">
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">755</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rwxr-xr-x</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Exec</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">644</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rw-r--r--</td>
+              <td class="p-3.5 sm:p-4">Read/Write</td>
+              <td class="p-3.5 sm:p-4">Read-Only</td>
+              <td class="p-3.5 sm:p-4">Read-Only</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">600</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rw-------</td>
+              <td class="p-3.5 sm:p-4">Read/Write</td>
+              <td class="p-3.5 sm:p-4">None</td>
+              <td class="p-3.5 sm:p-4">None</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Bar -->
+    <div class="p-8 bg-gradient-to-r from-emerald-950/60 to-zinc-900 border border-emerald-800/60 rounded-3xl text-center space-y-4">
+      <h3 class="text-2xl font-bold text-zinc-100 font-sans">{pageInfo.h1}</h3>
+      <p class="text-sm text-zinc-300 max-w-xl mx-auto">{pageInfo.sub}</p>
+      <div class="pt-2">
+        <a
+          href={getLocalizedPath('/terminal/', lang)}
+          class="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-950/50 font-mono"
+        >
+          <span>$</span>
+          <span>{t.ctaTerminal}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

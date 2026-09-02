@@ -1,0 +1,232 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TerminalRunner } from '../../components/terminal/TerminalRunner';
+import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((l) => ({
+    params: { lang: l },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+const I18N_COMPILER_DATA: Record<SupportedLocale, {
+  title: string;
+  badge: string;
+  h1: string;
+  sub: string;
+  cta: string;
+  desc: string;
+  keywords: string;
+}> = {
+  en: {
+    title: "Linux Online Compiler — Free In-Browser Shell Script & Command Runner",
+    badge: "Free JS Linux Online Compiler & Shell Sandbox",
+    h1: "The Best Linux Online Compiler in Browser",
+    sub: "Execute shell scripts, test bash one-liners, inspect virtual filesystems, and edit code with vi or nano. Powered by an instant, zero-lag JS Linux online compiler with full offline persistence.",
+    cta: "Launch Fullscreen Compiler Workspace",
+    desc: "Free Linux online compiler in browser. Write and execute shell scripts, run bash commands, and test Ubuntu & Kali Linux commands with zero installation.",
+    keywords: "linux online compiler, kali linux online compiler, js linux online compiler, linux online compiler free, linux online compiler ubuntu"
+  },
+  ru: {
+    title: "Онлайн компилятор Linux — Бесплатный запуск bash скриптов в браузере",
+    badge: "Бесплатный JS онлайн компилятор Linux и песочница",
+    h1: "Лучший онлайн компилятор Linux в браузере",
+    sub: "Запускайте bash скрипты, тестируйте команды Linux, редактируйте код через vi и nano. Мгновенное выполнение на клиенте с нулевой задержкой и сохранением в IndexedDB.",
+    cta: "Открыть полный компилятор Linux",
+    desc: "Бесплатный онлайн компилятор Linux в браузере. Выполняйте скрипты bash, проверяйте команды Ubuntu и Kali без установки ПО.",
+    keywords: "онлайн компилятор linux, компилятор bash онлайн, js linux online compiler, компилятор ubuntu онлайн, запустить bash скрипт онлайн"
+  },
+  es: {
+    title: "Compilador Linux Online — Ejecutar scripts bash y comandos en navegador",
+    badge: "Compilador Linux JS gratuito y entorno sandbox",
+    h1: "El mejor compilador Linux Online en navegador",
+    sub: "Escriba y ejecute scripts bash, pruebe comandos de Ubuntu y Kali, y edite archivos con vi o nano. Ejecución instantánea sin demoras gracias al motor AST en JavaScript.",
+    cta: "Abrir compilador Linux completo",
+    desc: "Compilador Linux online gratuito en navegador. Ejecute scripts de shell y practique comandos de Ubuntu y Kali sin instalación.",
+    keywords: "compilador linux online, compilador bash online, linux online compiler free, terminal linux ubuntu online, ejecutar script shell online"
+  },
+  de: {
+    title: "Linux Online Compiler — Kostenloser Shell-Script & Befehls-Runner im Browser",
+    badge: "Kostenloser JS-Linux-Online-Compiler & Sandbox",
+    h1: "Der beste Linux Online Compiler im Webbrowser",
+    sub: "Führen Sie Shell-Skripte aus, testen Sie Bash-Befehle und bearbeiten Sie Dateien mit vi oder nano. Blitzschnelle clientseitige Ausführung ohne Server-Latenz.",
+    cta: "Vollständigen Compiler öffnen",
+    desc: "Kostenloser Linux Online Compiler im Browser. Führen Sie Bash-Skripte und Ubuntu-Befehle direkt im Browser aus.",
+    keywords: "linux online compiler, bash online compiler, linux online compiler free, ubuntu linux online compiler, shell script online ausführen"
+  },
+  fr: {
+    title: "Compilateur Linux en Ligne — Exécuteur de scripts bash et commandes gratuit",
+    badge: "Compilateur Linux JS gratuit en ligne & bac à sable",
+    h1: "Le meilleur compilateur Linux en ligne dans votre navigateur",
+    sub: "Écrivez et exécutez des scripts bash, testez les commandes Ubuntu et Kali, et éditez du code avec vi ou nano. Exécution instantanée sans latence serveur.",
+    cta: "Ouvrir le compilateur plein écran",
+    desc: "Compilateur Linux en ligne gratuit dans le navigateur. Exécutez des scripts shell et testez des commandes Ubuntu sans aucune installation.",
+    keywords: "compilateur linux en ligne, compilateur bash en ligne, linux online compiler free, terminal linux ubuntu en ligne, executer script shell en ligne"
+  },
+  zh: {
+    title: "Linux 在线编译器 — 免费在浏览器中运行 Bash 脚本与命令",
+    badge: "免费 JavaScript Linux 在线编译器与 Shell 沙盒",
+    h1: "最优质的浏览器端 Linux 在线编译器",
+    sub: "编写并运行 Shell 脚本，测试 Bash 单行命令，使用 vi 或 nano 编辑文件。基于纯客户端 JavaScript AST 引擎，零延迟即时响应并支持离线保存。",
+    cta: "打开全屏编译器工作台",
+    desc: "免费在浏览器中运行的 Linux 在线编译器。编写并执行 Shell 脚本，练习 Ubuntu 和 Kali Linux 命令，无需任何本地安装配置。",
+    keywords: "linux 在线编译器, bash 在线编译器, linux online compiler, 在线运行 shell 脚本, 在线 linux 终端"
+  }
+};
+
+const pageData = I18N_COMPILER_DATA[lang] || I18N_COMPILER_DATA.en;
+
+const SCRIPT_EXAMPLES = [
+  {
+    title: "1. Shell Variables & Interpolation",
+    code: 'NAME="DevOps"; echo "Hello, $NAME! Linux Compiler Active."',
+    desc: "Declare shell variables and format output."
+  },
+  {
+    title: "2. Directory Scaffolding & Logging",
+    code: 'mkdir -p /home/user/app_lab && date > /home/user/app_lab/build.log && ls -la /home/user/app_lab',
+    desc: "Create folders, capture timestamps, and inspect directory."
+  },
+  {
+    title: "3. Regex Log Filtering with Grep",
+    code: 'grep -n -i "session" /var/log/auth.log | head -n 5',
+    desc: "Extract matching lines with line numbers."
+  },
+  {
+    title: "4. Permissions & Octal Modes",
+    code: 'touch deploy.sh && chmod 755 deploy.sh && ls -l deploy.sh',
+    desc: "Set executable permissions using chmod 755."
+  },
+  {
+    title: "5. Compressed Tarball Archiving",
+    code: 'tar -czvf /tmp/projects_backup.tar.gz /home/user/projects && ls -lh /tmp/projects_backup.tar.gz',
+    desc: "Bundle folders into gzipped tarball."
+  },
+  {
+    title: "6. System Diagnostic Snapshot",
+    code: 'uname -a && free -h && ps aux | head -n 6',
+    desc: "Snapshot active processes and memory stats."
+  }
+];
+---
+
+<BaseLayout
+  lang={lang}
+  title={pageData.title}
+  description={pageData.desc}
+  keywords={pageData.keywords}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+    <!-- Hero Header -->
+    <div class="text-center max-w-4xl mx-auto space-y-4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>{pageData.badge}</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-sans tracking-tight">
+        {pageData.h1}
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+        {pageData.sub}
+      </p>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href={getLocalizedPath('/terminal/', lang)}
+          class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-950/50 flex items-center space-x-2 font-mono"
+        >
+          <span>$</span>
+          <span>{pageData.cta}</span>
+        </a>
+        <a
+          href={getLocalizedPath('/cheat-sheet/', lang)}
+          class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold rounded-xl text-sm transition-all font-mono"
+        >
+          {t.navCheatSheet} ⚡
+        </a>
+      </div>
+    </div>
+
+    <!-- Live Interactive Compiler Terminal React Island -->
+    <div class="max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-b from-zinc-700/50 to-zinc-800/20 shadow-2xl space-y-2">
+      <div class="px-4 py-2 bg-zinc-950/90 rounded-t-xl border-b border-zinc-800 flex items-center justify-between text-xs font-mono text-zinc-400">
+        <div class="flex items-center space-x-2">
+          <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+          <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+          <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+          <span class="ml-2 font-bold text-zinc-200">bash — {pageData.h1}</span>
+        </div>
+        <span class="text-emerald-400 font-semibold">Ready ($)</span>
+      </div>
+      <TerminalRunner client:load initialCommand='echo "Linux Online Compiler Ready. Type any command to execute..."' className="h-[480px]" />
+    </div>
+
+    <!-- Ready-to-Run Code Programs Section -->
+    <section class="space-y-6">
+      <div class="text-center max-w-3xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          Shell Scripting & Programming Examples
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+          Test essential shell programming patterns directly in the compiler.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
+        {SCRIPT_EXAMPLES.map((ex, index) => (
+          <div class="p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl flex flex-col justify-between space-y-3 shadow-md hover:border-zinc-700 transition-colors">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-emerald-400 font-semibold">#{index + 1}</span>
+                <span class="text-xs text-zinc-400 font-medium">{ex.title}</span>
+              </div>
+
+              <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800/80 text-emerald-300 font-mono text-xs overflow-x-auto flex items-center justify-between">
+                <code>{ex.code}</code>
+                <button
+                  onclick={`navigator.clipboard.writeText('${ex.code.replace(/'/g, "\\'")}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 2000)`}
+                  class="ml-3 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-[11px] transition-colors shrink-0 font-sans cursor-pointer"
+                >
+                  Copy
+                </button>
+              </div>
+
+              <p class="text-xs text-zinc-300 leading-relaxed font-sans">{ex.desc}</p>
+            </div>
+
+            <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-end">
+              <a
+                href={getLocalizedPath(`/terminal/?cmd=${encodeURIComponent(ex.code)}`, lang)}
+                class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-zinc-950 font-bold rounded-lg border border-emerald-800/60 transition-colors flex items-center space-x-1 font-sans text-xs"
+              >
+                <span>Run in Compiler ⚡</span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Bottom CTA Bar -->
+    <div class="p-8 bg-gradient-to-r from-emerald-950/60 to-zinc-900 border border-emerald-800/60 rounded-3xl text-center space-y-4">
+      <h3 class="text-2xl font-bold text-zinc-100 font-sans">Online Linux Terminal & Compiler</h3>
+      <p class="text-sm text-zinc-300 max-w-xl mx-auto">
+        {pageData.sub}
+      </p>
+      <div class="pt-2">
+        <a
+          href={getLocalizedPath('/terminal/', lang)}
+          class="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-950/50 font-mono"
+        >
+          <span>$</span>
+          <span>{pageData.cta}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

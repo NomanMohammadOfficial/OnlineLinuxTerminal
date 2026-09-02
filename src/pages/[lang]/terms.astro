@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+export function getStaticPaths() {
+  const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
+  return locales.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLocale };
+
+const I18N_TERMS_TITLES: Record<SupportedLocale, { title: string; h1: string; sub: string }> = {
+  en: {
+    title: "Terms of Service — Online Linux Terminal",
+    h1: "Terms of Service",
+    sub: "Terms and conditions governing the use of our web-based Linux simulation platform."
+  },
+  ru: {
+    title: "Условия использования — Онлайн Терминал Linux",
+    h1: "Условия использования",
+    sub: "Правила и условия использования браузерной платформы симулятора Linux."
+  },
+  es: {
+    title: "Términos de Servicio — Terminal Linux Online",
+    h1: "Términos de Servicio",
+    sub: "Términos y condiciones que rigen el uso de nuestra plataforma de simulación Linux."
+  },
+  de: {
+    title: "Nutzungsbedingungen — Online Linux Terminal",
+    h1: "Nutzungsbedingungen",
+    sub: "Bedingungen für die Nutzung unserer browserbasierten Linux-Simulationsplattform."
+  },
+  fr: {
+    title: "Conditions d'Utilisation — Terminal Linux en Ligne",
+    h1: "Conditions d'Utilisation",
+    sub: "Conditions générales régissant l'utilisation de notre simulateur Linux en ligne."
+  },
+  zh: {
+    title: "服务条款 — 在线 Linux 终端",
+    h1: "服务条款",
+    sub: "关于使用本站网页端 Linux 模拟平台与在线命令行的相关服务条款。"
+  }
+};
+
+const termsInfo = I18N_TERMS_TITLES[lang] || I18N_TERMS_TITLES.en;
+---
+
+<BaseLayout
+  lang={lang}
+  title={termsInfo.title}
+  description={termsInfo.sub}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Legal Terms & Simulator Scope</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        {termsInfo.h1}
+      </h1>
+      <p class="text-sm text-zinc-400 max-w-2xl leading-relaxed">
+        {termsInfo.sub}
+      </p>
+    </div>
+
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Educational Simulator Scope</h2>
+        <p>
+          OnlineLinuxTerminal.com provides an in-browser educational simulation powered by client-side JavaScript. It does not provide root access to physical cloud servers or access to unauthorized networks.
+        </p>
+      </section>
+
+      <section class="space-y-2">
+        <h2 class="text-lg font-bold text-zinc-100"># Trademark Notice</h2>
+        <p>
+          Linux® is the registered trademark of Linus Torvalds in the U.S. and other countries. Ubuntu® is a registered trademark of Canonical Ltd. OnlineLinuxTerminal.com is an independent educational tool.
+        </p>
+      </section>
+
+      <section class="border-t border-zinc-800 pt-6">
+        <p class="text-zinc-500 text-xs">
+          For full legal provisions and liability disclaimers, please review the <a href="/terms/" class="text-emerald-400 hover:underline font-bold">Master English Terms of Service</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
