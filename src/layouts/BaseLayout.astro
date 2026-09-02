@@ -78,10 +78,6 @@ LOCALES.forEach((l) => {
       })(window, document, "clarity", "script", "y4xfs76qe8");
     </script>
 
-    <!-- Yandex Autoplacement 19789036 -->
-    <script src="https://yandex.ru/ads/system/context.js" async></script>
-    <script data-page-id="19789036" src="https://yandex.ru/ads/system/ap-loader.js" async></script>
-    
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -155,20 +151,26 @@ LOCALES.forEach((l) => {
         </a>
 
         <!-- Desktop Navigation Links & Language Switcher -->
-        <div class="flex items-center space-x-4">
-          <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <a href={getLocalizedPath('/terminal/', lang)} class="px-3.5 py-2 rounded-lg text-emerald-400 hover:bg-zinc-900 transition-colors flex items-center space-x-1.5 border border-emerald-800/50 bg-emerald-950/40 min-h-[44px]">
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <nav class="hidden md:flex items-center space-x-5 text-sm font-medium">
+            <a href={getLocalizedPath('/terminal/', lang)} class="px-3 py-1.5 rounded-lg text-emerald-400 hover:bg-zinc-900 transition-colors flex items-center space-x-1.5 border border-emerald-800/50 bg-emerald-950/40 min-h-[40px]">
               <span class="font-mono font-bold">$</span>
               <span>{t.navTerminal}</span>
             </a>
-            <a href={getLocalizedPath('/commands/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+            <a href={getLocalizedPath('/commands/', lang)} class="px-2.5 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               {t.navCommands}
             </a>
-            <a href={getLocalizedPath('/tutorials/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+            <a href={getLocalizedPath('/tutorials/', lang)} class="px-2.5 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               {t.navTutorials}
             </a>
-            <a href={getLocalizedPath('/challenges/', lang)} class="px-3 py-2 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[44px] flex items-center">
+            <a href={getLocalizedPath('/challenges/', lang)} class="px-2.5 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
               {t.navChallenges}
+            </a>
+            <a href="/cheat-sheet/" class="px-2.5 py-1.5 rounded-lg text-emerald-300 hover:text-emerald-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center font-mono text-xs font-semibold">
+              Cheat Sheet ⚡
+            </a>
+            <a href="/faq/" class="px-2.5 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors min-h-[40px] flex items-center">
+              FAQ
             </a>
           </nav>
 
@@ -208,6 +210,12 @@ LOCALES.forEach((l) => {
         <a href={getLocalizedPath('/challenges/', lang)} class="flex items-center px-4 py-3 rounded-xl text-zinc-200 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
           {t.navChallenges}
         </a>
+        <a href="/cheat-sheet/" class="flex items-center px-4 py-3 rounded-xl text-emerald-300 hover:bg-zinc-900 text-sm font-semibold border border-zinc-800/60 min-h-[48px] font-mono">
+          Cheat Sheet ⚡
+        </a>
+        <a href="/faq/" class="flex items-center px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-900 text-sm font-medium border border-zinc-800/60 min-h-[48px]">
+          FAQ / Help Center
+        </a>
       </div>
     </header>
 
@@ -224,56 +232,67 @@ LOCALES.forEach((l) => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           
           <!-- Brand Info Column -->
-          <div class="lg:col-span-2 space-y-4">
+          <div class="lg:col-span-1 space-y-4">
             <a href={getLocalizedPath('/', lang)} class="flex items-center space-x-3 group">
               <img src="/icon.svg" alt="Online Linux Terminal Logo" class="w-8 h-8 rounded-xl shadow-lg shadow-emerald-900/30 group-hover:scale-105 transition-transform" />
               <span class="font-mono font-bold text-lg text-zinc-100 group-hover:text-emerald-400 transition-colors">
                 OnlineLinux<span class="text-emerald-400">Terminal</span>
               </span>
             </a>
-            <p class="text-xs text-zinc-400 leading-relaxed max-w-sm">
+            <p class="text-xs text-zinc-400 leading-relaxed">
               {t.heroSub}
             </p>
             <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-emerald-400">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>AST Engine: Active & Online</span>
+              <span>AST Engine: Active</span>
             </div>
           </div>
 
           <!-- Command Manuals Column -->
           <div class="space-y-3">
-            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Popular Commands</h4>
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Essential Commands</h4>
             <ul class="space-y-2 text-xs font-mono">
               <li><a href={getLocalizedPath('/commands/grep/', lang)} class="hover:text-emerald-400 transition-colors">man grep</a></li>
-              <li><a href={getLocalizedPath('/commands/ls/', lang)} class="hover:text-emerald-400 transition-colors">man ls</a></li>
+              <li><a href={getLocalizedPath('/commands/find/', lang)} class="hover:text-emerald-400 transition-colors">man find</a></li>
               <li><a href={getLocalizedPath('/commands/chmod/', lang)} class="hover:text-emerald-400 transition-colors">man chmod</a></li>
-              <li><a href={getLocalizedPath('/commands/cd/', lang)} class="hover:text-emerald-400 transition-colors">man cd</a></li>
+              <li><a href={getLocalizedPath('/commands/ls/', lang)} class="hover:text-emerald-400 transition-colors">man ls</a></li>
               <li><a href={getLocalizedPath('/commands/cat/', lang)} class="hover:text-emerald-400 transition-colors">man cat</a></li>
-              <li><a href={getLocalizedPath('/commands/sed/', lang)} class="hover:text-emerald-400 transition-colors">man sed</a></li>
-              <li><a href={getLocalizedPath('/commands/awk/', lang)} class="hover:text-emerald-400 transition-colors">man awk</a></li>
+              <li><a href={getLocalizedPath('/commands/tar/', lang)} class="hover:text-emerald-400 transition-colors">man tar</a></li>
+              <li><a href={getLocalizedPath('/commands/curl/', lang)} class="hover:text-emerald-400 transition-colors">man curl</a></li>
+              <li><a href={getLocalizedPath('/commands/top/', lang)} class="hover:text-emerald-400 transition-colors">man top</a></li>
             </ul>
           </div>
 
           <!-- Practice & Tutorials Column -->
           <div class="space-y-3">
-            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Practice & Drills</h4>
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Learning & Practice</h4>
             <ul class="space-y-2 text-xs">
-              <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors flex items-center space-x-1.5"><span class="font-mono text-emerald-400">$</span><span>{t.navTerminal} Workspace</span></a></li>
-              <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">{t.navTutorials} Hub</a></li>
-              <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">{t.navChallenges} Drills</a></li>
-              <li><a href={getLocalizedPath('/tutorials/basics/', lang)} class="hover:text-emerald-400 transition-colors">Navigation Basics</a></li>
-              <li><a href={getLocalizedPath('/challenges/find-hidden-flag/', lang)} class="hover:text-emerald-400 transition-colors">Secret Flag Drill</a></li>
+              <li><a href={getLocalizedPath('/terminal/', lang)} class="hover:text-emerald-400 transition-colors flex items-center space-x-1.5"><span class="font-mono text-emerald-400">$</span><span>Terminal Workspace</span></a></li>
+              <li><a href={getLocalizedPath('/tutorials/', lang)} class="hover:text-emerald-400 transition-colors">Interactive Tutorials Hub</a></li>
+              <li><a href={getLocalizedPath('/challenges/', lang)} class="hover:text-emerald-400 transition-colors">Scenario Challenges</a></li>
+              <li><a href="/cheat-sheet/" class="hover:text-emerald-400 transition-colors font-mono text-emerald-400 font-semibold">Linux Cheat Sheet ⚡</a></li>
+              <li><a href="/faq/" class="hover:text-emerald-400 transition-colors">FAQ & Help Center</a></li>
             </ul>
           </div>
 
-          <!-- Trust & Legal Column -->
+          <!-- Trust & Editorial Column -->
           <div class="space-y-3">
-            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Trust & Legal</h4>
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Trust & Editorial</h4>
             <ul class="space-y-2 text-xs">
-              <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & EEAT</a></li>
+              <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & Team</a></li>
+              <li><a href="/editorial-guidelines/" class="hover:text-emerald-400 transition-colors">Editorial Guidelines</a></li>
+              <li><a href="/disclaimer/" class="hover:text-emerald-400 transition-colors">Educational Disclaimer</a></li>
               <li><a href="/contact/" class="hover:text-emerald-400 transition-colors">Contact & Support</a></li>
+            </ul>
+          </div>
+
+          <!-- Privacy & Legal Column -->
+          <div class="space-y-3">
+            <h4 class="font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider">Privacy & Legal</h4>
+            <ul class="space-y-2 text-xs">
               <li><a href="/privacy/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
               <li><a href="/terms/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+              <li><a href="/cookies/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
               <li><a href="/sitemap/" class="hover:text-emerald-400 transition-colors">HTML Directory Sitemap</a></li>
             </ul>
           </div>

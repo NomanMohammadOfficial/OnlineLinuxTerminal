@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { ChallengeRunner } from '../../components/terminal/ChallengeRunner';
-import { AdSlot } from '../../components/ads/AdSlot';
 
 export function getStaticPaths() {
   const scenarios = [
@@ -10,15 +9,15 @@ export function getStaticPaths() {
       title: 'Challenge 1: Find the Secret Flag File',
       difficulty: 'Easy',
       points: '100 pts',
-      mission: 'A hidden flag file is stored inside the /etc/ directory tree. Your task is to inspect /etc/ files using cat to uncover the secret key.',
+      mission: 'A hidden system configuration file is stored inside the /etc/ directory tree. Your task is to inspect /etc/ files using cat or grep to uncover the secret key.',
       hint: 'Run "ls /etc" to see files in /etc, then read "os-release" or "hostname".',
     },
     {
       slug: 'fix-log-permissions',
-      title: 'Challenge 2: Fix Log File Permissions',
+      title: 'Challenge 2: Fix Restricted Log File Permissions',
       difficulty: 'Medium',
       points: '250 pts',
-      mission: 'The file /var/log/auth.log has restricted mode permissions. Change its permissions to 755 using chmod so all users can read it.',
+      mission: 'The file /var/log/auth.log has restricted mode permissions. Change its permissions to 755 using chmod so all users can read and inspect it.',
       hint: 'Run "chmod 755 /var/log/auth.log" and verify with "ls -l /var/log/auth.log".',
     },
     {
@@ -28,6 +27,30 @@ export function getStaticPaths() {
       points: '500 pts',
       mission: 'Inspect /var/log/syslog and /var/log/auth.log to extract all occurrences of IP addresses matching 192.168 or 10.0.',
       hint: 'Use "grep -i -n 192.168 /var/log/auth.log".',
+    },
+    {
+      slug: 'cleanup-temp-logs',
+      title: 'Challenge 4: Clean Up Temporary Workspace Logs',
+      difficulty: 'Easy',
+      points: '200 pts',
+      mission: 'The /tmp directory requires maintenance. Create or inspect the directory, or run directory cleanup commands using rm.',
+      hint: 'Run "ls /tmp" and test file maintenance commands like "touch /tmp/cleaned.log".',
+    },
+    {
+      slug: 'diagnose-high-cpu',
+      title: 'Challenge 5: Diagnose System Resource Metrics',
+      difficulty: 'Medium',
+      points: '300 pts',
+      mission: 'Inspect system resource health. Execute process monitoring commands to snapshot active processes and memory allocations.',
+      hint: 'Run "ps aux" or "top" or "free -h" to inspect resource consumption.',
+    },
+    {
+      slug: 'create-system-backup',
+      title: 'Challenge 6: Create Compressed Backup Tarball',
+      difficulty: 'Hard',
+      points: '400 pts',
+      mission: 'Bundle directory files into a compressed tarball archive using tar with gzip compression flags.',
+      hint: 'Run "tar -czvf backup.tar.gz /home/user/projects".',
     },
   ];
 
@@ -81,9 +104,6 @@ const howToSchema = {
       <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{data.title}</h1>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Challenge Interactive Runner Island -->
     <ChallengeRunner
       client:load
@@ -94,7 +114,14 @@ const howToSchema = {
       hint={data.hint}
     />
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+    <!-- Bottom Navigation Links -->
+    <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-2xl flex items-center justify-between text-xs font-mono">
+      <a href="/challenges/" class="text-zinc-400 hover:text-emerald-400 transition-colors">
+        ← Back to All Challenges
+      </a>
+      <a href="/tutorials/" class="text-emerald-400 hover:underline">
+        Explore Guided Tutorials →
+      </a>
+    </div>
   </div>
 </BaseLayout>

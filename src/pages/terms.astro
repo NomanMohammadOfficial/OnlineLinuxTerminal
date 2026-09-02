@@ -1,23 +1,183 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const termsSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Terms of Service — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/terms/",
+  "description": "Terms of Service for Online Linux Terminal (onlinelinuxterminal.com) detailing acceptable use, educational sandbox boundaries, intellectual property, and liability limitations.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
 ---
 
 <BaseLayout
   title="Terms of Service — Online Linux Terminal"
-  description="Terms of Service for Online Linux Terminal (onlinelinuxterminal.com)."
-  keywords="online linux terminal terms of service, online linux terminal terms, legal terms"
+  description="Terms of Service for Online Linux Terminal (onlinelinuxterminal.com). Review acceptable use, educational sandbox guidelines, and legal terms."
+  keywords="online linux terminal terms of service, online linux terminal terms, legal agreement, linux terminal terms"
 >
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
-    <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">Terms of Service</h1>
-    <div class="text-xs sm:text-sm leading-relaxed space-y-4">
-      <p>Effective Date: August 19, 2026</p>
-      <p>
-        By accessing and using OnlineLinuxTerminal.com, you agree to comply with and be bound by these Terms of Service.
+  <script type="application/ld+json" set:html={JSON.stringify(termsSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Legal Terms & Conditions</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Terms of Service
+      </h1>
+      <p class="text-xs text-zinc-400 font-mono">
+        Last Updated: September 2, 2026 • Effective Date: January 1, 2026
       </p>
-      <h2 class="text-lg font-bold text-emerald-400">Acceptable Use</h2>
-      <p>
-        Online Linux Terminal is provided for educational, testing, and learning purposes. The client-side AST simulation operates strictly within your browser environment.
-      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
+      
+      <!-- 1. Agreement to Terms -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">1.</span>
+          <span>Agreement to Terms</span>
+        </h2>
+        <p>
+          These Terms of Service ("Terms") constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you", "user"), and <strong>Online Linux Terminal</strong> ("we", "us", or "our"), concerning your access to and use of the <a href="https://onlinelinuxterminal.com" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com</a> website, as well as any associated services, documentation, tutorials, challenges, and browser-based terminal tools (collectively, the "Platform").
+        </p>
+        <p>
+          By accessing or using the Platform, you acknowledge that you have read, understood, and agree to be bound by all of these Terms. If you do not agree with all of these Terms, you are expressly prohibited from using the Platform and must discontinue use immediately.
+        </p>
+      </section>
+
+      <!-- 2. Nature of Service: Educational Simulation -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">2.</span>
+          <span>Nature of the Platform & Educational Sandbox</span>
+        </h2>
+        <p>
+          Online Linux Terminal provides a free, web-based educational terminal simulator and command reference library. You acknowledge and understand that:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li><strong>Client-Side AST Simulation:</strong> Commands executed in the terminal window are processed via an Abstract Syntax Tree (AST) shell parser running within your client web browser. It is not an unrestricted physical kernel instance or dedicated cloud hardware container.</li>
+          <li><strong>Virtual File System (VFS):</strong> Files, directories, permissions, and system state modifications are stored inside your browser's local IndexedDB and are isolated from actual physical machine operating systems.</li>
+          <li><strong>Simulated Superuser (Root) Mode:</strong> Commands requiring elevated permissions (e.g., <code>chmod</code>, <code>chown</code>, <code>apt install</code>) are simulated for instructional demonstration and do not grant physical machine kernel control.</li>
+        </ul>
+      </section>
+
+      <!-- 3. Acceptable Use Policy -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">3.</span>
+          <span>User Conduct & Prohibited Uses</span>
+        </h2>
+        <p>
+          You agree to use Online Linux Terminal strictly for lawful educational, learning, testing, and reference purposes. You agree not to:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li>Attempt to exploit, probe, scan, or compromise the security or integrity of our web servers, CDN, or origin infrastructure.</li>
+          <li>Use automated bots, spiders, or scrapers to overwhelm or extract content from the Platform in violation of robots.txt directives.</li>
+          <li>Introduce malicious payloads, automated denial-of-service (DoS) attacks, or malicious scripts targeting other visitors.</li>
+          <li>Reverse engineer, decompile, or frame the Platform without explicit written authorization.</li>
+          <li>Use the platform in any manner that could interfere with, disrupt, or negatively impact other users' learning experience.</li>
+        </ul>
+      </section>
+
+      <!-- 4. Intellectual Property & Trademarks -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">4.</span>
+          <span>Intellectual Property Rights & Trademarks</span>
+        </h2>
+        <p>
+          Unless otherwise indicated, the Platform—including its source code, user interface designs, custom interactive tutorials, command scenario challenges, text documentation, brand assets, and logos—is our proprietary property and is protected by copyright and international intellectual property laws.
+        </p>
+        <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-2 text-xs text-zinc-400">
+          <p>
+            <strong>Trademark Notices:</strong> Linux® is the registered trademark of Linus Torvalds in the U.S. and other countries. Ubuntu® is a registered trademark of Canonical Ltd. Debian®, Red Hat®, CentOS®, GNU, and other referenced operating system or software names are the trademarks of their respective owners. OnlineLinuxTerminal.com is an independent educational platform and is not officially affiliated with, endorsed by, or sponsored by Linus Torvalds, Canonical Ltd., or the Free Software Foundation.
+          </p>
+        </div>
+      </section>
+
+      <!-- 5. Warranty Disclaimer -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">5.</span>
+          <span>Disclaimer of Warranties</span>
+        </h2>
+        <p>
+          THE PLATFORM IS PROVIDED ON AN "AS-IS" AND "AS-AVAILABLE" BASIS. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE PLATFORM AND YOUR USE THEREOF, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+        </p>
+        <p class="text-zinc-400">
+          WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR COMPLETENESS OF THE CONTENT ON THE PLATFORM OR THE SCRIPT EXAMPLES PROVIDED. ALWAYS EXERCISE CAUTION BEFORE EXECUTING ANY COMMAND-LINE SCRIPT (SUCH AS <code>rm -rf</code> OR PERMISSION MODIFICATIONS) ON LIVE PRODUCTION SERVERS.
+        </p>
+      </section>
+
+      <!-- 6. Limitation of Liability -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">6.</span>
+          <span>Limitation of Liability</span>
+        </h2>
+        <p>
+          IN NO EVENT SHALL ONLINE LINUX TERMINAL, ITS DIRECTORS, EMPLOYEES, CONTRIBUTORS, OR AFFILIATES BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR OTHER DAMAGES ARISING FROM YOUR USE OF THE PLATFORM, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+        </p>
+      </section>
+
+      <!-- 7. Advertising & Third-Party Links -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">7.</span>
+          <span>Third-Party Advertisements & Links</span>
+        </h2>
+        <p>
+          The Platform may display third-party advertisements (via Google AdSense) and links to external websites (e.g., official GNU coreutils manuals, Linux man pages, GitHub repositories). We are not responsible for inspecting, evaluating, or guaranteeing the products, services, or content offered by third parties. Your dealings with advertisers found on the Platform are solely between you and the advertiser.
+        </p>
+      </section>
+
+      <!-- 8. Termination -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">8.</span>
+          <span>Modifications & Termination</span>
+        </h2>
+        <p>
+          We reserve the right, in our sole discretion, to modify, update, suspend, or discontinue the Platform or any portion thereof at any time without notice. We shall not be liable to you or any third party for any modification, suspension, or discontinuation of the Platform.
+        </p>
+      </section>
+
+      <!-- 9. Governing Law -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">9.</span>
+          <span>Governing Law</span>
+        </h2>
+        <p>
+          These Terms shall be governed by and defined following the laws of applicable international commerce and standard digital service regulations, without regard to its conflict of law principles.
+        </p>
+      </section>
+
+      <!-- 10. Contact Us -->
+      <section class="space-y-3 border-t border-zinc-800 pt-6">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">10.</span>
+          <span>Contact Information</span>
+        </h2>
+        <p>
+          If you have any questions or concerns regarding these Terms of Service, please contact our team:
+        </p>
+        <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-2 text-xs font-mono">
+          <div><strong class="text-zinc-200">Email:</strong> <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a></div>
+          <div><strong class="text-zinc-200">Website:</strong> <a href="https://onlinelinuxterminal.com" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com</a></div>
+          <div><strong class="text-zinc-200">Legal Contact:</strong> <a href="/contact/" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com/contact/</a></div>
+        </div>
+      </section>
+
     </div>
   </div>
 </BaseLayout>

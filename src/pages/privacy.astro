@@ -1,27 +1,235 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const privacySchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Privacy Policy — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/privacy/",
+  "description": "Comprehensive Privacy Policy for Online Linux Terminal (onlinelinuxterminal.com) detailing cookies, Google AdSense, GDPR, CCPA, and browser data storage.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
 ---
 
 <BaseLayout
   title="Privacy Policy — Online Linux Terminal"
-  description="Privacy Policy for Online Linux Terminal (onlinelinuxterminal.com). Learn how browser IndexedDB data and cookies are handled."
-  keywords="online linux terminal privacy policy, online linux terminal privacy, terms and privacy"
+  description="Comprehensive Privacy Policy for Online Linux Terminal (onlinelinuxterminal.com). Learn how Google AdSense cookies, analytics, and browser IndexedDB data are protected."
+  keywords="online linux terminal privacy policy, adsense privacy policy, online linux terminal cookies, gdpr privacy notice, ccpa privacy policy"
 >
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-zinc-300">
-    <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">Privacy Policy</h1>
-    <div class="text-xs sm:text-sm leading-relaxed space-y-4">
-      <p>Effective Date: August 19, 2026</p>
-      <p>
-        At OnlineLinuxTerminal.com, accessible from https://onlinelinuxterminal.com, one of our main priorities is the privacy of our visitors.
+  <script type="application/ld+json" set:html={JSON.stringify(privacySchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Legal & Transparency</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Privacy Policy
+      </h1>
+      <p class="text-xs text-zinc-400 font-mono">
+        Last Updated: September 2, 2026 • Effective Date: January 1, 2026
       </p>
-      <h2 class="text-lg font-bold text-emerald-400">Local Browser Storage</h2>
-      <p>
-        All terminal session data, file system modifications, and command histories created within the Online Linux Terminal sandbox are stored locally in your browser's IndexedDB and localStorage. We do not transmit or store your terminal session files on remote servers.
-      </p>
-      <h2 class="text-lg font-bold text-emerald-400">Cookies & Advertising</h2>
-      <p>
-        We may use third-party advertising partners like Google AdSense to serve non-intrusive ads on content pages to support free access to the terminal tool.
-      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
+      
+      <!-- 1. Introduction -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">1.</span>
+          <span>Introduction & Overview</span>
+        </h2>
+        <p>
+          Welcome to <strong>Online Linux Terminal</strong> (accessible from <a href="https://onlinelinuxterminal.com" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com</a>). Your privacy is of fundamental importance to us. This Privacy Policy outlines the types of information we collect, how it is used, how cookies and third-party advertising technologies function on our website, and the controls available to you under international data protection laws, including the <strong>General Data Protection Regulation (GDPR)</strong> and the <strong>California Consumer Privacy Act (CCPA/CPRA)</strong>.
+        </p>
+        <p>
+          By using our website, you hereby consent to our Privacy Policy and agree to its terms. If you have additional questions or require more information about our Privacy Policy, please contact us at <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a>.
+        </p>
+      </section>
+
+      <!-- 2. Local Browser Storage & Client Sandbox -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">2.</span>
+          <span>Local Browser Storage & Virtual File System (VFS)</span>
+        </h2>
+        <p>
+          Online Linux Terminal is built upon a <strong>Client-Side AST (Abstract Syntax Tree) Simulation Architecture</strong>. The primary execution engine, virtual terminal sessions, file creation, command history, and custom directory modifications operate entirely inside your local web browser:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li><strong>IndexedDB Storage:</strong> We use your browser's local IndexedDB (via <code>idb-keyval</code>) to preserve your simulated files (such as <code>/home/user/</code> files) across browser refreshes. This data never leaves your device and is never uploaded to our servers.</li>
+          <li><strong>LocalStorage & SessionStorage:</strong> Used strictly to save user preferences, such as selected UI color themes, terminal font sizes, and challenge progress.</li>
+          <li><strong>Zero Remote File Transmission:</strong> Any files you create, edit with <code>nano</code> or <code>vim</code>, or delete inside the simulated terminal are stored strictly on your local device.</li>
+        </ul>
+      </section>
+
+      <!-- 3. Information We Collect -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">3.</span>
+          <span>Log Files & Analytics</span>
+        </h2>
+        <p>
+          Like most modern websites, Online Linux Terminal follows standard procedures using server log files. The information collected by log files includes:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li>Internet Protocol (IP) addresses (anonymized where required by applicable law)</li>
+          <li>Browser type and version (e.g., Chrome, Firefox, Safari)</li>
+          <li>Operating System (e.g., Linux, Windows, macOS, Android, iOS)</li>
+          <li>Internet Service Provider (ISP)</li>
+          <li>Date and timestamp of visits</li>
+          <li>Referring/exit pages and click paths</li>
+          <li>Approximate geographic region (country/city level)</li>
+        </ul>
+        <p>
+          This data is not linked to any personally identifiable information. The purpose of this information is to analyze technical trends, administer the platform, track aggregate user movement, monitor server health, and optimize web performance.
+        </p>
+      </section>
+
+      <!-- 4. Google AdSense & Advertising Cookies -->
+      <section class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl">
+        <h2 class="text-lg sm:text-xl font-bold text-emerald-400 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">4.</span>
+          <span>Google AdSense & Third-Party Advertising</span>
+        </h2>
+        <p>
+          We partner with third-party vendors, including <strong>Google AdSense</strong>, to serve advertisements on our content pages to keep the terminal simulator completely free for learners worldwide.
+        </p>
+        <div class="space-y-2 text-zinc-300">
+          <p>
+            <strong>Google DoubleClick DART Cookie:</strong> Google is a third-party vendor on our site. Google uses cookies, specifically DART cookies, to serve ads to our site visitors based upon their visit to <code>onlinelinuxterminal.com</code> and other sites on the internet.
+          </p>
+          <p>
+            <strong>Opting Out of Personalized Advertising:</strong> Visitors may choose to decline the use of personalized advertising cookies by visiting Google's official Ads Settings page:
+          </p>
+          <p class="font-mono text-xs text-emerald-400">
+            <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="hover:underline">
+              → Google Advertising & Privacy Policy (https://policies.google.com/technologies/ads)
+            </a>
+          </p>
+          <p>
+            You can also opt out of third-party vendors' use of cookies for personalized advertising by visiting:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-xs text-zinc-400 font-mono">
+            <li><a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Digital Advertising Alliance (DAA) Consumer Choice: aboutads.info</a></li>
+            <li><a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Network Advertising Initiative (NAI) Opt-Out: optout.networkadvertising.org</a></li>
+            <li><a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">European Interactive Digital Advertising Alliance (EDAA): youronlinechoices.eu</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 5. Cookies & Tracking Technologies -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">5.</span>
+          <span>Types of Cookies We Use</span>
+        </h2>
+        <div class="space-y-3">
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">Strictly Necessary Cookies</h3>
+            <p class="text-xs text-zinc-400">Essential for site navigation, terminal state preservation, security tokens, and language locale routing.</p>
+          </div>
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">Analytics & Performance Cookies</h3>
+            <p class="text-xs text-zinc-400">We utilize Google Analytics 4 (GA4) and Microsoft Clarity to understand aggregated user behavior, popular terminal commands, and session duration to improve documentation clarity.</p>
+          </div>
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">Advertising & Marketing Cookies</h3>
+            <p class="text-xs text-zinc-400">Used by Google AdSense and ad exchange networks to deliver relevant advertisements and cap advertising frequency.</p>
+          </div>
+        </div>
+        <p class="text-xs text-zinc-400">
+          For detailed information regarding individual cookies, please review our dedicated <a href="/cookies/" class="text-emerald-400 hover:underline">Cookie Policy</a>.
+        </p>
+      </section>
+
+      <!-- 6. GDPR Data Protection Rights -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">6.</span>
+          <span>GDPR Data Subject Rights (EEA & UK Users)</span>
+        </h2>
+        <p>
+          Under the General Data Protection Regulation, users located within the European Economic Area (EEA) and the United Kingdom are entitled to specific data subject rights:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li><strong>Right to Access:</strong> You have the right to request copies of your personal data held by us.</li>
+          <li><strong>Right to Rectification:</strong> You have the right to request correction of inaccurate or incomplete information.</li>
+          <li><strong>Right to Erasure ("Right to be Forgotten"):</strong> You have the right to request the deletion of your personal data under certain conditions.</li>
+          <li><strong>Right to Restrict Processing:</strong> You have the right to request restriction of personal data processing.</li>
+          <li><strong>Right to Object to Processing:</strong> You have the right to object to our processing of your personal data, including for direct marketing or automated profiling.</li>
+          <li><strong>Right to Data Portability:</strong> You have the right to request the transfer of your data to another organization or directly to you.</li>
+        </ul>
+        <p>
+          To exercise any of these rights, please email us at <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a>. We will respond within one calendar month.
+        </p>
+      </section>
+
+      <!-- 7. CCPA / CPRA Privacy Rights -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">7.</span>
+          <span>California Privacy Rights (CCPA / CPRA)</span>
+        </h2>
+        <p>
+          Under the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA), California residents have the right to:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li>Know what categories and specific pieces of personal data a business collects.</li>
+          <li>Request deletion of personal data collected by the business.</li>
+          <li>Opt-out of the "sale" or "sharing" of personal data for cross-context behavioral advertising.</li>
+          <li>Not receive discriminatory treatment for exercising privacy rights.</li>
+        </ul>
+        <p>
+          We do not sell personal data for monetary consideration. To submit a verifiable consumer request under CCPA, please contact <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a>.
+        </p>
+      </section>
+
+      <!-- 8. Children's Privacy (COPPA) -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">8.</span>
+          <span>Children's Privacy Protection (COPPA)</span>
+        </h2>
+        <p>
+          Online Linux Terminal does not knowingly collect any Personal Identifiable Information from children under the age of 13. If a parent or guardian believes that Online Linux Terminal has personal information of a child under 13 in its database, please contact us immediately, and we will promptly remove such information from our records.
+        </p>
+      </section>
+
+      <!-- 9. Third-Party Links -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">9.</span>
+          <span>Third-Party Links & External Services</span>
+        </h2>
+        <p>
+          Our command documentation may contain links to external websites, such as official GNU coreutils manuals, Linux man pages, or developer documentation. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party websites or services.
+        </p>
+      </section>
+
+      <!-- 10. Policy Changes & Contact -->
+      <section class="space-y-3 border-t border-zinc-800 pt-6">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">10.</span>
+          <span>Updates to This Policy & Contact Information</span>
+        </h2>
+        <p>
+          We may update our Privacy Policy periodically to reflect technological changes, legal requirements, or adjustments to our services. Any updates will be posted on this page with a revised "Last Updated" timestamp.
+        </p>
+        <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl space-y-2 text-xs font-mono">
+          <div><strong class="text-zinc-200">Online Linux Terminal Support:</strong> <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a></div>
+          <div><strong class="text-zinc-200">Official Website:</strong> <a href="https://onlinelinuxterminal.com" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com</a></div>
+          <div><strong class="text-zinc-200">Help & Contact Page:</strong> <a href="/contact/" class="text-emerald-400 hover:underline">https://onlinelinuxterminal.com/contact/</a></div>
+        </div>
+      </section>
+
     </div>
   </div>
 </BaseLayout>

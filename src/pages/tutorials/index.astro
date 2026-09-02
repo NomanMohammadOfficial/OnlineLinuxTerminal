@@ -8,36 +8,64 @@ export const TUTORIALS_LIST = [
     title: 'Linux Terminal Basics & Navigation',
     level: 'Beginner',
     duration: '10 mins',
-    desc: 'Learn how to inspect directories with pwd and ls, navigate file paths with cd, and view file contents using cat.',
+    desc: 'Learn how to inspect directories with pwd and ls, navigate absolute and relative paths with cd, and inspect text files with cat.',
   },
   {
     slug: 'file-management',
     title: 'File & Directory Manipulation',
     level: 'Beginner',
     duration: '15 mins',
-    desc: 'Master creating files with touch and echo, organizing folders with mkdir, copying with cp, and removing items with rm.',
+    desc: 'Master creating files with touch and echo, organizing nested folders with mkdir -p, copying with cp, and removing items with rm.',
   },
   {
     slug: 'grep-text-search',
     title: 'Text Searching & Regex with Grep',
     level: 'Intermediate',
     duration: '15 mins',
-    desc: 'Filter logs and search large files using grep flags (-i, -n, -v) and output redirection operators.',
+    desc: 'Filter log streams and search through large files using essential grep flags (-i, -n, -v) and regex pattern matching.',
   },
   {
     slug: 'permissions',
     title: 'Linux Permissions & Chmod',
     level: 'Intermediate',
     duration: '15 mins',
-    desc: 'Understand read, write, execute permissions for user, group, and others using octal modes like 755 and 644.',
+    desc: 'Understand read, write, and execute permissions for user, group, and others using octal modes like 755, 644, and 600.',
+  },
+  {
+    slug: 'pipes-redirection',
+    title: 'I/O Redirection & Command Pipelines',
+    level: 'Intermediate',
+    duration: '15 mins',
+    desc: 'Chain commands together using pipes (|), redirect standard output with >, append with >>, and filter streams with sort and uniq.',
+  },
+  {
+    slug: 'processes-top-kill',
+    title: 'Process Management & System Monitoring',
+    level: 'Intermediate',
+    duration: '12 mins',
+    desc: 'Inspect running system processes with ps aux and top, monitor CPU and memory usage, and terminate hung tasks using kill.',
+  },
+  {
+    slug: 'tar-compression',
+    title: 'Archiving & Compression with Tar & Gzip',
+    level: 'Intermediate',
+    duration: '12 mins',
+    desc: 'Bundle directories into tarballs with tar -czvf, list archive contents with -tvf, and decompress archives safely with tar -xzvf.',
+  },
+  {
+    slug: 'network-diagnostics',
+    title: 'Network Diagnostics with Curl & Ping',
+    level: 'Advanced',
+    duration: '15 mins',
+    desc: 'Test network latency with ping, inspect HTTP response headers with curl -I, and verify connectivity across remote endpoints.',
   },
 ];
 
 const courseSchema = {
   "@context": "https://schema.org",
   "@type": "Course",
-  "name": "Interactive Linux Command Line Course",
-  "description": "Step-by-step interactive Linux command line tutorials with instant terminal execution and automated verification.",
+  "name": "Interactive Linux Command Line Curriculum",
+  "description": "Comprehensive step-by-step interactive Linux command line tutorials with live browser sandbox execution, automated verification, and zero setup.",
   "provider": {
     "@type": "Organization",
     "name": "Online Linux Terminal",
@@ -48,38 +76,37 @@ const courseSchema = {
 
 <BaseLayout
   title="Interactive Linux Tutorials — Free Online Linux Terminal Practice"
-  description="Step-by-step interactive Linux command line tutorials. Practice terminal navigation, file management, text searching with grep, and permissions live in browser."
-  keywords="online linux terminal practice, free online linux terminal practice, webminal online linux terminal practice, free online linux terminal for practice, online linux terminal for practice free, online linux terminal tutorial"
+  description="Step-by-step interactive Linux command line tutorials. Practice terminal navigation, file management, grep filtering, permissions, pipelines, and processes live in browser."
+  keywords="online linux terminal practice, free online linux terminal practice, webminal online linux terminal practice, free online linux terminal for practice, online linux terminal tutorial, learn linux command line"
 >
   <script type="application/ld+json" set:html={JSON.stringify(courseSchema)} />
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-    <div class="text-center max-w-3xl mx-auto space-y-3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-4">
       <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         <span>Interactive Linux Learning Track</span>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-sans tracking-tight">
         Interactive Linux Command Line Tutorials
       </h1>
-      <p class="text-sm text-zinc-400 leading-relaxed">
+      <p class="text-sm sm:text-base text-zinc-400 leading-relaxed">
         Step-by-step guided lessons with instant browser terminal execution, live command validation, and zero setup required.
       </p>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Tutorials Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-      {TUTORIALS_LIST.map((t) => (
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+      {TUTORIALS_LIST.map((t, idx) => (
         <a
           href={`/tutorials/${t.slug}/`}
           class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between space-y-4"
         >
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-mono px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
-                {t.level}
+                Lesson {idx + 1} • {t.level}
               </span>
               <span class="text-xs font-mono text-zinc-500">{t.duration}</span>
             </div>
@@ -97,30 +124,39 @@ const courseSchema = {
       ))}
     </div>
 
-    <!-- 600+ Word SEO Content Section -->
-    <section class="max-w-4xl mx-auto p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
-      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
-        Why Practice Linux Commands with Interactive Guided Tutorials?
-      </h2>
-      <p class="text-xs sm:text-sm leading-relaxed">
-        Learning the Linux command-line interface requires hands-on repetition. Reading command manuals is helpful, but actual retention happens when you execute commands inside a real terminal shell. Our <strong>free online linux terminal practice</strong> tutorials combine conceptual explanations with live step-by-step terminal execution.
-      </p>
-
-      <div class="space-y-4 text-xs sm:text-sm">
-        <h3 class="text-lg font-bold text-emerald-400">Structured Learning Path for Linux Beginners</h3>
-        <p class="text-zinc-400 leading-relaxed">
-          Traditional platforms like <strong>webminal online linux terminal practice</strong> provided command prompts, but lacked real-time automated step verification. Our tutorials walk you through essential Linux milestones:
+    <!-- In-Depth SEO & Educational Guide Section -->
+    <section class="max-w-5xl mx-auto p-6 sm:p-10 bg-zinc-900/40 border border-zinc-800 rounded-3xl space-y-8 text-zinc-300">
+      <div class="space-y-3">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          Why Hands-on Interactive Terminal Drills Deliver 3x Faster Retention
+        </h2>
+        <p class="text-xs sm:text-sm leading-relaxed text-zinc-400">
+          Learning the Linux operating system is primarily a muscle memory exercise. Reading syntax manuals without active execution leads to rapid forgetting. Our in-browser guided curriculum bridges theory and practice by providing an immediate, risk-free shell sandbox alongside every lesson.
         </p>
-        <ul class="list-disc list-inside text-zinc-400 space-y-2">
-          <li><strong>Navigation & Filesystem Traversal:</strong> Master <code>pwd</code>, <code>ls -l</code>, and <code>cd</code> path resolution.</li>
-          <li><strong>File Creation & Manipulation:</strong> Practice redirecting output with <code>echo "text" &gt; file</code> and viewing logs with <code>cat</code>.</li>
-          <li><strong>Log Analysis & Pattern Matching:</strong> Filter text streams using <code>grep -i -n</code> expressions.</li>
-          <li><strong>File Security & Permissions:</strong> Understand octal mode bits with <code>chmod 755</code> and ownership with <code>chown</code>.</li>
-        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">1. Progressive Difficulty</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Begin with basic directory traversal (<code>pwd</code>, <code>cd</code>, <code>ls</code>), advance to stream redirection (<code>|</code>, <code>&gt;</code>), and master process orchestration.
+          </p>
+        </div>
+
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">2. Instant Verification</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Execute commands against a live Virtual File System and observe authentic terminal stdout output in real time.
+          </p>
+        </div>
+
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">3. Zero-Risk Exploration</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Practice destructive administrative tasks like removing folders with <code>rm -rf</code> or changing root permissions with zero risk to your physical device.
+          </p>
+        </div>
       </div>
     </section>
-
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
   </div>
 </BaseLayout>

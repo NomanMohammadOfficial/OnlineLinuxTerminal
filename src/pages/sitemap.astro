@@ -8,7 +8,7 @@ import { LOCALES } from '../i18n/translations';
 
 <BaseLayout
   title="HTML Sitemap — Online Linux Terminal"
-  description="HTML Directory Sitemap listing all pages, tutorials, command manuals, and localized versions on OnlineLinuxTerminal.com."
+  description="HTML Directory Sitemap listing all pages, tutorials, command manuals, cheat sheets, and localized versions on OnlineLinuxTerminal.com."
 >
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
     <div class="space-y-3">
@@ -16,25 +16,38 @@ import { LOCALES } from '../i18n/translations';
         HTML Directory Sitemap
       </h1>
       <p class="text-xs sm:text-sm text-zinc-400">
-        Complete map of all routes, tutorial modules, 50+ command manuals, and language translations on Online Linux Terminal.
+        Complete map of all routes, tutorial modules, scenario challenges, 50+ command manuals, cheat sheets, and legal trust pages on Online Linux Terminal.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Main Core Pages -->
-      <div class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-xl">
-        <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Main Workspace & Pages</h2>
-        <ul class="space-y-2 text-xs">
-          <li><a href="/" class="hover:text-emerald-400 transition-colors">Home — Online Linux Terminal</a></li>
-          <li><a href="/terminal/" class="hover:text-emerald-400 transition-colors">Terminal Workspace ($)</a></li>
-          <li><a href="/commands/" class="hover:text-emerald-400 transition-colors">Linux Commands Directory</a></li>
-          <li><a href="/tutorials/" class="hover:text-emerald-400 transition-colors">Interactive Tutorials Hub</a></li>
-          <li><a href="/challenges/" class="hover:text-emerald-400 transition-colors">Hands-on Scenario Challenges</a></li>
-          <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & EEAT</a></li>
-          <li><a href="/contact/" class="hover:text-emerald-400 transition-colors">Contact & Support</a></li>
-          <li><a href="/privacy/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
-          <li><a href="/terms/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
-        </ul>
+      <!-- Main Core & Trust Pages -->
+      <div class="space-y-6">
+        <div class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-xl">
+          <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Main Workspace & Hubs</h2>
+          <ul class="space-y-2 text-xs">
+            <li><a href="/" class="hover:text-emerald-400 transition-colors">Home — Online Linux Terminal</a></li>
+            <li><a href="/terminal/" class="hover:text-emerald-400 transition-colors">Terminal Workspace ($)</a></li>
+            <li><a href="/cheat-sheet/" class="hover:text-emerald-400 transition-colors font-semibold text-emerald-400">Ultimate Linux Command Cheat Sheet ⚡</a></li>
+            <li><a href="/commands/" class="hover:text-emerald-400 transition-colors">Linux Commands Directory (50+)</a></li>
+            <li><a href="/tutorials/" class="hover:text-emerald-400 transition-colors">Interactive Tutorials Hub</a></li>
+            <li><a href="/challenges/" class="hover:text-emerald-400 transition-colors">Hands-on Scenario Challenges</a></li>
+            <li><a href="/faq/" class="hover:text-emerald-400 transition-colors">FAQ & Help Center</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-xl">
+          <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Trust & Legal Pages</h2>
+          <ul class="space-y-2 text-xs">
+            <li><a href="/about/" class="hover:text-emerald-400 transition-colors">About Us & Team</a></li>
+            <li><a href="/editorial-guidelines/" class="hover:text-emerald-400 transition-colors">Editorial Guidelines & Standards</a></li>
+            <li><a href="/disclaimer/" class="hover:text-emerald-400 transition-colors">Educational Simulator Disclaimer</a></li>
+            <li><a href="/contact/" class="hover:text-emerald-400 transition-colors">Contact & Support</a></li>
+            <li><a href="/privacy/" class="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/terms/" class="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/cookies/" class="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+          </ul>
+        </div>
       </div>
 
       <!-- Command Manual Pages -->
@@ -60,6 +73,19 @@ import { LOCALES } from '../i18n/translations';
               <li>
                 <a href={`/tutorials/${t.slug}/`} class="hover:text-emerald-400 transition-colors">
                   {t.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="space-y-3 p-5 bg-zinc-900/60 border border-zinc-800 rounded-xl">
+          <h2 class="font-bold text-emerald-400 font-mono text-sm uppercase tracking-wider">Scenario Challenges</h2>
+          <ul class="space-y-2 text-xs">
+            {CHALLENGES_LIST.map((c) => (
+              <li>
+                <a href={`/challenges/${c.slug}/`} class="hover:text-emerald-400 transition-colors">
+                  {c.title}
                 </a>
               </li>
             ))}

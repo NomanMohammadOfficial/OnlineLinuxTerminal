@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const faqCategories = [
+  {
+    category: "General & Platform Basics",
+    questions: [
+      {
+        q: "What is Online Linux Terminal?",
+        a: "Online Linux Terminal (onlinelinuxterminal.com) is a free, web-based Linux command-line learning environment and reference manual. It allows students, developers, and DevOps engineers to practice bash commands, test scripts, and complete interactive tutorials directly inside their web browser with zero installation."
+      },
+      {
+        q: "Is Online Linux Terminal completely free to use?",
+        a: "Yes, 100% free! You do not need to enter a credit card, create an account, or download any software. All 50+ command manuals, interactive tutorials, and scenario drills are publicly accessible."
+      },
+      {
+        q: "Do I need to install VirtualBox, WSL, or Docker to practice?",
+        a: "No. Everything runs directly inside your modern web browser using client-side JavaScript AST parsing and an in-memory/IndexedDB Virtual File System. It works seamlessly across Windows, macOS, Linux, ChromeOS, and mobile browsers."
+      },
+      {
+        q: "Where are my created files and session data stored?",
+        a: "All terminal session files, custom directories, and command history are stored locally on your device in your browser's IndexedDB storage. No private session files or commands are transmitted to external servers."
+      }
+    ]
+  },
+  {
+    category: "Technical Architecture & Features",
+    questions: [
+      {
+        q: "How does the client-side AST engine differ from traditional cloud terminals?",
+        a: "Traditional web terminals (like Webminal or shared SSH sandboxes) run on centralized remote cloud servers, causing network latency, SSH disconnects, and queue times. Online Linux Terminal parses and executes commands client-side with zero latency, complete privacy, and offline capabilities."
+      },
+      {
+        q: "Can I practice superuser (root) commands?",
+        a: "Yes. Our simulated environment supports root commands such as chmod, chown, systemctl, and apt install. You can test permission modifications and package installations in a completely safe, risk-free sandbox."
+      },
+      {
+        q: "Can I edit files using nano or vim?",
+        a: "Yes! Running nano or vim on any file opens an interactive in-browser code editor modal, allowing you to write shell scripts, modify configuration files, and save changes back into the Virtual File System."
+      },
+      {
+        q: "How do I reset the terminal back to its default clean state?",
+        a: "You can click the 'Reset' button in the terminal toolbar or execute the command 'clear' (or press Ctrl+L) to clear the screen, or reset the Virtual File System using the UI controls."
+      }
+    ]
+  },
+  {
+    category: "Learning, Certifications & Feedback",
+    questions: [
+      {
+        q: "Can I use Online Linux Terminal to prepare for Linux certifications?",
+        a: "Absolutely. Our platform covers core competencies for CompTIA Linux+, RHCSA (Red Hat Certified System Administrator), LFCS (Linux Foundation Certified System Administrator), and LPIC-1 exams, including file hierarchy navigation, text processing with grep/sed/awk, user permissions, and archiving with tar."
+      },
+      {
+        q: "How can I run examples from the documentation directly in the terminal?",
+        a: "Every command manual and cheat sheet item features a 'Run in Sandbox ⚡' button. Clicking it instantly launches the terminal preloaded with the command."
+      },
+      {
+        q: "How do I report a bug or suggest a new command?",
+        a: "You can reach our engineering team via our Contact page or open an issue on our official GitHub repository at github.com/NomanMohammadOfficial/OnlineLinuxTerminal."
+      }
+    ]
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqCategories.flatMap((cat) =>
+    cat.questions.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  )
+};
+---
+
+<BaseLayout
+  title="Frequently Asked Questions (FAQ) — Online Linux Terminal"
+  description="Frequently asked questions about Online Linux Terminal. Learn about client-side AST execution, IndexedDB privacy, supported commands, and certification practice."
+  keywords="online linux terminal faq, linux terminal help, free online linux terminal practice, browser terminal questions"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8 text-center sm:text-left">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Help Center & Knowledge Base</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Frequently Asked Questions
+      </h1>
+      <p class="text-sm text-zinc-400 leading-relaxed max-w-2xl">
+        Everything you need to know about using Online Linux Terminal, our browser simulation engine, data privacy, and learning tracks.
+      </p>
+    </div>
+
+    <!-- FAQ Categories & Accordions -->
+    <div class="space-y-10">
+      {faqCategories.map((cat) => (
+        <section class="space-y-4">
+          <h2 class="text-xl font-bold text-emerald-400 font-sans flex items-center space-x-2">
+            <span>{cat.category}</span>
+          </h2>
+
+          <div class="space-y-3">
+            {cat.questions.map((item) => (
+              <details class="group bg-zinc-900/60 border border-zinc-800 rounded-xl overflow-hidden transition-colors open:bg-zinc-900 open:border-emerald-800/60">
+                <summary class="p-4 sm:p-5 text-sm font-semibold text-zinc-200 cursor-pointer flex items-center justify-between select-none list-none group-hover:text-emerald-300">
+                  <span>{item.q}</span>
+                  <span class="ml-4 font-mono text-emerald-400 transition-transform duration-200 group-open:rotate-180">
+                    ▼
+                  </span>
+                </summary>
+                <div class="px-4 sm:px-5 pb-5 pt-1 text-xs sm:text-sm text-zinc-400 leading-relaxed border-t border-zinc-800/50 font-sans">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Quick Help Banner -->
+    <div class="p-6 bg-zinc-900/40 border border-zinc-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="space-y-1">
+        <h3 class="font-bold text-zinc-100 text-sm sm:text-base font-sans">Still have questions?</h3>
+        <p class="text-xs text-zinc-400">Our engineering and editorial team is here to assist you.</p>
+      </div>
+      <a
+        href="/contact/"
+        class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-xs transition-colors shrink-0 font-mono"
+      >
+        Contact Support →
+      </a>
+    </div>
+  </div>
+</BaseLayout>

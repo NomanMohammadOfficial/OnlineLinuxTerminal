@@ -1,0 +1,374 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const cheatSheetSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Ultimate Linux Command Cheat Sheet: 100+ Essential Commands & Syntax",
+  "description": "Comprehensive Linux command cheat sheet with syntax rules, option flags, octal permission calculator tables, grep regex patterns, and 1-click browser terminal sandboxing.",
+  "author": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
+
+const CHEAT_CATEGORIES = [
+  {
+    name: "1. Navigation & Directory Traversal",
+    desc: "Essential commands for moving through the Linux Filesystem Hierarchy.",
+    items: [
+      { cmd: "pwd", desc: "Print current working directory absolute path", example: "pwd" },
+      { cmd: "ls -la", desc: "List all files including hidden dotfiles in detailed format", example: "ls -la /var/log" },
+      { cmd: "cd ..", desc: "Navigate up one parent directory level", example: "cd .." },
+      { cmd: "cd ~", desc: "Jump directly to user home directory", example: "cd ~" },
+      { cmd: "tree -L 2", desc: "Display directory structure as a visual tree up to 2 levels", example: "tree -L 2" },
+      { cmd: "which <app>", desc: "Locate executable binary path in system PATH", example: "which bash" },
+    ]
+  },
+  {
+    name: "2. File & Directory Operations",
+    desc: "Creating, copying, moving, viewing, and deleting files and folders safely.",
+    items: [
+      { cmd: "touch <file>", desc: "Create empty file or update timestamp", example: "touch script.sh" },
+      { cmd: "mkdir -p <dir>", desc: "Create parent and sub-directories in a single command", example: "mkdir -p /home/user/projects/web" },
+      { cmd: "cp -r <src> <dest>", desc: "Copy directory recursively with all subfolders and contents", example: "cp -r /home/user/projects /tmp/backup" },
+      { cmd: "mv <old> <new>", desc: "Move or rename files and directories", example: "mv old_name.txt new_name.txt" },
+      { cmd: "rm -rf <dir>", desc: "Forcefully and recursively remove directory (use with extreme care)", example: "rm -rf /tmp/test_dir" },
+      { cmd: "cat <file>", desc: "Concatenate and print file contents to terminal stdout", example: "cat /var/log/syslog" },
+      { cmd: "head -n 20 <file>", desc: "Output first 20 lines of a file", example: "head -n 20 /var/log/syslog" },
+      { cmd: "tail -n 20 -f <file>", desc: "Output last 20 lines and follow live file growth", example: "tail -n 20 /var/log/auth.log" },
+      { cmd: "wc -l <file>", desc: "Count total number of lines in a file", example: "wc -l /var/log/syslog" },
+    ]
+  },
+  {
+    name: "3. Text Searching & Pattern Filtering",
+    desc: "High-performance text extraction, regex filtering, and stream processing.",
+    items: [
+      { cmd: "grep -i 'pattern' <file>", desc: "Case-insensitive search for string pattern in file", example: "grep -i 'error' /var/log/syslog" },
+      { cmd: "grep -r -n 'pattern' .", desc: "Recursively search all files in current directory with line numbers", example: "grep -r -n 'TODO' ." },
+      { cmd: "grep -v 'pattern' <file>", desc: "Invert match to display lines that do NOT contain pattern", example: "grep -v '^#' /etc/hosts" },
+      { cmd: "find . -name '*.log'", desc: "Recursively locate files by wildcard filename pattern", example: "find /var/log -name '*.log'" },
+      { cmd: "find . -type f -size +10M", desc: "Find all regular files larger than 10 Megabytes", example: "find . -type f -size +10M" },
+      { cmd: "sed 's/old/new/g' <file>", desc: "Stream editor search and replace all instances of string", example: "sed 's/localhost/127.0.0.1/g' /etc/hosts" },
+      { cmd: "awk '{print $1, $3}' <file>", desc: "Extract and print specific space-delimited columns", example: "awk '{print $1, $3}' /var/log/auth.log" },
+    ]
+  },
+  {
+    name: "4. Permissions & Ownership Management",
+    desc: "Controlling POSIX file security, read/write/execute bits, and user ownership.",
+    items: [
+      { cmd: "chmod 755 <script>", desc: "Owner: Read/Write/Execute (7); Group & Others: Read/Execute (5)", example: "chmod 755 deploy.sh" },
+      { cmd: "chmod 644 <file>", desc: "Owner: Read/Write (6); Group & Others: Read-Only (4) - Standard file mode", example: "chmod 644 config.txt" },
+      { cmd: "chmod 600 <key>", desc: "Owner: Read/Write (6); Others: No access (0) - Required for SSH private keys", example: "chmod 600 id_rsa" },
+      { cmd: "chmod +x <file>", desc: "Add executable permission to current user", example: "chmod +x run.sh" },
+      { cmd: "chown user:group <file>", desc: "Change owner user and group of file or directory", example: "chown user:user deploy.sh" },
+      { cmd: "chown -R user:group <dir>", desc: "Recursively update ownership across entire directory tree", example: "chown -R user:user /home/user/projects" },
+    ]
+  },
+  {
+    name: "5. System Monitoring, Memory & Processes",
+    desc: "Inspecting live CPU utilization, memory allocations, running processes, and terminating jobs.",
+    items: [
+      { cmd: "top", desc: "Interactive real-time process manager and system metrics", example: "top" },
+      { cmd: "htop", desc: "Enhanced colorized process viewer with scrollable thread tree", example: "htop" },
+      { cmd: "ps aux", desc: "Snapshot of all active processes running on the operating system", example: "ps aux" },
+      { cmd: "ps aux | grep nginx", desc: "Find specific running process ID by name", example: "ps aux | grep bash" },
+      { cmd: "kill -9 <PID>", desc: "Forcefully terminate process by its Process ID", example: "kill -9 1234" },
+      { cmd: "free -h", desc: "Display total, used, and available RAM and Swap in human-readable GB/MB", example: "free -h" },
+      { cmd: "uname -a", desc: "Print Linux kernel version, architecture, and hostname", example: "uname -a" },
+      { cmd: "uptime", desc: "Show how long the system has been running and load averages", example: "uptime" },
+    ]
+  },
+  {
+    name: "6. Disk Space & Storage Inspection",
+    desc: "Analyzing filesystem capacity, partition usage, and directory size footprints.",
+    items: [
+      { cmd: "df -h", desc: "Show disk space usage of all mounted filesystems in human-readable format", example: "df -h" },
+      { cmd: "du -sh *", desc: "Summarize total disk size of each folder in current working directory", example: "du -sh *" },
+      { cmd: "du -h --max-depth=1 /var", desc: "Inspect directory sizes exactly 1 level deep", example: "du -h --max-depth=1 /var" },
+    ]
+  },
+  {
+    name: "7. Networking, Connectivity & Downloads",
+    desc: "Transferring data over HTTP/HTTPS, testing latency, and checking open sockets.",
+    items: [
+      { cmd: "curl -I <url>", desc: "Fetch only HTTP response headers without body", example: "curl -I https://onlinelinuxterminal.com" },
+      { cmd: "curl -O <url>", desc: "Download remote file and save under its original filename", example: "curl -O https://example.com/file.tar.gz" },
+      { cmd: "wget <url>", desc: "Download file from web server in background", example: "wget https://example.com/data.zip" },
+      { cmd: "ping -c 4 <host>", desc: "Send 4 ICMP ECHO_REQUEST packets to verify network reachability", example: "ping -c 4 8.8.8.8" },
+      { cmd: "netstat -tuln", desc: "List all listening TCP and UDP network ports without resolving names", example: "netstat -tuln" },
+    ]
+  },
+  {
+    name: "8. Archiving, Tarballs & Compression",
+    desc: "Bundling multiple files into tarballs and compressing archives with gzip.",
+    items: [
+      { cmd: "tar -czvf archive.tar.gz /path", desc: "Create gzipped tarball archive of target directory", example: "tar -czvf backup.tar.gz /home/user/projects" },
+      { cmd: "tar -xzvf archive.tar.gz", desc: "Extract gzipped tarball archive into current directory", example: "tar -xzvf backup.tar.gz" },
+      { cmd: "tar -tvf archive.tar.gz", desc: "List files inside tar archive without extracting", example: "tar -tvf backup.tar.gz" },
+      { cmd: "gzip <file>", desc: "Compress file into .gz format and replace original", example: "gzip server.log" },
+      { cmd: "gunzip <file.gz>", desc: "Decompress .gz file back to original uncompressed file", example: "gunzip server.log.gz" },
+    ]
+  }
+];
+---
+
+<BaseLayout
+  title="Ultimate Linux Command Cheat Sheet — 100+ Commands & Syntax Reference"
+  description="The ultimate Linux command cheat sheet. Quick syntax reference for 100+ commands, chmod octal calculator table, grep regex patterns, and 1-click interactive sandbox."
+  keywords="linux command cheat sheet, linux commands reference, chmod cheat sheet, grep cheat sheet, bash commands list, linux commands for beginners"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(cheatSheetSchema)} />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+    <!-- Header Hero -->
+    <div class="text-center max-w-4xl mx-auto space-y-4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Developer & Sysadmin Reference Guide</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-sans tracking-tight">
+        The Ultimate <span class="text-emerald-400">Linux Command</span> Cheat Sheet
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl mx-auto">
+        A curated, high-density reference guide covering 100+ essential Linux commands, chmod octal permission matrices, grep regex patterns, and bash shortcuts. Click <strong>"Run in Sandbox ⚡"</strong> to test any command instantly in browser.
+      </p>
+    </div>
+
+    <!-- Quick Navigation Anchor Strip -->
+    <div class="p-4 bg-zinc-900/80 border border-zinc-800 rounded-2xl flex flex-wrap items-center justify-center gap-2 text-xs font-mono">
+      <span class="text-zinc-500 uppercase tracking-wider text-[11px] mr-2">Jump to Section:</span>
+      <a href="#cat-0" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Navigation</a>
+      <a href="#cat-1" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">File Operations</a>
+      <a href="#cat-2" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Grep & Text</a>
+      <a href="#cat-3" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Permissions & Chmod</a>
+      <a href="#cat-4" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">System & Processes</a>
+      <a href="#cat-5" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Disk Usage</a>
+      <a href="#cat-6" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Networking</a>
+      <a href="#cat-7" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Tar & Compression</a>
+      <a href="#permissions-matrix" class="px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-800 text-emerald-400 hover:bg-emerald-900 transition-colors font-bold">Chmod Octal Matrix</a>
+      <a href="#bash-shortcuts" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">Bash Shortcuts</a>
+      <a href="#fhs-hierarchy" class="px-2.5 py-1 rounded bg-zinc-950 border border-zinc-800 hover:text-emerald-400 transition-colors">FHS Map</a>
+    </div>
+
+    <!-- Categorized Command Reference Sections -->
+    <div class="space-y-12">
+      {CHEAT_CATEGORIES.map((cat, catIdx) => (
+        <section id={`cat-${catIdx}`} class="space-y-4 pt-4">
+          <div class="border-b border-zinc-800 pb-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+              <span class="text-emerald-400 font-mono">#</span>
+              <span>{cat.name}</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-zinc-400 mt-1">{cat.desc}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {cat.items.map((item) => (
+              <div class="p-4 sm:p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl flex flex-col justify-between space-y-3 hover:border-zinc-700 transition-colors">
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <span class="font-mono text-emerald-300 font-bold text-sm bg-zinc-950 px-2.5 py-1 rounded-lg border border-zinc-800">
+                      {item.cmd}
+                    </span>
+                    <button
+                      onclick={`navigator.clipboard.writeText('${item.example.replace(/'/g, "\\'")}'); this.innerText = 'Copied!'; setTimeout(() => this.innerText = 'Copy', 2000)`}
+                      class="px-2 py-0.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-[11px] transition-colors cursor-pointer font-sans"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <p class="text-xs text-zinc-300 leading-relaxed font-sans pt-1">{item.desc}</p>
+                </div>
+
+                <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono">
+                  <span class="text-zinc-500 text-[11px] truncate max-w-[200px]">$ {item.example}</span>
+                  <a
+                    href={`/terminal/?cmd=${encodeURIComponent(item.example)}`}
+                    class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-zinc-950 font-bold rounded-lg border border-emerald-800/60 transition-colors flex items-center space-x-1 shrink-0 font-sans text-[11px]"
+                  >
+                    <span>Run in Sandbox ⚡</span>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Section: Linux Permissions & Chmod Octal Calculator Matrix -->
+    <section id="permissions-matrix" class="p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-3 py-1 rounded-full">
+          <span>Security & Permissions Matrix</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          Linux File Permissions & Chmod Octal Calculator
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+          Linux permissions are divided into three user classes: <strong>User (Owner)</strong>, <strong>Group</strong>, and <strong>Others</strong>. Each class receives permissions calculated by summing the binary octal values: <strong>Read (4)</strong>, <strong>Write (2)</strong>, and <strong>Execute (1)</strong>.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto border border-zinc-800 rounded-2xl shadow-lg">
+        <table class="w-full text-left text-xs sm:text-sm font-mono bg-zinc-950">
+          <thead class="bg-zinc-900 text-zinc-300 border-b border-zinc-800">
+            <tr>
+              <th class="p-3.5 sm:p-4">Octal Mode</th>
+              <th class="p-3.5 sm:p-4">Symbolic Format</th>
+              <th class="p-3.5 sm:p-4">Owner (User)</th>
+              <th class="p-3.5 sm:p-4">Group</th>
+              <th class="p-3.5 sm:p-4">Others (World)</th>
+              <th class="p-3.5 sm:p-4">Common Use Case</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-800/80 text-zinc-300">
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">777</td>
+              <td class="p-3.5 sm:p-4 text-amber-400">rwxrwxrwx</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4 font-sans text-xs text-red-400">Full Public Access (Security Hazard in Production)</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">755</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rwxr-xr-x</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Exec</td>
+              <td class="p-3.5 sm:p-4">Read/Exec</td>
+              <td class="p-3.5 sm:p-4 font-sans text-xs">Standard Executable Scripts & Public Web Directories</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">644</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rw-r--r--</td>
+              <td class="p-3.5 sm:p-4">Read/Write</td>
+              <td class="p-3.5 sm:p-4">Read-Only</td>
+              <td class="p-3.5 sm:p-4">Read-Only</td>
+              <td class="p-3.5 sm:p-4 font-sans text-xs">Standard File Permission (HTML, CSS, text documents)</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">600</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rw-------</td>
+              <td class="p-3.5 sm:p-4">Read/Write</td>
+              <td class="p-3.5 sm:p-4">None</td>
+              <td class="p-3.5 sm:p-4">None</td>
+              <td class="p-3.5 sm:p-4 font-sans text-xs">Sensitive Files (SSH private keys, password files)</td>
+            </tr>
+            <tr class="hover:bg-zinc-900/50">
+              <td class="p-3.5 sm:p-4 font-bold text-emerald-400">700</td>
+              <td class="p-3.5 sm:p-4 text-emerald-300">rwx------</td>
+              <td class="p-3.5 sm:p-4">Read/Write/Exec</td>
+              <td class="p-3.5 sm:p-4">None</td>
+              <td class="p-3.5 sm:p-4">None</td>
+              <td class="p-3.5 sm:p-4 font-sans text-xs">Private Directories (e.g. <code>~/.ssh/</code> folder)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section: Bash Keyboard Shortcuts -->
+    <section id="bash-shortcuts" class="p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-6">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Essential Bash Shell Keyboard Shortcuts
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+          Master terminal navigation and speed up your productivity using command-line hotkeys.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Ctrl + C</span>
+          <p class="text-zinc-400 font-sans">Send SIGINT to terminate the currently running foreground process.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Ctrl + L</span>
+          <p class="text-zinc-400 font-sans">Clear the terminal screen buffer (equivalent to running <code>clear</code>).</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Ctrl + R</span>
+          <p class="text-zinc-400 font-sans">Reverse-i-search history buffer to search previously executed commands.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Ctrl + A / Ctrl + E</span>
+          <p class="text-zinc-400 font-sans">Jump cursor directly to beginning (A) or end (E) of the current command line.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Ctrl + U / Ctrl + K</span>
+          <p class="text-zinc-400 font-sans">Cut text from cursor to the start (U) or from cursor to the end (K) of line.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">Tab (or Tab × 2)</span>
+          <p class="text-zinc-400 font-sans">Autocomplete command, argument, or directory path name automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Linux Filesystem Hierarchy (FHS) Reference -->
+    <section id="fhs-hierarchy" class="p-6 sm:p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl space-y-6">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-bold text-zinc-100 font-sans">
+          Linux Filesystem Hierarchy Standard (FHS) Quick Map
+        </h2>
+        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+          Understanding what resides inside root system directories is crucial for systems administration and troubleshooting.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/etc</span>
+          <p class="text-zinc-400 font-sans">System-wide configuration files (e.g. <code>/etc/hosts</code>, <code>/etc/passwd</code>, <code>/etc/ssh</code>).</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/var/log</span>
+          <p class="text-zinc-400 font-sans">System and application log files (e.g. <code>/var/log/syslog</code>, <code>/var/log/auth.log</code>).</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/home</span>
+          <p class="text-zinc-400 font-sans">User personal home directories containing documents, project files, and personal configs.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/tmp</span>
+          <p class="text-zinc-400 font-sans">Temporary files created by system and applications, cleared automatically on reboot.</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/bin & /usr/bin</span>
+          <p class="text-zinc-400 font-sans">Essential user command binaries (e.g. <code>ls</code>, <code>grep</code>, <code>cat</code>, <code>curl</code>).</p>
+        </div>
+        <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
+          <span class="text-emerald-400 font-bold">/opt</span>
+          <p class="text-zinc-400 font-sans">Optional third-party standalone software packages and custom server installations.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Bar -->
+    <div class="p-8 bg-gradient-to-r from-emerald-950/60 to-zinc-900 border border-emerald-800/60 rounded-3xl text-center space-y-4">
+      <h3 class="text-2xl font-bold text-zinc-100 font-sans">Ready to Put These Commands to Practice?</h3>
+      <p class="text-sm text-zinc-300 max-w-xl mx-auto">
+        Launch our zero-lag browser terminal sandbox and test any of the 100+ commands above with zero installation.
+      </p>
+      <div class="pt-2">
+        <a
+          href="/terminal/"
+          class="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl text-sm transition-all shadow-lg shadow-emerald-950/50 font-mono"
+        >
+          <span>$</span>
+          <span>Open Full Interactive Terminal Workspace</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { ChallengeRunner } from '../../../components/terminal/ChallengeRunner';
-import { AdSlot } from '../../../components/ads/AdSlot';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
 
 export function getStaticPaths() {
@@ -30,6 +29,30 @@ export function getStaticPaths() {
       points: '500 pts',
       mission: 'Inspect /var/log/syslog and /var/log/auth.log to extract all occurrences of IP addresses matching 192.168 or 10.0.',
       hint: 'Use "grep -i -n 192.168 /var/log/auth.log".',
+    },
+    {
+      slug: 'cleanup-temp-logs',
+      title: 'Challenge 4: Clean Up Temporary Workspace Logs',
+      difficulty: 'Easy',
+      points: '200 pts',
+      mission: 'Inspect and clean up temporary files in /tmp directory.',
+      hint: 'Run "ls /tmp" and test file maintenance commands like "touch /tmp/cleaned.log".',
+    },
+    {
+      slug: 'diagnose-high-cpu',
+      title: 'Challenge 5: Diagnose System Resource Metrics',
+      difficulty: 'Medium',
+      points: '300 pts',
+      mission: 'Inspect system resource health using ps aux and top.',
+      hint: 'Run "ps aux" or "top" or "free -h".',
+    },
+    {
+      slug: 'create-system-backup',
+      title: 'Challenge 6: Create Compressed Backup Tarball',
+      difficulty: 'Hard',
+      points: '400 pts',
+      mission: 'Bundle directory files into a compressed tarball archive.',
+      hint: 'Run "tar -czvf backup.tar.gz /home/user/projects".',
     },
   ];
 
@@ -68,9 +91,6 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
       <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{data.title}</h1>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Challenge Interactive Runner Island -->
     <ChallengeRunner
       client:load
@@ -80,8 +100,5 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
       mission={data.mission}
       hint={data.hint}
     />
-
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
   </div>
 </BaseLayout>

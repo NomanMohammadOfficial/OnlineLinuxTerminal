@@ -30,21 +30,35 @@ export const ChallengeRunner: React.FC<ChallengeRunnerProps> = ({
     let msg = '';
 
     if (scenarioSlug === 'find-hidden-flag') {
-      const osRelease = getNodeAtPath(currentVFS, '/etc/os-release');
-      if (lastCmd && (lastCmd.includes('os-release') || lastCmd.includes('cat /etc'))) {
+      if (lastCmd && (lastCmd.includes('os-release') || lastCmd.includes('cat /etc') || lastCmd.includes('hostname'))) {
         solved = true;
         msg = 'Congratulations! You located the system configuration flag!';
       }
     } else if (scenarioSlug === 'fix-log-permissions') {
       const authLog = getNodeAtPath(currentVFS, '/var/log/auth.log');
-      if (authLog && (authLog.permissions.includes('rwx') || authLog.permissions.includes('r-x') || authLog.permissions === 'rwxr-xr-x')) {
+      if (authLog && (authLog.permissions.includes('rwx') || authLog.permissions.includes('r-x') || authLog.permissions === 'rwxr-xr-x' || authLog.permissions.includes('755'))) {
         solved = true;
         msg = 'Great job! You successfully modified file permissions on /var/log/auth.log!';
       }
     } else if (scenarioSlug === 'extract-ip-grep') {
-      if (lastCmd && lastCmd.includes('grep') && (lastCmd.includes('192.168') || lastCmd.includes('10.0'))) {
+      if (lastCmd && lastCmd.includes('grep') && (lastCmd.includes('192.168') || lastCmd.includes('10.0') || lastCmd.includes('auth.log') || lastCmd.includes('syslog'))) {
         solved = true;
-        msg = 'Awesome! You successfully filtered IP addresses using grep!';
+        msg = 'Awesome! You successfully filtered log records using grep!';
+      }
+    } else if (scenarioSlug === 'cleanup-temp-logs') {
+      if (lastCmd && (lastCmd.includes('rm') || lastCmd.includes('mkdir /tmp') || lastCmd.includes('touch /tmp'))) {
+        solved = true;
+        msg = 'Success! You executed the directory maintenance task!';
+      }
+    } else if (scenarioSlug === 'diagnose-high-cpu') {
+      if (lastCmd && (lastCmd.includes('ps') || lastCmd.includes('top') || lastCmd.includes('htop') || lastCmd.includes('free'))) {
+        solved = true;
+        msg = 'Well done! You successfully diagnosed system resource metrics!';
+      }
+    } else if (scenarioSlug === 'create-system-backup') {
+      if (lastCmd && (lastCmd.includes('tar') || lastCmd.includes('gzip') || lastCmd.includes('backup'))) {
+        solved = true;
+        msg = 'Outstanding! You created a compressed backup archive!';
       }
     }
 
@@ -57,7 +71,7 @@ export const ChallengeRunner: React.FC<ChallengeRunnerProps> = ({
         origin: { y: 0.6 },
       });
     } else {
-      setStatusMessage('Requirement not yet satisfied. Keep trying!');
+      setStatusMessage('Requirement not yet satisfied. Try executing the requested command in the terminal!');
     }
   };
 
@@ -84,7 +98,7 @@ export const ChallengeRunner: React.FC<ChallengeRunnerProps> = ({
           </div>
 
           <h2 className="font-bold text-base text-emerald-400">Mission Briefing</h2>
-          <p class="text-xs text-zinc-300 leading-relaxed">{mission}</p>
+          <p className="text-xs text-zinc-300 leading-relaxed">{mission}</p>
 
           <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-lg text-xs space-y-1">
             <div className="font-semibold text-amber-400">Hint:</div>
@@ -106,7 +120,7 @@ export const ChallengeRunner: React.FC<ChallengeRunnerProps> = ({
 
         <button
           onClick={() => checkSolution()}
-          className="w-full mt-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold rounded-lg text-xs transition-colors shadow-sm"
+          className="w-full mt-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold rounded-lg text-xs transition-colors shadow-sm cursor-pointer font-mono"
         >
           Check Solution Now
         </button>

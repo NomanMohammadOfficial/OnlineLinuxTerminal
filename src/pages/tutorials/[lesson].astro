@@ -1,47 +1,109 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
-import { AdSlot } from '../../components/ads/AdSlot';
 
 export function getStaticPaths() {
   const lessons = [
     {
       slug: 'basics',
-      title: 'Linux Navigation Basics',
+      title: 'Linux Navigation Basics & Traversal',
       level: 'Beginner',
+      overview: 'Mastering the Linux Filesystem Hierarchy starts with knowing where you are and how to move between directories. In this lesson, you will practice printing your current path, listing hidden files, and inspecting file contents.',
       steps: [
-        { title: 'Step 1: Check Current Directory', instruction: 'Run `pwd` to print working directory path.' },
-        { title: 'Step 2: List Files in Detail', instruction: 'Run `ls -l` to inspect file permissions and size.' },
-        { title: 'Step 3: Read Welcome Notes', instruction: 'Run `cat welcome.txt` to read content.' },
-      ]
+        { title: 'Step 1: Check Current Directory Path', instruction: 'Run `pwd` (print working directory) to verify your current location in the filesystem hierarchy.' },
+        { title: 'Step 2: List Directory Contents in Long Format', instruction: 'Run `ls -la` to inspect all files, including hidden dotfiles, permissions, owner, and sizes.' },
+        { title: 'Step 3: Read System Welcome Message', instruction: 'Run `cat welcome.txt` to read the initial setup guide in your home directory.' },
+        { title: 'Step 4: Navigate into Projects Directory', instruction: 'Run `cd projects` and run `ls` to see what files exist inside the projects folder.' },
+      ],
+      proTip: 'Use `cd ..` to navigate up one level in the hierarchy, or `cd ~` to return to your home directory from anywhere.'
     },
     {
       slug: 'file-management',
       title: 'File & Directory Manipulation',
       level: 'Beginner',
+      overview: 'Creating, copying, renaming, and deleting files and directories are foundational skills for any Linux user. Learn how to manage the Virtual File System cleanly.',
       steps: [
-        { title: 'Step 1: Create a Folder', instruction: 'Run `mkdir lab` to create a directory.' },
-        { title: 'Step 2: Create a File', instruction: 'Run `echo "hello" > lab/test.txt`.' },
-        { title: 'Step 3: Verify Creation', instruction: 'Run `ls lab` to confirm file presence.' },
-      ]
+        { title: 'Step 1: Create a Dedicated Lab Directory', instruction: 'Run `mkdir -p lab/configs` to create a parent and subfolder in one command.' },
+        { title: 'Step 2: Create a Shell Script File', instruction: 'Run `echo "echo hello linux" > lab/test.sh` to create and write content to a file.' },
+        { title: 'Step 3: Verify Creation & Inspect Content', instruction: 'Run `cat lab/test.sh` to confirm the script content was written properly.' },
+        { title: 'Step 4: Copy the File to Backup', instruction: 'Run `cp lab/test.sh lab/configs/test.bak` and check with `ls -l lab/configs`.' },
+      ],
+      proTip: 'Always use `mkdir -p` when creating nested directory structures to avoid "No such file or directory" errors.'
     },
     {
       slug: 'grep-text-search',
       title: 'Text Searching & Regex with Grep',
       level: 'Intermediate',
+      overview: 'Grep (Global Regular Expression Print) is the ultimate tool for log analysis, debugging errors, and extracting critical strings from large datasets.',
       steps: [
-        { title: 'Step 1: Simple Pattern Match', instruction: 'Run `grep error /var/log/syslog`.' },
-        { title: 'Step 2: Line Numbering', instruction: 'Run `grep -n -i "accepted" /var/log/auth.log`.' },
-      ]
+        { title: 'Step 1: Search for Error Messages in Syslog', instruction: 'Run `grep -i "error" /var/log/syslog` to perform a case-insensitive search for system errors.' },
+        { title: 'Step 2: Show Line Numbers with Matches', instruction: 'Run `grep -n -i "accepted" /var/log/auth.log` to find successful authentication events with exact line numbers.' },
+        { title: 'Step 3: Count Total Matching Lines', instruction: 'Run `grep -c "session" /var/log/auth.log` to return the total number of matched lines.' },
+        { title: 'Step 4: Invert Match to Exclude Comments', instruction: 'Run `grep -v "^#" /etc/hosts` to display only active non-comment configuration lines.' },
+      ],
+      proTip: 'Combine `-i` (case-insensitive) and `-n` (line numbers) when debugging production log files for rapid troubleshooting.'
     },
     {
       slug: 'permissions',
-      title: 'Linux Permissions & Chmod',
+      title: 'Linux Permissions & Chmod Security',
       level: 'Intermediate',
+      overview: 'Linux protects files using a 3-tier permission model (User, Group, Others) with Read (4), Write (2), and Execute (1) bits. Understand octal modes like 755 and 644.',
       steps: [
-        { title: 'Step 1: Inspect Permissions', instruction: 'Run `ls -l /var/log/auth.log`.' },
-        { title: 'Step 2: Update Mode Bits', instruction: 'Run `chmod 755 /home/user/projects/demo.sh`.' },
-      ]
+        { title: 'Step 1: Inspect Current File Permissions', instruction: 'Run `ls -l /var/log/auth.log` and note the permission string (e.g., `-rw-r--r--`).' },
+        { title: 'Step 2: Grant Executable Permissions to Script', instruction: 'Run `chmod 755 /home/user/projects/demo.sh` to give owner full access and others read/execute.' },
+        { title: 'Step 3: Restrict Sensitive Private Keys', instruction: 'Run `chmod 600 welcome.txt` to restrict read/write access strictly to the owner.' },
+        { title: 'Step 4: Verify Updated Permission Bits', instruction: 'Run `ls -l welcome.txt` to confirm the permissions now display as `-rw-------`.' },
+      ],
+      proTip: 'Avoid using `chmod 777` in production servers as it grants world-writable permissions, introducing severe security vulnerabilities.'
+    },
+    {
+      slug: 'pipes-redirection',
+      title: 'I/O Redirection & Command Pipelines',
+      level: 'Intermediate',
+      overview: 'The true power of the Unix philosophy is combining simple modular programs using pipes (`|`) and redirecting data streams with `>`, `>>`, and `2>/dev/null`.',
+      steps: [
+        { title: 'Step 1: Pipe Output into Word Count', instruction: 'Run `ls -la /var/log | wc -l` to count how many files exist in the system log directory.' },
+        { title: 'Step 2: Redirect Output to a Log File', instruction: 'Run `date > timestamp.txt` to capture the current system date and save it to a file.' },
+        { title: 'Step 3: Append Content without Overwriting', instruction: 'Run `uname -a >> timestamp.txt` using the `>>` operator to append kernel details.' },
+        { title: 'Step 4: Inspect Combined Output Stream', instruction: 'Run `cat timestamp.txt` to verify both the date and system details exist.' },
+      ],
+      proTip: '`>` overwrites the destination file, while `>>` appends to the end of the file safely.'
+    },
+    {
+      slug: 'processes-top-kill',
+      title: 'Process Management & System Monitoring',
+      level: 'Intermediate',
+      overview: 'Learn how Linux manages execution threads, background jobs, process identifiers (PIDs), and resource consumption using `ps`, `top`, and `kill`.',
+      steps: [
+        { title: 'Step 1: View Snapshot of Running Processes', instruction: 'Run `ps aux` to list all running system processes with user, PID, CPU, and memory metrics.' },
+        { title: 'Step 2: Launch Real-Time Monitor', instruction: 'Run `top` to view live CPU load averages and task states.' },
+        { title: 'Step 3: Inspect Memory Usage', instruction: 'Run `free -h` to see total, used, and available RAM in human-readable megabytes and gigabytes.' },
+      ],
+      proTip: 'Use `ps aux | grep <process_name>` to quickly identify the PID of a specific background service.'
+    },
+    {
+      slug: 'tar-compression',
+      title: 'Archiving & Compression with Tar & Gzip',
+      level: 'Intermediate',
+      overview: 'Learn how systems administrators create backups, compress logs into tarballs, and unpack software releases using `tar` and `gzip`.',
+      steps: [
+        { title: 'Step 1: Create a Compressed Tarball Archive', instruction: 'Run `tar -czvf projects_backup.tar.gz /home/user/projects` to bundle the projects folder.' },
+        { title: 'Step 2: Inspect Archive Contents without Extracting', instruction: 'Run `tar -tvf projects_backup.tar.gz` to verify the list of packaged files.' },
+        { title: 'Step 3: Decompress Archive into Target Folder', instruction: 'Run `tar -xzvf projects_backup.tar.gz` to extract the archived files.' },
+      ],
+      proTip: 'Remember the mnemonic for creating archives: `-czvf` (Create, Gzip, Verbose, File), and extracting: `-xzvf` (eXtract, Gzip, Verbose, File).'
+    },
+    {
+      slug: 'network-diagnostics',
+      title: 'Network Diagnostics with Curl & Ping',
+      level: 'Advanced',
+      overview: 'Diagnose network latency, verify HTTP status codes, and test remote API endpoints using standard Linux networking utilities.',
+      steps: [
+        { title: 'Step 1: Test Server Latency with Ping', instruction: 'Run `ping -c 4 8.8.8.8` to send 4 ICMP packets and measure round-trip latency.' },
+        { title: 'Step 2: Inspect HTTP Response Headers', instruction: 'Run `curl -I https://onlinelinuxterminal.com` to inspect web server response headers and status codes.' },
+        { title: 'Step 3: Download Remote Resource', instruction: 'Run `curl -s https://api.github.com` to test API endpoint JSON delivery in the shell.' },
+      ],
+      proTip: 'Use `curl -I` when troubleshooting CDN cache status and HTTP redirect headers without downloading massive web pages.'
     }
   ];
 
@@ -57,7 +119,7 @@ const howToSchema = {
   "@context": "https://schema.org",
   "@type": "HowTo",
   "name": lessonData.title,
-  "description": `Interactive Linux tutorial lesson on ${lessonData.title}. Learn step-by-step bash commands online.`,
+  "description": `Interactive Linux tutorial lesson on ${lessonData.title}. Learn step-by-step bash commands online in browser.`,
   "step": lessonData.steps.map((s, idx) => ({
     "@type": "HowToStep",
     "position": idx + 1,
@@ -70,12 +132,13 @@ const howToSchema = {
 <BaseLayout
   title={`${lessonData.title} — Free Online Linux Tutorial`}
   description={`Step-by-step interactive tutorial: ${lessonData.title}. Practice bash commands live in browser with free online linux terminal.`}
-  keywords={`${lessonData.title} linux tutorial, online linux terminal practice free, free online linux terminal practice, online linux terminal simulator`}
+  keywords={`${lessonData.title} linux tutorial, online linux terminal practice free, free online linux terminal practice, online linux terminal simulator, interactive bash tutorial`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
 
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-    <div class="space-y-2">
+    <!-- Header Breadcrumb & Title -->
+    <div class="space-y-3">
       <div class="flex items-center space-x-3">
         <a href="/tutorials/" class="text-xs font-mono text-emerald-400 hover:underline">← All Tutorials</a>
         <span class="text-zinc-600">•</span>
@@ -83,32 +146,63 @@ const howToSchema = {
           {lessonData.level}
         </span>
       </div>
-      <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{lessonData.title}</h1>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans tracking-tight">
+        {lessonData.title}
+      </h1>
+      <p class="text-sm text-zinc-400 leading-relaxed max-w-3xl">
+        {lessonData.overview}
+      </p>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
-    <!-- Workspace Split: Instructions & Terminal -->
+    <!-- Workspace Split: Objectives & Interactive Terminal -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-1 space-y-4 bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-        <h2 class="font-bold text-base text-emerald-400">Lesson Objectives</h2>
+      <!-- Lesson Objectives Sidebar -->
+      <div class="lg:col-span-1 space-y-4 bg-zinc-900/70 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between">
         <div class="space-y-4">
-          {lessonData.steps.map((s) => (
-            <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-lg space-y-1 text-xs">
-              <div class="font-semibold text-zinc-200">{s.title}</div>
-              <p class="text-zinc-400 leading-relaxed">{s.instruction}</p>
-            </div>
-          ))}
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+            <h2 class="font-bold text-sm uppercase tracking-wider text-emerald-400 font-mono">Lesson Objectives</h2>
+            <span class="text-xs font-mono text-zinc-500">{lessonData.steps.length} Steps</span>
+          </div>
+
+          <div class="space-y-3">
+            {lessonData.steps.map((s, index) => (
+              <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1.5 text-xs">
+                <div class="font-bold text-zinc-200 flex items-center space-x-2">
+                  <span class="w-4 h-4 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center text-[10px] font-mono">
+                    {index + 1}
+                  </span>
+                  <span>{s.title}</span>
+                </div>
+                <p class="text-zinc-400 leading-relaxed font-sans">{s.instruction}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {lessonData.proTip && (
+          <div class="mt-4 p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl text-xs space-y-1">
+            <span class="font-bold text-emerald-400 font-mono">💡 Pro Tip:</span>
+            <p class="text-zinc-300 leading-relaxed font-sans">{lessonData.proTip}</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Live Terminal Workspace -->
+      <div class="lg:col-span-2">
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-1 shadow-2xl">
+          <TerminalRunner client:load className="h-[520px]" />
         </div>
       </div>
-
-      <div class="lg:col-span-2">
-        <TerminalRunner client:load className="h-[520px]" />
-      </div>
     </div>
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+    <!-- Bottom Navigation Buttons -->
+    <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-2xl flex items-center justify-between text-xs font-mono">
+      <a href="/tutorials/" class="text-zinc-400 hover:text-emerald-400 transition-colors">
+        ← Back to Tutorials Directory
+      </a>
+      <a href="/terminal/" class="text-emerald-400 hover:underline">
+        Launch Full Terminal Workspace ($) →
+      </a>
+    </div>
   </div>
 </BaseLayout>

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
-import { AdSlot } from '../../../components/ads/AdSlot';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
 
 export function getStaticPaths() {
@@ -13,8 +12,9 @@ export function getStaticPaths() {
       level: 'Beginner',
       steps: [
         { title: 'Step 1: Check Current Directory', instruction: 'Run `pwd` to print working directory path.' },
-        { title: 'Step 2: List Files in Detail', instruction: 'Run `ls -l` to inspect file permissions and size.' },
+        { title: 'Step 2: List Files in Detail', instruction: 'Run `ls -la` to inspect file permissions and size.' },
         { title: 'Step 3: Read Welcome Notes', instruction: 'Run `cat welcome.txt` to read content.' },
+        { title: 'Step 4: Navigate into Projects', instruction: 'Run `cd projects` and run `ls`.' },
       ]
     },
     {
@@ -22,9 +22,9 @@ export function getStaticPaths() {
       title: 'File & Directory Manipulation',
       level: 'Beginner',
       steps: [
-        { title: 'Step 1: Create a Folder', instruction: 'Run `mkdir lab` to create a directory.' },
-        { title: 'Step 2: Create a File', instruction: 'Run `echo "hello" > lab/test.txt`.' },
-        { title: 'Step 3: Verify Creation', instruction: 'Run `ls lab` to confirm file presence.' },
+        { title: 'Step 1: Create a Folder', instruction: 'Run `mkdir -p lab/configs` to create a directory.' },
+        { title: 'Step 2: Create a File', instruction: 'Run `echo "hello linux" > lab/test.sh`.' },
+        { title: 'Step 3: Verify Creation', instruction: 'Run `cat lab/test.sh` to confirm file presence.' },
       ]
     },
     {
@@ -32,8 +32,9 @@ export function getStaticPaths() {
       title: 'Text Searching & Regex with Grep',
       level: 'Intermediate',
       steps: [
-        { title: 'Step 1: Simple Pattern Match', instruction: 'Run `grep error /var/log/syslog`.' },
+        { title: 'Step 1: Simple Pattern Match', instruction: 'Run `grep -i "error" /var/log/syslog`.' },
         { title: 'Step 2: Line Numbering', instruction: 'Run `grep -n -i "accepted" /var/log/auth.log`.' },
+        { title: 'Step 3: Invert Filter', instruction: 'Run `grep -v "^#" /etc/hosts`.' },
       ]
     },
     {
@@ -43,6 +44,44 @@ export function getStaticPaths() {
       steps: [
         { title: 'Step 1: Inspect Permissions', instruction: 'Run `ls -l /var/log/auth.log`.' },
         { title: 'Step 2: Update Mode Bits', instruction: 'Run `chmod 755 /home/user/projects/demo.sh`.' },
+        { title: 'Step 3: Restrict File', instruction: 'Run `chmod 600 welcome.txt`.' },
+      ]
+    },
+    {
+      slug: 'pipes-redirection',
+      title: 'I/O Redirection & Command Pipelines',
+      level: 'Intermediate',
+      steps: [
+        { title: 'Step 1: Pipe into Word Count', instruction: 'Run `ls -la /var/log | wc -l`.' },
+        { title: 'Step 2: Redirect Date to File', instruction: 'Run `date > timestamp.txt`.' },
+        { title: 'Step 3: Append Content', instruction: 'Run `uname -a >> timestamp.txt`.' },
+      ]
+    },
+    {
+      slug: 'processes-top-kill',
+      title: 'Process Management & Monitoring',
+      level: 'Intermediate',
+      steps: [
+        { title: 'Step 1: Process Snapshot', instruction: 'Run `ps aux` to list active processes.' },
+        { title: 'Step 2: Check Memory Usage', instruction: 'Run `free -h` to see memory stats.' },
+      ]
+    },
+    {
+      slug: 'tar-compression',
+      title: 'Archiving & Compression with Tar',
+      level: 'Intermediate',
+      steps: [
+        { title: 'Step 1: Create Tarball', instruction: 'Run `tar -czvf projects_backup.tar.gz /home/user/projects`.' },
+        { title: 'Step 2: Test Extraction', instruction: 'Run `tar -tvf projects_backup.tar.gz`.' },
+      ]
+    },
+    {
+      slug: 'network-diagnostics',
+      title: 'Network Diagnostics with Curl',
+      level: 'Advanced',
+      steps: [
+        { title: 'Step 1: Latency Check', instruction: 'Run `ping -c 4 8.8.8.8`.' },
+        { title: 'Step 2: HTTP Headers', instruction: 'Run `curl -I https://onlinelinuxterminal.com`.' },
       ]
     }
   ];
@@ -81,14 +120,11 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
       <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{lessonData.title}</h1>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Workspace Split: Instructions & Terminal -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-1 space-y-4 bg-zinc-900 border border-zinc-800 rounded-xl p-5">
         <h2 class="font-bold text-base text-emerald-400">Lesson Objectives</h2>
-        <div class="space-y-4">
+        <div class="space-y-3">
           {lessonData.steps.map((s) => (
             <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-lg space-y-1 text-xs">
               <div class="font-semibold text-zinc-200">{s.title}</div>
@@ -102,8 +138,5 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
         <TerminalRunner client:load className="h-[520px]" />
       </div>
     </div>
-
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
   </div>
 </BaseLayout>

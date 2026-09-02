@@ -8,21 +8,42 @@ export const CHALLENGES_LIST = [
     title: 'Challenge 1: Find the Secret Flag File',
     difficulty: 'Easy',
     points: '100 pts',
-    desc: 'Locate a hidden configuration file inside the directory tree and output its flag code.',
+    desc: 'Locate a hidden system configuration file inside the /etc/ directory tree and output its configuration values.',
   },
   {
     slug: 'fix-log-permissions',
-    title: 'Challenge 2: Fix Log File Permissions',
+    title: 'Challenge 2: Fix Restricted Log File Permissions',
     difficulty: 'Medium',
     points: '250 pts',
-    desc: 'The auth log file has restricted permissions. Modify permissions so the user can inspect it.',
+    desc: 'The auth log file has restricted permissions. Update its permissions to 755 using chmod so processes can inspect it.',
   },
   {
     slug: 'extract-ip-grep',
     title: 'Challenge 3: Extract IP Addresses with Grep',
     difficulty: 'Hard',
     points: '500 pts',
-    desc: 'Parse system logs and extract failed SSH login IP addresses using grep regex.',
+    desc: 'Parse system authentication logs and extract failed login attempts matching IP address patterns using grep regex.',
+  },
+  {
+    slug: 'cleanup-temp-logs',
+    title: 'Challenge 4: Clean Up Temporary Workspace Logs',
+    difficulty: 'Easy',
+    points: '200 pts',
+    desc: 'The temporary /tmp filesystem needs maintenance. Safely inspect and clean up old diagnostic log files.',
+  },
+  {
+    slug: 'diagnose-high-cpu',
+    title: 'Challenge 5: Diagnose System Resource Metrics',
+    difficulty: 'Medium',
+    points: '300 pts',
+    desc: 'A simulated resource spike occurred. Use process monitoring tools like ps aux and top to identify active tasks.',
+  },
+  {
+    slug: 'create-system-backup',
+    title: 'Challenge 6: Create Compressed Backup Tarball',
+    difficulty: 'Hard',
+    points: '400 pts',
+    desc: 'Bundle the entire /home/user/projects directory into a compressed tarball named projects_backup.tar.gz.',
   },
 ];
 
@@ -30,7 +51,7 @@ const itemListSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   "name": "Hands-on Linux Scenario Challenges",
-  "description": "Practical Linux troubleshooting drills with automated solution verification.",
+  "description": "Practical Linux troubleshooting drills with automated solution verification and instant browser terminal feedback.",
   "itemListElement": CHALLENGES_LIST.map((c, idx) => ({
     "@type": "ListItem",
     "position": idx + 1,
@@ -47,30 +68,29 @@ const itemListSchema = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} />
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-    <div class="text-center max-w-3xl mx-auto space-y-3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <!-- Header Hero -->
+    <div class="text-center max-w-3xl mx-auto space-y-4">
       <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         <span>Hands-on Skill Drills</span>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-100 font-sans tracking-tight">
         Practical Linux Scenario Challenges
       </h1>
-      <p class="text-sm text-zinc-400 leading-relaxed">
-        Put your terminal knowledge to the test. Solve real-world Linux scenarios with automated validation.
+      <p class="text-sm sm:text-base text-zinc-400 leading-relaxed">
+        Put your terminal knowledge to the test. Solve real-world sysadmin scenarios with live automated solution validation and confetti celebrations.
       </p>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Challenges Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
       {CHALLENGES_LIST.map((c) => (
         <a
           href={`/challenges/${c.slug}/`}
           class="p-6 bg-zinc-900/60 border border-zinc-800 rounded-2xl hover:border-emerald-800/80 hover:bg-zinc-900 transition-all group flex flex-col justify-between space-y-4"
         >
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-mono px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
                 {c.difficulty}
@@ -92,23 +112,38 @@ const itemListSchema = {
     </div>
 
     <!-- 600+ Word SEO Content Section -->
-    <section class="max-w-4xl mx-auto p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800 rounded-2xl space-y-6 text-zinc-300">
-      <h2 class="text-2xl font-bold text-zinc-100 font-sans">
-        Why Practice Hands-on Linux Troubleshooting Drills?
-      </h2>
-      <p class="text-xs sm:text-sm leading-relaxed">
-        System administration and DevOps engineering require quick problem-solving under pressure. Participating in hands-on scenario drills with an <strong>online linux terminal for practice free</strong> builds real-world confidence.
-      </p>
-
-      <div class="space-y-4 text-xs sm:text-sm">
-        <h3 class="text-lg font-bold text-emerald-400">Automated Solution Verification</h3>
-        <p class="text-zinc-400 leading-relaxed">
-          Unlike static reading guides or older platforms like <strong>webminal online linux terminal practice</strong>, our challenge engine monitors your Virtual File System modifications in real time. When you successfully update permissions on <code>/var/log/auth.log</code> or discover hidden configuration flags, our engine validates your solution instantly with automated confetti feedback.
+    <section class="max-w-5xl mx-auto p-6 sm:p-10 bg-zinc-900/40 border border-zinc-800 rounded-3xl space-y-8 text-zinc-300">
+      <div class="space-y-3">
+        <h2 class="text-2xl sm:text-3xl font-bold text-zinc-100 font-sans">
+          Why Practice Hands-on Linux Troubleshooting Drills?
+        </h2>
+        <p class="text-xs sm:text-sm leading-relaxed text-zinc-400">
+          In real-world production engineering, systems administrators and DevOps engineers rarely execute commands in a vacuum. You are faced with real diagnostic scenarios: a restricted log file preventing service debugging, an overfilled <code>/tmp</code> partition, or suspicious authentication logs requiring rapid regex extraction.
         </p>
       </div>
-    </section>
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">Automated Verification</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Our sandbox monitors your Virtual File System modifications in real time, validating permission bits and command syntax automatically.
+          </p>
+        </div>
+
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">Real Sysadmin Scenarios</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Every drill mirrors real technical interview questions and certification lab problems encountered in RHCSA and CompTIA Linux+ exams.
+          </p>
+        </div>
+
+        <div class="p-5 bg-zinc-950/60 rounded-2xl border border-zinc-800/80 space-y-2">
+          <h3 class="font-bold text-emerald-400 text-sm">Instant Retries & Hints</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Stuck on a tricky syntax flag? Access contextual hints and reset your sandbox environment with one click.
+          </p>
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>

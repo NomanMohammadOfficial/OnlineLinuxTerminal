@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const disclaimerSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Educational Disclaimer — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/disclaimer/",
+  "description": "Educational simulator disclaimer, trademark notices, and liability statements for Online Linux Terminal (onlinelinuxterminal.com).",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
+---
+
+<BaseLayout
+  title="Educational & Legal Disclaimer — Online Linux Terminal"
+  description="Educational simulator disclaimer and trademark notices for Online Linux Terminal (onlinelinuxterminal.com). Understand sandbox simulation boundaries and safety guidelines."
+  keywords="online linux terminal disclaimer, linux simulator disclaimer, trademark notices, educational disclaimer linux"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(disclaimerSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Legal Disclaimers & Safety</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Educational & Legal Disclaimer
+      </h1>
+      <p class="text-xs text-zinc-400 font-mono">
+        Last Updated: September 2, 2026 • Effective Date: January 1, 2026
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
+      
+      <!-- 1. Educational Purpose -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">1.</span>
+          <span>Educational Simulation Purpose Only</span>
+        </h2>
+        <p>
+          All tools, terminal windows, command guides, tutorials, and scenario challenges on <strong>Online Linux Terminal</strong> (<code>onlinelinuxterminal.com</code>) are designed strictly for <strong>educational, instructional, training, and testing purposes</strong>.
+        </p>
+        <p>
+          The terminal interface provided on this website is an <em>in-browser AST (Abstract Syntax Tree) simulator</em> utilizing a client-side Virtual File System (VFS). While it emulates standard Linux command behaviors (including GNU coreutils syntax, file operations, permissions, and text filters), it does not connect to a live physical Linux kernel instance.
+        </p>
+      </section>
+
+      <!-- 2. No Liability for Real-World Execution -->
+      <section class="space-y-3 p-5 bg-red-950/20 border border-red-900/40 rounded-2xl">
+        <h2 class="text-lg sm:text-xl font-bold text-red-400 font-sans flex items-center space-x-2">
+          <span class="text-red-400">2.</span>
+          <span>Caution Regarding Real-World Server Execution</span>
+        </h2>
+        <p class="text-zinc-300">
+          The code snippets, bash command flags, and tutorial drills published on this platform are safe to execute inside our browser sandbox. However:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+          <li><strong>Never run destructive commands indiscriminately on live production machines:</strong> Commands like <code>rm -rf /</code>, <code>mkfs</code>, <code>dd</code>, or unvalidated <code>chmod 777</code> operations can cause permanent, irreversible data loss on real operating systems.</li>
+          <li><strong>Verify syntax on non-production systems:</strong> Always test custom bash scripts, cron jobs, and firewall rules in isolated staging environments before deploying to production cloud infrastructure.</li>
+          <li><strong>OnlineLinuxTerminal.com accepts no liability:</strong> We shall not be held liable for any damages, service outages, or data loss occurring on your physical servers or local machines resulting from applying commands or concepts demonstrated on this site.</li>
+        </ul>
+      </section>
+
+      <!-- 3. Trademark Notices -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">3.</span>
+          <span>Third-Party Trademarks & Brand Attribution</span>
+        </h2>
+        <p>
+          All product names, logos, brands, and registered trademarks displayed or mentioned on OnlineLinuxTerminal.com are the property of their respective owners:
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-zinc-400">
+          <li><strong>Linux®</strong> is a registered trademark of Linus Torvalds in the United States and other countries.</li>
+          <li><strong>Ubuntu®</strong> and <strong>Canonical®</strong> are registered trademarks of Canonical Ltd.</li>
+          <li><strong>Debian®</strong> is a registered trademark of Software in the Public Interest, Inc.</li>
+          <li><strong>Red Hat®</strong> and <strong>CentOS®</strong> are trademarks or registered trademarks of Red Hat, Inc. or its subsidiaries.</li>
+          <li><strong>POSIX®</strong> is a registered trademark of the IEEE.</li>
+        </ul>
+        <p class="text-xs text-zinc-500">
+          Use of these names, trademarks, and brands does not imply endorsement, affiliation, or sponsorship. OnlineLinuxTerminal.com is an independent educational initiative.
+        </p>
+      </section>
+
+      <!-- 4. Accuracy & Completeness -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">4.</span>
+          <span>Accuracy & Editorial Verification</span>
+        </h2>
+        <p>
+          While our editorial and engineering team makes every effort to ensure that all command flags, explanations, and troubleshooting solutions are accurate and up to date against current GNU coreutils standards, software documentation may occasionally contain typographical errors or outdated options. We invite users to report discrepancies to our team via our <a href="/contact/" class="text-emerald-400 hover:underline">Contact page</a>.
+        </p>
+      </section>
+
+      <!-- 5. Advertising & Affiliate Disclosures -->
+      <section class="space-y-3 border-t border-zinc-800 pt-6">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">5.</span>
+          <span>Advertising & Monetization Disclosure</span>
+        </h2>
+        <p>
+          To keep our interactive terminal and all educational content 100% free and accessible to students worldwide, OnlineLinuxTerminal.com is supported by online advertising partners, including <strong>Google AdSense</strong>. Advertisements are labeled and served in accordance with Google Publisher Policies. We do not accept sponsored content that compromises our editorial integrity.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AdSlot } from '../components/ads/AdSlot';
 
 const aboutSchema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  "name": "About Us — Online Linux Terminal",
+  "name": "About Us & Editorial Standards — Online Linux Terminal",
   "url": "https://onlinelinuxterminal.com/about/",
-  "description": "Learn about the mission, engineering architecture, and E-E-A-T standards behind Online Linux Terminal.",
+  "description": "Learn about the mission, engineering team, technical architecture, and E-E-A-T editorial quality standards behind Online Linux Terminal.",
   "publisher": {
     "@type": "Organization",
     "name": "Online Linux Terminal",
@@ -18,47 +17,160 @@ const aboutSchema = {
 ---
 
 <BaseLayout
-  title="About Us & EEAT — Online Linux Terminal"
-  description="Learn about the mission, technology, engineering architecture, and E-E-A-T quality standards behind Online Linux Terminal (onlinelinuxterminal.com)."
-  keywords="online linux terminal about, online linux terminal team, best online linux terminal platform, online linux terminal simulator architecture"
+  title="About Us & Editorial Standards — Online Linux Terminal"
+  description="Learn about the engineering architecture, mission, editorial guidelines, and E-E-A-T quality standards powering Online Linux Terminal (onlinelinuxterminal.com)."
+  keywords="online linux terminal about, online linux terminal team, best online linux terminal platform, online linux terminal simulator architecture, eeat linux terminal"
 >
   <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
-    <div class="space-y-3">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
       <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
         <span>Engineering & E-E-A-T Standards</span>
       </div>
       <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
         About Online Linux Terminal
       </h1>
-    </div>
-
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
-    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-6">
-      <p>
-        <strong>Online Linux Terminal</strong> (hosted at <code>onlinelinuxterminal.com</code>) was created with a clear mission: to break down barriers to learning computer systems and DevOps engineering by providing an instant, zero-friction, professional Linux terminal experience directly inside modern web browsers.
-      </p>
-
-      <h2 class="text-xl font-bold text-emerald-400 font-sans">Our Engineering Architecture</h2>
-      <p>
-        Traditional cloud terminal services rely on expensive remote virtual machine instances or SSH tunnels that introduce latency and recurring infrastructure costs. Online Linux Terminal uses a modern <strong>Hybrid Execution Engine</strong>:
-      </p>
-      <ul class="list-disc list-inside space-y-2">
-        <li><strong>Client-Side AST Engine:</strong> Instant command parsing and shell execution with zero server latency.</li>
-        <li><strong>IndexedDB Persistence:</strong> Virtual File System (VFS) nodes, modified files, and shell command histories persist safely in your browser storage.</li>
-        <li><strong>xterm.js Canvas:</strong> High-performance terminal rendering supporting full ANSI color codes, tab completion, and keyboard shortcuts.</li>
-      </ul>
-
-      <h2 class="text-xl font-bold text-emerald-400 font-sans">E-E-A-T & Technical Quality Guardrails</h2>
-      <p>
-        Our content and command reference guides are authored and verified by veteran systems engineers and DevOps practitioners. Every code example, command flag table, and tutorial scenario is regularly audited for accuracy against GNU coreutils and POSIX standards.
+      <p class="text-sm text-zinc-400 leading-relaxed max-w-2xl">
+        Democratizing command-line education through instant, zero-friction, client-side browser terminal simulation and authoritative Linux reference manuals.
       </p>
     </div>
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+    <!-- Content Sections -->
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-10">
+      
+      <!-- 1. Our Mission -->
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">#</span>
+          <span>Our Mission: Zero-Friction Linux Learning</span>
+        </h2>
+        <p>
+          The Linux operating system powers the global Internet—from Kubernetes clusters, cloud compute instances (AWS, GCP, Azure), to Android devices, supercomputers, and mission-critical databases. Yet, for beginners, students, and aspiring DevOps engineers, the initial hurdle of setting up a local virtual machine (VirtualBox), configuring WSL2, or purchasing cloud VPS servers creates unnecessary friction.
+        </p>
+        <p>
+          <strong>Online Linux Terminal</strong> (hosted at <code>onlinelinuxterminal.com</code>) was founded with a singular purpose: <em>to provide an instant, zero-install, 100% free Linux terminal sandbox paired with deeply vetted technical documentation.</em> Whether you are running on a low-powered Chromebook, Windows, macOS, or an iPad, you can open our platform and practice authentic shell commands in milliseconds.
+        </p>
+      </section>
+
+      <!-- 2. Technical Architecture -->
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">#</span>
+          <span>Engineering Architecture: How It Works</span>
+        </h2>
+        <p>
+          Unlike legacy web terminals that rely on central SSH servers—which introduce latency, require account sign-ups, and frequently suffer downtime—Online Linux Terminal is built on a modern, decoupled client-side architecture:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 not-prose">
+          <div class="p-5 bg-zinc-900/70 border border-zinc-800 rounded-xl space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 font-mono font-bold flex items-center justify-center text-xs">
+              AST
+            </div>
+            <h3 class="font-bold text-zinc-100 text-sm">Client AST Shell Parser</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Parses command tokens, flags, pipe chains (<code>|</code>), and I/O redirection (<code>&gt;</code>, <code>&gt;&gt;</code>) directly in JavaScript with zero server roundtrip latency.
+            </p>
+          </div>
+
+          <div class="p-5 bg-zinc-900/70 border border-zinc-800 rounded-xl space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 font-mono font-bold flex items-center justify-center text-xs">
+              VFS
+            </div>
+            <h3 class="font-bold text-zinc-100 text-sm">IndexedDB Virtual File System</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Maintains an in-browser hierarchical tree of nodes (<code>/etc</code>, <code>/var/log</code>, <code>/home/user</code>). Files created and permissions updated stay saved across page refreshes.
+            </p>
+          </div>
+
+          <div class="p-5 bg-zinc-900/70 border border-zinc-800 rounded-xl space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 font-mono font-bold flex items-center justify-center text-xs">
+              XTERM
+            </div>
+            <h3 class="font-bold text-zinc-100 text-sm">xterm.js Canvas Engine</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Industry-standard terminal emulator supporting full ANSI 256-color output, tab autocompletion, cursor navigation, and custom monospace typography.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. E-E-A-T & Quality Commitment -->
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">#</span>
+          <span>E-E-A-T Standards & Editorial Integrity</span>
+        </h2>
+        <p>
+          In accordance with Google's <strong>Search Quality Evaluator Guidelines for E-E-A-T</strong> (Experience, Expertise, Authoritativeness, and Trustworthiness), all educational content on OnlineLinuxTerminal.com is held to rigorous standards:
+        </p>
+
+        <div class="space-y-3">
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-emerald-400 text-sm">1. GNU Coreutils & POSIX Compliance</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Every command definition, flag table, and output preview is verified against official GNU coreutils manuals, Linux man-pages (man7.org), and IEEE Std 1003.1 (POSIX) standards.
+            </p>
+          </div>
+
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-emerald-400 text-sm">2. Real-World Practical Examples</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Rather than generic placeholder examples, our command guides showcase actual DevOps, system administration, and software engineering use cases—such as parsing log files with <code>grep</code>, changing permissions with octal <code>chmod</code>, and extracting compressed archives with <code>tar</code>.
+            </p>
+          </div>
+
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-emerald-400 text-sm">3. Continuous Auditing & Updates</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Our technical review team conducts monthly audits across our 50+ command manuals, interactive tutorials, and scenario challenges to ensure technical accuracy and readability.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Who We Are -->
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">#</span>
+          <span>The Team Behind the Project</span>
+        </h2>
+        <p>
+          Online Linux Terminal is created and maintained by a dedicated team of Linux systems engineers, full-stack developers, and technical writers passionate about open-source technologies.
+        </p>
+        <p>
+          Having spent years debugging servers, writing shell automation pipelines, and mentoring junior engineers, we recognized that the fastest way to learn Linux is by <strong>typing commands with immediate interactive feedback</strong>. We built this platform to give learners worldwide the tool we wished we had when first learning the command line.
+        </p>
+      </section>
+
+      <!-- 5. Editorial Policies & Contact Links -->
+      <section class="space-y-4 border-t border-zinc-800 pt-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">#</span>
+          <span>Explore Our Trust & Learning Resources</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose text-xs">
+          <a href="/editorial-guidelines/" class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 transition-colors block space-y-1">
+            <span class="font-bold text-zinc-100 text-sm">Editorial Guidelines →</span>
+            <p class="text-zinc-400">Our fact-checking methodology, peer review process, and code testing standards.</p>
+          </a>
+          <a href="/disclaimer/" class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 transition-colors block space-y-1">
+            <span class="font-bold text-zinc-100 text-sm">Educational Disclaimer →</span>
+            <p class="text-zinc-400">Sandbox boundaries, simulation parameters, and trademark notices.</p>
+          </a>
+          <a href="/cheat-sheet/" class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 transition-colors block space-y-1">
+            <span class="font-bold text-zinc-100 text-sm">Linux Command Cheat Sheet →</span>
+            <p class="text-zinc-400">Comprehensive reference table of 100+ commands and one-liners.</p>
+          </a>
+          <a href="/contact/" class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-xl hover:border-emerald-800 transition-colors block space-y-1">
+            <span class="font-bold text-zinc-100 text-sm">Contact & Support →</span>
+            <p class="text-zinc-400">Submit feedback, report simulation bugs, or suggest new command tutorials.</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
   </div>
 </BaseLayout>

@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const cookiesSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Cookie Policy — Online Linux Terminal",
+  "url": "https://onlinelinuxterminal.com/cookies/",
+  "description": "Cookie Policy for Online Linux Terminal (onlinelinuxterminal.com) explaining essential cookies, analytics cookies, Google AdSense cookies, and user cookie management.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Online Linux Terminal",
+    "url": "https://onlinelinuxterminal.com",
+    "logo": "https://onlinelinuxterminal.com/icon.svg"
+  }
+};
+---
+
+<BaseLayout
+  title="Cookie Policy — Online Linux Terminal"
+  description="Learn about the cookies and browser storage mechanisms used on Online Linux Terminal (onlinelinuxterminal.com), including Google AdSense cookies and opt-out instructions."
+  keywords="online linux terminal cookie policy, adsense cookies, manage cookies, opt out advertising cookies, linux terminal cookies"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(cookiesSchema)} />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-zinc-300">
+    <!-- Header -->
+    <div class="space-y-3 border-b border-zinc-800 pb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-mono">
+        <span>Privacy & Cookie Preferences</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-zinc-100 font-sans">
+        Cookie Policy
+      </h1>
+      <p class="text-xs text-zinc-400 font-mono">
+        Last Updated: September 2, 2026 • Effective Date: January 1, 2026
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
+      
+      <!-- 1. What Are Cookies -->
+      <section class="space-y-3">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">1.</span>
+          <span>What Are Cookies & Browser Storage Technologies?</span>
+        </h2>
+        <p>
+          Cookies are small text files that are stored on your computer, smartphone, or tablet when you visit websites. They are widely used by web developers to make websites function properly, improve user navigation efficiency, save user preferences, and provide analytical or advertising insights.
+        </p>
+        <p>
+          In addition to standard HTTP cookies, modern web platforms like <strong>Online Linux Terminal</strong> utilize client-side web storage mechanisms, such as <strong>IndexedDB</strong> and <strong>LocalStorage</strong>, to operate in-browser terminal simulations without transmitting sensitive data to external servers.
+        </p>
+      </section>
+
+      <!-- 2. Categories of Cookies We Use -->
+      <section class="space-y-4">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">2.</span>
+          <span>Categories of Cookies & Storage Used on Our Platform</span>
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Necessary -->
+          <div class="p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-zinc-100 text-sm">A. Strictly Necessary & Functional Storage</h3>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">Required</span>
+            </div>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              These storage items are strictly essential for the core functionality of the website. Without them, the browser terminal simulator cannot maintain your directory state or remember language settings.
+            </p>
+            <ul class="list-disc list-inside text-xs text-zinc-400 space-y-1 font-mono">
+              <li><code>IndexedDB (keyval-store)</code>: Saves virtual filesystem files, folders, and command history locally.</li>
+              <li><code>terminal_theme / locale</code>: Remembers selected color themes and UI languages.</li>
+            </ul>
+          </div>
+
+          <!-- Analytics -->
+          <div class="p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-zinc-100 text-sm">B. Performance & Analytics Cookies</h3>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">Analytics</span>
+            </div>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              We use analytics tools, including Google Analytics 4 (GA4) and Microsoft Clarity, to collect aggregated, anonymous statistics regarding page traffic, popular Linux command guides, and browser performance.
+            </p>
+            <ul class="list-disc list-inside text-xs text-zinc-400 space-y-1 font-mono">
+              <li><code>_ga, _ga_*</code>: Google Analytics cookies used to distinguish unique user sessions.</li>
+              <li><code>_clck, _clsk</code>: Microsoft Clarity cookies used for anonymous heatmap and error diagnostic analysis.</li>
+            </ul>
+          </div>
+
+          <!-- Advertising -->
+          <div class="p-5 bg-zinc-900/60 border border-zinc-800 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-emerald-400 text-sm">C. Advertising & Targeting Cookies (Google AdSense)</h3>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/50">Advertising</span>
+            </div>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              We use <strong>Google AdSense</strong> to display non-intrusive advertisements on documentation pages. Google and its third-party advertising partners use cookies (such as DoubleClick DART cookies) to serve ads based on prior visits to our site or other websites.
+            </p>
+            <ul class="list-disc list-inside text-xs text-zinc-400 space-y-1 font-mono">
+              <li><code>IDE, DSID, __gads, __gpi</code>: Google advertising cookies for ad delivery, reporting, and frequency capping.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. How to Manage and Opt-Out -->
+      <section class="space-y-4">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">3.</span>
+          <span>How to Control, Manage, and Opt-Out of Cookies</span>
+        </h2>
+        <p>
+          You have complete control over cookies and can disable or clear them at any time:
+        </p>
+
+        <div class="space-y-3">
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">1. Google Ad Personalization Opt-Out</h3>
+            <p class="text-xs text-zinc-400">
+              You can turn off personalized advertising by Google at: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">https://policies.google.com/technologies/ads</a> or through Google Ad Settings at <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">https://adssettings.google.com</a>.
+            </p>
+          </div>
+
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">2. Industry-Wide Consumer Opt-Out Tools</h3>
+            <p class="text-xs text-zinc-400">
+              You can opt out of interest-based advertising from multiple ad networks via:
+            </p>
+            <ul class="list-disc list-inside text-xs text-zinc-400 space-y-1 font-mono pt-1">
+              <li><a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Network Advertising Initiative (NAI): optout.networkadvertising.org</a></li>
+              <li><a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Digital Advertising Alliance (DAA): aboutads.info/choices</a></li>
+              <li><a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">Your Online Choices (EU/EEA): youronlinechoices.com</a></li>
+            </ul>
+          </div>
+
+          <div class="p-4 bg-zinc-900/40 border border-zinc-800 rounded-xl space-y-1">
+            <h3 class="font-bold text-zinc-200">3. Browser-Level Cookie Management</h3>
+            <p class="text-xs text-zinc-400">
+              Most web browsers automatically accept cookies, but you can modify your browser settings to decline cookies or alert you when a cookie is placed. Refer to your browser's official support documentation:
+            </p>
+            <ul class="list-disc list-inside text-xs text-zinc-400 space-y-1 font-mono pt-1">
+              <li>Google Chrome: Settings → Privacy & Security → Cookies and other site data</li>
+              <li>Mozilla Firefox: Settings → Privacy & Security → Cookies and Site Data</li>
+              <li>Apple Safari: Preferences → Privacy → Block all cookies</li>
+              <li>Microsoft Edge: Settings → Cookies and site permissions</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Contact Us -->
+      <section class="space-y-3 border-t border-zinc-800 pt-6">
+        <h2 class="text-lg sm:text-xl font-bold text-zinc-100 font-sans flex items-center space-x-2">
+          <span class="text-emerald-400">4.</span>
+          <span>Contact & Inquiries</span>
+        </h2>
+        <p>
+          If you have questions regarding our Cookie Policy, please reach out to us at <a href="mailto:support@onlinelinuxterminal.com" class="text-emerald-400 hover:underline">support@onlinelinuxterminal.com</a>.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
