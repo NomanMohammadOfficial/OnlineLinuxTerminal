@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
 import SeoFaq from '../../components/seo/SeoFaq.astro';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -93,6 +94,11 @@ const localizedFaqSchema = {
             {t.ctaTutorials}
           </a>
         </div>
+      </div>
+
+      <!-- Telegram Community Box on top of Live Terminal -->
+      <div class="max-w-5xl mx-auto mb-4">
+        <TelegramCta lang={lang} />
       </div>
 
       <!-- Live Terminal Canvas React Island -->

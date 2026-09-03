@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -126,6 +127,9 @@ const aboutData = I18N_ABOUT_CONTENT[lang] || I18N_ABOUT_CONTENT.en;
         {aboutData.sub}
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang={lang} />
 
     <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-8">
       <!-- Mission -->

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { AdSlot } from '../../components/ads/AdSlot';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export const CHALLENGES_LIST = [
   {
@@ -81,6 +82,11 @@ const itemListSchema = {
       <p class="text-sm sm:text-base text-zinc-400 leading-relaxed">
         Put your terminal knowledge to the test. Solve real-world sysadmin scenarios with live automated solution validation and confetti celebrations.
       </p>
+    </div>
+
+    <!-- Telegram Community Box -->
+    <div class="max-w-7xl mx-auto">
+      <TelegramCta lang="en" />
     </div>
 
     <!-- Challenges Grid -->

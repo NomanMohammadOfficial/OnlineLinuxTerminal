@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../../components/terminal/TerminalRunner';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
+import TelegramCta from '../../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -119,6 +120,9 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
       </div>
       <h1 class="text-3xl font-extrabold text-zinc-100 font-sans">{lessonData.title}</h1>
     </div>
+
+    <!-- Telegram Community Box on top of Tutorial Workspace -->
+    <TelegramCta lang={lang} />
 
     <!-- Workspace Split: Instructions & Terminal -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

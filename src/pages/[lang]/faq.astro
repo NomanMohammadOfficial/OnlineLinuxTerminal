@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SeoFaq from '../../components/seo/SeoFaq.astro';
 import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -31,6 +32,9 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
         {t.faqHeaderSub}
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang={lang} />
 
     <!-- Interactive FAQ Component -->
     <SeoFaq lang={lang} />

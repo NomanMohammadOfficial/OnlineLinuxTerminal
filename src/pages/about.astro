@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TelegramCta from '../components/community/TelegramCta.astro';
 
 const aboutSchema = {
   "@context": "https://schema.org",
@@ -36,6 +37,9 @@ const aboutSchema = {
         Democratizing command-line education through instant, zero-friction, client-side browser terminal simulation and authoritative Linux reference manuals.
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang="en" />
 
     <!-- Content Sections -->
     <div class="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-10">

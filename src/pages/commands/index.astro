@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { AdSlot } from '../../components/ads/AdSlot';
 import { CommandsDirectory } from '../../components/commands/CommandsDirectory';
 import { COMMANDS_DATA, COMMAND_CATEGORIES } from '../../data/commandsData';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 const itemListSchema = {
   "@context": "https://schema.org",
@@ -39,6 +40,9 @@ const itemListSchema = {
         Search and select any Linux command below to inspect syntax rules, option flags, and launch an instant client-side terminal sandbox.
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang="en" />
 
     <!-- Ad Placement Top -->
     <AdSlot type="banner" client:idle />

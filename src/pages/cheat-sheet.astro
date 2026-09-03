@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TelegramCta from '../components/community/TelegramCta.astro';
 
 const cheatSheetSchema = {
   "@context": "https://schema.org",
@@ -141,6 +142,9 @@ const CHEAT_CATEGORIES = [
         A curated, high-density reference guide covering 100+ essential Linux commands, chmod octal permission matrices, grep regex patterns, and bash shortcuts. Click <strong>"Run in Sandbox ⚡"</strong> to test any command instantly in browser.
       </p>
     </div>
+
+    <!-- Telegram Community & Free PDFs Box -->
+    <TelegramCta lang="en" />
 
     <!-- Quick Navigation Anchor Strip -->
     <div class="p-4 bg-zinc-900/80 border border-zinc-800 rounded-2xl flex flex-wrap items-center justify-center gap-2 text-xs font-mono">

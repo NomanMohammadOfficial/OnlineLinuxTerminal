@@ -47,6 +47,24 @@ export interface TranslationDictionary {
   faqs: FaqEntry[];
   footerRights: string;
   footerTagline: string;
+  // Telegram Community CTA
+  telegramBadge: string;
+  telegramOnline: string;
+  telegramTitle: string;
+  telegramTitleHighlight: string;
+  telegramDesc: string;
+  telegramFeature1Title: string;
+  telegramFeature1Desc: string;
+  telegramFeature2Title: string;
+  telegramFeature2Desc: string;
+  telegramFeature3Title: string;
+  telegramFeature3Desc: string;
+  telegramFeature4Title: string;
+  telegramFeature4Desc: string;
+  telegramCtaBtn: string;
+  telegramCopyBtn: string;
+  telegramCopied: string;
+  telegramTrust: string;
 }
 
 export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
@@ -94,6 +112,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: 'All rights reserved.',
     footerTagline: 'Free Online Linux Terminal Platform & Simulator',
+    telegramBadge: '💬 Telegram Community',
+    telegramOnline: '2.4k Online',
+    telegramTitle: 'Linux Community',
+    telegramTitleHighlight: 'on Telegram',
+    telegramDesc: 'Chat with real Linux users, learn new commands & get free cheat sheet PDFs.',
+    telegramFeature1Title: 'Chat with Real Linux Users',
+    telegramFeature1Desc: 'Talk with students, developers, and friendly sysadmins worldwide.',
+    telegramFeature2Title: 'Learn New Commands Daily',
+    telegramFeature2Desc: 'Discover useful bash tricks, flags, and shortcuts to master Linux fast.',
+    telegramFeature3Title: 'Free Cheat Sheets & PDFs',
+    telegramFeature3Desc: 'Downloadable PDF reference guides, roadmaps, and command cheat sheets.',
+    telegramFeature4Title: 'Get Help When You\'re Stuck',
+    telegramFeature4Desc: 'Ask questions anytime and get friendly, judgment-free answers.',
+    telegramCtaBtn: 'Join Telegram',
+    telegramCopyBtn: 'Copy Link',
+    telegramCopied: 'Copied! ✓',
+    telegramTrust: '100% Free • Friendly Community • Zero Spam',
   },
   ru: {
     navTerminal: 'Терминал',
@@ -139,6 +174,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: 'Все права защищены.',
     footerTagline: 'Бесплатная платформа и симулятор онлайн терминала Linux',
+    telegramBadge: '💬 Сообщество Telegram',
+    telegramOnline: '2.4k Онлайн',
+    telegramTitle: 'Сообщество Linux',
+    telegramTitleHighlight: 'в Telegram',
+    telegramDesc: 'Общайтесь с пользователями Linux, учите команды и скачивайте шпаргалки.',
+    telegramFeature1Title: 'Общение с пользователями Linux',
+    telegramFeature1Desc: 'Общайтесь со студентами, разработчиками и системными администраторами.',
+    telegramFeature2Title: 'Новые команды каждый день',
+    telegramFeature2Desc: 'Полезные трюки bash, ключи команд и горячие клавиши.',
+    telegramFeature3Title: 'Бесплатные шпаргалки и PDF',
+    telegramFeature3Desc: 'Скачивайте удобные справочные материалы, схемы и шпаргалки.',
+    telegramFeature4Title: 'Помощь в решении проблем',
+    telegramFeature4Desc: 'Задавайте вопросы и получайте быстрые и дружелюбные ответы.',
+    telegramCtaBtn: 'Вступить в Telegram',
+    telegramCopyBtn: 'Копировать',
+    telegramCopied: 'Скопировано! ✓',
+    telegramTrust: '100% Бесплатно • Дружелюбное сообщество • Без спама',
   },
   es: {
     navTerminal: 'Terminal',
@@ -184,6 +236,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: 'Todos los derechos reservados.',
     footerTagline: 'Plataforma y simulador gratuito de terminal Linux en línea',
+    telegramBadge: '💬 Comunidad Telegram',
+    telegramOnline: '2.4k En línea',
+    telegramTitle: 'Comunidad Linux',
+    telegramTitleHighlight: 'en Telegram',
+    telegramDesc: 'Chatea con usuarios de Linux, aprende comandos y descarga guías PDF.',
+    telegramFeature1Title: 'Chat con Usuarios Reales',
+    telegramFeature1Desc: 'Habla con estudiantes, desarrolladores y administradores de sistemas.',
+    telegramFeature2Title: 'Comandos Diarios',
+    telegramFeature2Desc: 'Descubre trucos de bash, atajos y consejos prácticos.',
+    telegramFeature3Title: 'PDFs y Guías Gratis',
+    telegramFeature3Desc: 'Descarga guías de referencia y hojas de trucos en PDF.',
+    telegramFeature4Title: 'Ayuda Inmediata',
+    telegramFeature4Desc: 'Haz preguntas y recibe respuestas claras y amigables.',
+    telegramCtaBtn: 'Unirse a Telegram',
+    telegramCopyBtn: 'Copiar enlace',
+    telegramCopied: '¡Copiado! ✓',
+    telegramTrust: '100% Gratis • Comunidad Amigable • Sin Spam',
   },
   de: {
     navTerminal: 'Terminal',
@@ -229,6 +298,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: 'Alle Rechte vorbehalten.',
     footerTagline: 'Kostenlose Online-Linux-Terminal-Plattform und Simulator',
+    telegramBadge: '💬 Telegram-Community',
+    telegramOnline: '2.4k Online',
+    telegramTitle: 'Linux-Community',
+    telegramTitleHighlight: 'auf Telegram',
+    telegramDesc: 'Tausche dich mit Linux-Nutzern aus, lerne Befehle und lade PDF-Cheatsheets herunter.',
+    telegramFeature1Title: 'Chatte mit Linux-Nutzern',
+    telegramFeature1Desc: 'Tausche dich weltweit mit Entwicklern und Admins aus.',
+    telegramFeature2Title: 'Täglich neue Befehle',
+    telegramFeature2Desc: 'Lerne Bash-Tricks, Parameter und Tastenkombinationen.',
+    telegramFeature3Title: 'Kostenlose Cheatsheets & PDFs',
+    telegramFeature3Desc: 'Lade strukturierte Spickzettel und Leitfäden als PDF herunter.',
+    telegramFeature4Title: 'Hilfe bei Problemen',
+    telegramFeature4Desc: 'Stelle Fragen und erhalte verständliche Antworten.',
+    telegramCtaBtn: 'Telegram beitreten',
+    telegramCopyBtn: 'Link kopieren',
+    telegramCopied: 'Kopiert! ✓',
+    telegramTrust: '100% Kostenlos • Freundliche Community • Kein Spam',
   },
   fr: {
     navTerminal: 'Terminal',
@@ -274,6 +360,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: 'Tous droits réservés.',
     footerTagline: 'Plateforme et simulateur de terminal Linux en ligne gratuit',
+    telegramBadge: '💬 Communauté Telegram',
+    telegramOnline: '2.4k En ligne',
+    telegramTitle: 'Communauté Linux',
+    telegramTitleHighlight: 'sur Telegram',
+    telegramDesc: 'Échangez avec des utilisateurs Linux, apprenez des commandes et téléchargez des PDF.',
+    telegramFeature1Title: 'Échangez avec des utilisateurs',
+    telegramFeature1Desc: 'Discutez avec des étudiants, développeurs et administrateurs.',
+    telegramFeature2Title: 'Nouvelles commandes chaque jour',
+    telegramFeature2Desc: 'Découvrez des astuces bash et des raccourcis essentiels.',
+    telegramFeature3Title: 'Aide-mémoires & PDF gratuits',
+    telegramFeature3Desc: 'Téléchargez des fiches récapitulatives et des guides complets.',
+    telegramFeature4Title: 'Entraide bienveillante',
+    telegramFeature4Desc: 'Posez vos questions et recevez des réponses rapides.',
+    telegramCtaBtn: 'Rejoindre Telegram',
+    telegramCopyBtn: 'Copier le lien',
+    telegramCopied: 'Copié ! ✓',
+    telegramTrust: '100% Gratuit • Communauté accueillante • Zéro Spam',
   },
   zh: {
     navTerminal: '终端',
@@ -319,6 +422,23 @@ export const TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
     ],
     footerRights: '保留所有权利。',
     footerTagline: '免费在线 Linux 终端平台与模拟器',
+    telegramBadge: '💬 Telegram 社区',
+    telegramOnline: '2.4k 在线',
+    telegramTitle: 'Linux 社区',
+    telegramTitleHighlight: 'Telegram',
+    telegramDesc: '与真实 Linux 用户交流，学习常用命令并免费获取精美速查表 PDF。',
+    telegramFeature1Title: '与真实 Linux 用户交流',
+    telegramFeature1Desc: '与全球学生、开发者和友好运维工程师随时切磋交流。',
+    telegramFeature2Title: '每日探索实用新命令',
+    telegramFeature2Desc: '掌握实用的 bash 技巧、常用参数及快捷键，轻松精通 Linux。',
+    telegramFeature3Title: '免费获取速查表与 PDF',
+    telegramFeature3Desc: '免费下载常用 Linux 命令手册、速查卡及终端学习路线图 PDF。',
+    telegramFeature4Title: '遇到难题随时获得解答',
+    telegramFeature4Desc: '遇到不懂的命令或报错随时提问，社区成员友好互助快速响应。',
+    telegramCtaBtn: '加入 Telegram',
+    telegramCopyBtn: '复制链接',
+    telegramCopied: '已复制！✓',
+    telegramTrust: '100% 免费 • 友好交流 • 零垃圾广告',
   },
 };
 

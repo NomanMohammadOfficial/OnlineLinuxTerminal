@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -143,6 +144,9 @@ const CHEAT_CATEGORIES = [
         {pageInfo.sub}
       </p>
     </div>
+
+    <!-- Telegram Community & Free PDFs Box -->
+    <TelegramCta lang={lang} />
 
     <!-- Categorized Command Reference Sections -->
     <div class="space-y-12">

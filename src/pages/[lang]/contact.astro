@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../i18n/translations';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -65,6 +66,9 @@ const contactData = I18N_CONTACT_TITLES[lang] || I18N_CONTACT_TITLES.en;
         {contactData.sub}
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang={lang} />
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Direct Contact Card -->

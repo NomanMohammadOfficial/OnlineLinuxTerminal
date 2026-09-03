@@ -1,0 +1,123 @@
+---
+import { TRANSLATIONS, type SupportedLocale } from '../../i18n/translations';
+
+interface Props {
+  telegramUrl?: string;
+  className?: string;
+  lang?: SupportedLocale | string;
+}
+
+const {
+  telegramUrl = "https://t.me/onlinelinuxterminal",
+  className = "",
+  lang = "en",
+} = Astro.props;
+
+const t = TRANSLATIONS[lang as SupportedLocale] || TRANSLATIONS.en;
+---
+
+<!-- Modern Aesthetic Community Banner with Boundary Light & Sheen -->
+<div class={`telegram-banner-box relative p-3 sm:p-3.5 bg-zinc-900/95 border border-zinc-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left overflow-hidden transition-all duration-300 ${className}`}>
+  <!-- Subtle Top Border Light Line -->
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent"></div>
+
+  <!-- Left Info Section -->
+  <div class="flex items-center space-x-3 z-10">
+    <!-- Telegram SVG Icon Badge -->
+    <div class="w-8 h-8 rounded-lg bg-[#229ED9]/15 border border-[#229ED9]/30 flex items-center justify-center text-[#229ED9] shrink-0 shadow-inner">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telegram w-4 h-4" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
+      </svg>
+    </div>
+    <div class="space-y-0.5">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs sm:text-sm font-bold font-mono text-zinc-100">{t.telegramTitle || "Linux Community"}</span>
+        <span class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px] font-mono text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>{t.telegramOnline || "2.4k Online"}</span>
+        </span>
+      </div>
+      <p class="text-[11px] sm:text-xs text-zinc-400 leading-normal">
+        {t.telegramDesc || "Chat with real Linux users, learn new commands & get free cheat sheet PDFs."}
+      </p>
+    </div>
+  </div>
+
+  <!-- Right Action: Animated Boundary-Light Button -->
+  <div class="shrink-0 self-end sm:self-center z-10">
+    <a
+      href={telegramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="boundary-light-wrapper relative inline-flex p-[1px] rounded-xl overflow-hidden group shadow-md shadow-emerald-950/40 hover:scale-105 active:scale-95 transition-all duration-300"
+      title="Join Linux Community on Telegram"
+    >
+      <!-- Rotating Boundary Light Ray -->
+      <span class="rotating-light-ray absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#10b981_40%,#34d399_50%,#10b981_60%,transparent_100%)]"></span>
+
+      <!-- Button Content Surface -->
+      <span class="relative inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-[11px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 text-zinc-950 font-bold font-sans text-xs overflow-hidden">
+        <!-- Intermittent Light Sheen Flash -->
+        <span class="sheen-flash absolute inset-0 pointer-events-none"></span>
+
+        <!-- Provided Telegram SVG Icon inside button -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telegram w-3.5 h-3.5 fill-zinc-950 shrink-0 group-hover:scale-110 transition-transform duration-200" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
+        </svg>
+
+        <span>{t.telegramCtaBtn || "Join Telegram"}</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<style>
+  /* Subtle box boundary breathing effect */
+  .telegram-banner-box {
+    box-shadow: 0 0 16px -4px rgba(16, 185, 129, 0.12);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .telegram-banner-box:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 24px -2px rgba(16, 185, 129, 0.22);
+  }
+
+  /* Rotating Boundary Light Animation */
+  .rotating-light-ray {
+    animation: spin 3.5s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Gentle Periodic Light Sheen Flash */
+  .sheen-flash {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 100%
+    );
+    animation: flashSweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes flashSweep {
+    0%, 60% {
+      transform: translateX(-120%) skewX(-15deg);
+      opacity: 0;
+    }
+    70% {
+      opacity: 1;
+    }
+    85%, 100% {
+      transform: translateX(220%) skewX(-15deg);
+      opacity: 0;
+    }
+  }
+</style>

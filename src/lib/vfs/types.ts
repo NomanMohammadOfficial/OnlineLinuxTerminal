@@ -25,9 +25,11 @@ export interface ExecutionResult {
   output: string;
   exitCode: number;
   newPwd?: string;
+  newEnv?: ShellEnv;
   openEditor?: {
     filename: string;
     content: string;
   };
   installedPkg?: string;
 }
+

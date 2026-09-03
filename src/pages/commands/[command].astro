@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
 import { AdSlot } from '../../components/ads/AdSlot';
 import { COMMANDS_DATA, type LinuxCommand } from '../../data/commandsData';
+import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   return COMMANDS_DATA.map((item) => ({
@@ -147,6 +148,9 @@ const relatedCommandsList = COMMANDS_DATA.filter((c) =>
         </button>
       </div>
     </div>
+
+    <!-- Telegram Community Box on top of Sandbox Terminal -->
+    <TelegramCta lang="en" />
 
     <!-- Live Interactive Sandbox Island -->
     <div class="space-y-4">

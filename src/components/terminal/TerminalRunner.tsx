@@ -59,12 +59,18 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     content: '',
   });
 
-  const getPrompt = useCallback((pwd: string) => {
+  const getPrompt = useCallback((pwd: string, user: string = envRef.current?.USER || 'user') => {
     let displayPwd = pwd;
-    if (pwd.startsWith('/home/user')) {
-      displayPwd = pwd.replace('/home/user', '~');
+    const homeDir = user === 'root' ? '/root' : (envRef.current?.HOME || '/home/user');
+    if (pwd === homeDir) {
+      displayPwd = '~';
+    } else if (pwd.startsWith(homeDir + '/')) {
+      displayPwd = pwd.replace(homeDir, '~');
     }
-    return `\x1b[1;32muser@linux-box\x1b[0m:\x1b[1;34m${displayPwd}\x1b[0m$ `;
+    if (user === 'root') {
+      return `\x1b[1;31mroot@linux-box\x1b[0m:\x1b[1;34m${displayPwd}\x1b[0m# `;
+    }
+    return `\x1b[1;32m${user}@linux-box\x1b[0m:\x1b[1;34m${displayPwd}\x1b[0m$ `;
   }, []);
 
   const runCommandRef = useRef<(cmdStr: string, term: any) => Promise<void>>();
@@ -75,7 +81,7 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
 
     const trimmed = cmdStr.trim();
     if (!trimmed) {
-      term.write('\r\n' + getPrompt(envRef.current.PWD));
+      term.write('\r\n' + getPrompt(envRef.current.PWD, envRef.current.USER));
       return;
     }
 
@@ -92,7 +98,10 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     setVfs(updatedVFS);
     await saveVFS(updatedVFS);
 
-    if (result.newPwd && result.newPwd !== envRef.current.PWD) {
+    if (result.newEnv) {
+      envRef.current = result.newEnv;
+      setEnv(result.newEnv);
+    } else if (result.newPwd && result.newPwd !== envRef.current.PWD) {
       const updatedEnv = { ...envRef.current, PWD: result.newPwd };
       envRef.current = updatedEnv;
       setEnv(updatedEnv);
@@ -115,9 +124,11 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
       term.write('\r\n' + formattedOutput);
     }
 
-    const activePwd = result.newPwd || envRef.current.PWD;
-    term.write('\r\n' + getPrompt(activePwd));
+    const activePwd = envRef.current.PWD;
+    const activeUser = envRef.current.USER;
+    term.write('\r\n' + getPrompt(activePwd, activeUser));
   };
+
 
   runCommandRef.current = runCommandInternal;
 
@@ -348,12 +359,20 @@ export const TerminalRunner: React.FC<TerminalRunnerProps> = ({
     setHistoryIndex(-1);
     currentLineRef.current = '';
     setCurrentInput('');
-    envRef.current = { ...envRef.current, PWD: '/home/user' };
-    setEnv((prev) => ({ ...prev, PWD: '/home/user' }));
+    const defaultEnv: ShellEnv = {
+      USER: 'user',
+      HOME: '/home/user',
+      PATH: '/usr/local/bin:/usr/bin:/bin',
+      SHELL: '/bin/bash',
+      TERM: 'xterm-256color',
+      PWD: '/home/user',
+    };
+    envRef.current = defaultEnv;
+    setEnv(defaultEnv);
     if (xtermInstance.current) {
       xtermInstance.current.write('\x1b[2J\x1b[3J\x1b[H');
       xtermInstance.current.writeln('\x1b[1;33m[Session Reset Completed]\x1b[0m');
-      xtermInstance.current.write(getPrompt('/home/user'));
+      xtermInstance.current.write(getPrompt('/home/user', 'user'));
     }
   };
 

@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { TUTORIALS_LIST } from '../../tutorials/index.astro';
 import { TRANSLATIONS, getLocalizedPath, type SupportedLocale } from '../../../i18n/translations';
+import TelegramCta from '../../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -25,6 +26,11 @@ const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
         {t.navTutorials}
       </h1>
       <p class="text-sm text-zinc-400 leading-relaxed">{t.heroSub}</p>
+    </div>
+
+    <!-- Telegram Community Box -->
+    <div class="max-w-5xl mx-auto">
+      <TelegramCta lang={lang} />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">

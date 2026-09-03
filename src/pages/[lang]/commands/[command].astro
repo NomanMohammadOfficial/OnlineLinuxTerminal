@@ -5,6 +5,7 @@ import { AdSlot } from '../../../components/ads/AdSlot';
 import { TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../../../i18n/translations';
 import { COMMANDS_DATA, type LinuxCommand } from '../../../data/commandsData';
 import { getLocalizedCommandData } from '../../../i18n/commandTranslations';
+import TelegramCta from '../../../components/community/TelegramCta.astro';
 
 export function getStaticPaths() {
   const locales: SupportedLocale[] = ['ru', 'es', 'de', 'fr', 'zh'];
@@ -133,6 +134,9 @@ const relatedCommandsList = COMMANDS_DATA.filter((c) =>
         </button>
       </div>
     </div>
+
+    <!-- Telegram Community Box on top of Sandbox Terminal -->
+    <TelegramCta lang={lang} />
 
     <!-- Live Interactive Sandbox Island -->
     <div class="space-y-4">

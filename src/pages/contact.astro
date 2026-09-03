@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TelegramCta from '../components/community/TelegramCta.astro';
 
 const contactSchema = {
   "@context": "https://schema.org",
@@ -36,6 +37,9 @@ const contactSchema = {
         Have questions, feedback, or a feature request for Online Linux Terminal? Our engineering team is here to help.
       </p>
     </div>
+
+    <!-- Telegram Community Box -->
+    <TelegramCta lang="en" />
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Contact Info & SLA Card -->
