@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
 import { LearningPanel } from '../../components/terminal/LearningPanel';
-import { AdSlot } from '../../components/ads/AdSlot';
 
 const workspaceSchema = {
   "@context": "https://schema.org",
@@ -66,8 +65,7 @@ const workspaceSchema = {
       </div>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
+    <!-- Ads are intentionally disabled on the full-screen terminal workspace -->
 
     <!-- Workspace Main Layout: Terminal + Interactive Learning Panel -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[500px]">
@@ -107,7 +105,5 @@ const workspaceSchema = {
       </div>
     </section>
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
   </div>
 </BaseLayout>

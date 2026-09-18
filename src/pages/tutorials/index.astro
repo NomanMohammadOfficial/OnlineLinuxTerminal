@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { AdSlot } from '../../components/ads/AdSlot';
+import YandexAd from '../../components/ads/YandexAd.astro';
 import TelegramCta from '../../components/community/TelegramCta.astro';
 
 export const TUTORIALS_LIST = [
@@ -130,6 +130,9 @@ const courseSchema = {
       ))}
     </div>
 
+    <!-- In-article ad: below the tutorial grid, above the SEO guide -->
+    <YandexAd slot="in-article" format="horizontal" />
+
     <!-- In-Depth SEO & Educational Guide Section -->
     <section class="max-w-5xl mx-auto p-6 sm:p-10 bg-zinc-900/40 border border-zinc-800 rounded-3xl space-y-8 text-zinc-300">
       <div class="space-y-3">
@@ -164,5 +167,8 @@ const courseSchema = {
         </div>
       </div>
     </section>
+
+    <!-- Bottom ad: after all content, before the footer -->
+    <YandexAd slot="bottom" format="horizontal" minHeight={90} />
   </div>
 </BaseLayout>

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TerminalRunner } from '../../components/terminal/TerminalRunner';
-import { AdSlot } from '../../components/ads/AdSlot';
+import YandexAd from '../../components/ads/YandexAd.astro';
 import { COMMANDS_DATA, type LinuxCommand } from '../../data/commandsData';
 import TelegramCta from '../../components/community/TelegramCta.astro';
 
@@ -129,9 +129,6 @@ const relatedCommandsList = COMMANDS_DATA.filter((c) =>
       </p>
     </div>
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Syntax Box with Quick Copy -->
     <div class="p-5 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-2 font-mono shadow-xl relative group">
       <div class="flex items-center justify-between text-zinc-400 text-xs font-sans">
@@ -174,6 +171,9 @@ const relatedCommandsList = COMMANDS_DATA.filter((c) =>
         <TerminalRunner client:load initialCommand={data.defaultSandboxCmd} className="h-[420px]" />
       </div>
     </div>
+
+    <!-- In-article ad: below the interactive sandbox, above the long-form guide -->
+    <YandexAd slot="in-article" format="horizontal" />
 
     <!-- Overview & In-Depth Details -->
     <div class="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl space-y-4 text-zinc-300 leading-relaxed text-sm sm:text-base">
@@ -321,7 +321,7 @@ const relatedCommandsList = COMMANDS_DATA.filter((c) =>
       </div>
     )}
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+    <!-- Bottom ad: after all content, before the footer -->
+    <YandexAd slot="bottom" format="horizontal" minHeight={90} />
   </div>
 </BaseLayout>

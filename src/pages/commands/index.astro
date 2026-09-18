@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { AdSlot } from '../../components/ads/AdSlot';
+import YandexAd from '../../components/ads/YandexAd.astro';
 import { CommandsDirectory } from '../../components/commands/CommandsDirectory';
 import { COMMANDS_DATA, COMMAND_CATEGORIES } from '../../data/commandsData';
 import TelegramCta from '../../components/community/TelegramCta.astro';
@@ -44,11 +44,11 @@ const itemListSchema = {
     <!-- Telegram Community Box -->
     <TelegramCta lang="en" />
 
-    <!-- Ad Placement Top -->
-    <AdSlot type="banner" client:idle />
-
     <!-- Interactive Search & Filtering Directory Island -->
     <CommandsDirectory client:load commands={COMMANDS_DATA} categories={COMMAND_CATEGORIES} />
+
+    <!-- In-article ad: below the interactive directory, above the SEO guide -->
+    <YandexAd slot="in-article" format="horizontal" />
 
     <!-- 600+ Word Comprehensive SEO Knowledge Section -->
     <section class="mt-16 p-6 sm:p-10 bg-zinc-900/40 border border-zinc-800 rounded-3xl space-y-8 text-zinc-300">
@@ -85,7 +85,7 @@ const itemListSchema = {
       </div>
     </section>
 
-    <!-- Ad Placement Bottom -->
-    <AdSlot type="leaderboard" client:idle />
+    <!-- Bottom ad: after all content, before the footer -->
+    <YandexAd slot="bottom" format="horizontal" minHeight={90} />
   </div>
 </BaseLayout>

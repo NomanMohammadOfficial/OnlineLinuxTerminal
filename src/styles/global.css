@@ -75,3 +75,33 @@ pre,
 kbd {
   translate: no;
 }
+
+/* ---------------------------------------------------------------------------
+   Yandex Advertising Network slot stabilisation
+   Keeps auto-injected units from breaking the dark theme, overflowing the
+   layout or causing content jumps (CLS).
+--------------------------------------------------------------------------- */
+.yandex-ad-slot,
+[id^='yandex_rtb_'],
+[id^='yandex_rtb-'],
+[class^='yandex-rtb'],
+[class*=' yandex-rtb'] {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+}
+
+[id^='yandex_rtb_'] iframe,
+[id^='yandex_rtb-'] iframe,
+.yandex-ad-unit iframe {
+  max-width: 100%;
+  border-radius: 0.75rem;
+}
+
+/* Autoplacement inserts blocks into the content flow; contain them so a slow
+   loading creative can never push the rest of the page around. */
+[id^='yandex_rtb_'],
+[id^='yandex_rtb-'] {
+  contain: layout paint;
+}

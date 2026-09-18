@@ -1,0 +1,85 @@
+---
+/**
+ * Explicit Yandex RTB ad slot.
+ *
+ * In the default `auto` placement mode this component renders nothing, because
+ * Yandex Autoplacement injects units on its own. Switch `placement` to
+ * `'manual'` in src/data/adsConfig.ts and fill the block ids to take over
+ * placement with these precise, UX-friendly slots.
+ *
+ * Rendering is lazy: the block only initialises when it is near the viewport,
+ * which improves viewability, keeps the initial page load fast, and avoids
+ * layout shift for readers who never scroll that far.
+ */
+import {
+  ADS_CONFIG,
+  getYandexManualBlock,
+  isManualPlacement,
+  type YandexAdSlotKey,
+} from '../../data/adsConfig';
+
+interface Props {
+  slot: YandexAdSlotKey;
+  format?: 'horizontal' | 'vertical' | 'auto';
+  /** Reserve height so the slot cannot cause a layout shift (CLS). */
+  minHeight?: number;
+  className?: string;
+}
+
+const { slot, format = 'auto', minHeight = 0, className = '' } = Astro.props;
+
+const blockId = getYandexManualBlock(slot);
+const shouldRender = ADS_CONFIG.enabled && isManualPlacement() && Boolean(blockId);
+const containerId = `yandex_rtb_${blockId}`;
+---
+
+{
+  shouldRender && (
+    <>
+      <div
+        class={`yandex-ad-slot w-full overflow-hidden my-6 text-center ${className}`}
+        data-yandex-slot={slot}
+        aria-label="Advertisement"
+        style={minHeight > 0 ? `min-height:${minHeight}px` : undefined}
+      >
+        <div id={containerId} class="yandex-ad-unit" />
+      </div>
+      <script define:vars={{ blockId, containerId, format }}>
+        (function () {
+          var init = function () {
+            window.yaContextCb = window.yaContextCb || [];
+            window.yaContextCb.push(function () {
+              if (window.Ya && window.Ya.Context && window.Ya.Context.AdvManager) {
+                window.Ya.Context.AdvManager.render({
+                  blockId: blockId,
+                  renderTo: containerId,
+                  format: format,
+                  async: true,
+                });
+              }
+            });
+          };
+
+          var el = document.getElementById(containerId);
+          if (!el || !('IntersectionObserver' in window)) {
+            init();
+            return;
+          }
+
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  observer.disconnect();
+                  init();
+                }
+              });
+            },
+            { rootMargin: '300px 0px' }
+          );
+          observer.observe(el);
+        })();
+      </script>
+    </>
+  )
+}

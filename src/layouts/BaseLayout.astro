@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { LanguageSwitcher } from '../components/i18n/LanguageSwitcher';
 import { LOCALES, TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../i18n/translations';
 import TelegramCta from '../components/community/TelegramCta.astro';
+import { ADS_CONFIG, isManualPlacement, shouldLoadYandexAds } from '../data/adsConfig';
 
 interface Props {
   title?: string;
@@ -70,6 +71,11 @@ const isLegalOrAdsensePage = EXCLUDED_LEGAL_PATHS.some(
   (p) => cleanPath === p || cleanPath.startsWith(p + '/')
 );
 const showTelegramCta = !hideTelegramCta && !isLegalOrAdsensePage;
+
+// Yandex ads are deliberately skipped on the full-screen terminal workspace and
+// on legal/compliance pages to protect UX and policy compliance.
+const showYandexAds = shouldLoadYandexAds(cleanPath);
+const useManualYandexBlocks = isManualPlacement();
 ---
 
 <!DOCTYPE html>
@@ -96,6 +102,25 @@ const showTelegramCta = !hideTelegramCta && !isLegalOrAdsensePage;
           y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
       })(window, document, "clarity", "script", "y4xfs76qe8");
     </script>
+
+    <!-- Yandex Advertising Network (YAN) — content pages only -->
+    {
+      showYandexAds && (
+        <>
+          <link rel="preconnect" href="https://yandex.ru" crossorigin />
+          <link rel="dns-prefetch" href="https://yandex.ru" />
+          <script is:inline async src="https://yandex.ru/ads/system/context.js" />
+          {!useManualYandexBlocks && (
+            <script
+              is:inline
+              async
+              data-page-id={ADS_CONFIG.yandex.pageId}
+              src="https://yandex.ru/ads/system/ap-loader.js"
+            />
+          )}
+        </>
+      )
+    }
 
     <!-- Favicons & App Icons -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
