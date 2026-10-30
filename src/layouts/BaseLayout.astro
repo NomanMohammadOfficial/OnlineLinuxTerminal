@@ -3,7 +3,8 @@ import '../styles/global.css';
 import { LanguageSwitcher } from '../components/i18n/LanguageSwitcher';
 import { LOCALES, TRANSLATIONS, type SupportedLocale, getLocalizedPath } from '../i18n/translations';
 import TelegramCta from '../components/community/TelegramCta.astro';
-import { ADS_CONFIG, isManualPlacement, shouldLoadYandexAds } from '../data/adsConfig';
+import AntiAdblock from '../components/ads/AntiAdblock.astro';
+import { ADS_CONFIG, isManualPlacement, shouldLoadYandexAds, shouldShowAntiAdblock } from '../data/adsConfig';
 
 interface Props {
   title?: string;
@@ -76,6 +77,7 @@ const showTelegramCta = !hideTelegramCta && !isLegalOrAdsensePage;
 // on legal/compliance pages to protect UX and policy compliance.
 const showYandexAds = shouldLoadYandexAds(cleanPath);
 const useManualYandexBlocks = isManualPlacement();
+const showAntiAdblock = shouldShowAntiAdblock(cleanPath);
 ---
 
 <!DOCTYPE html>
@@ -408,5 +410,7 @@ const useManualYandexBlocks = isManualPlacement();
         });
       }
     </script>
+    <!-- Anti-Adblock Protection Modal & Barrier -->
+    {showAntiAdblock && <AntiAdblock lang={lang} />}
   </body>
 </html>

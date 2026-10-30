@@ -1,0 +1,842 @@
+---
+import type { SupportedLocale } from '../../i18n/translations';
+import { ADS_CONFIG } from '../../data/adsConfig';
+
+interface Props {
+  lang?: SupportedLocale;
+}
+
+const { lang = 'en' } = Astro.props;
+
+interface AntiAdblockCopy {
+  badge: string;
+  title: string;
+  msg1: string;
+  msg2: string;
+  msg3: string;
+  guideBrave: string;
+  guideExtension: string;
+  btnCheck: string;
+  btnChecking: string;
+  btnSuccess: string;
+  btnFailed: string;
+  footer: string;
+  noJsTitle: string;
+  noJsMsg: string;
+}
+
+const COPY: Record<SupportedLocale, AntiAdblockCopy> = {
+  en: {
+    badge: 'Free Educational Resource',
+    title: 'Help Us Keep Online Linux Terminal Free ❤️',
+    msg1: "We noticed you're using an ad blocker. Online Linux Terminal is an independent free project helping students and developers practice Linux directly in the browser.",
+    msg2: 'Servers and sandbox environments cost real money to maintain. We show only clean, non-intrusive ads so we never have to charge subscriptions or lock features behind paywalls.',
+    msg3: 'Please whitelist onlinelinuxterminal.com or turn off your ad blocker to support this free resource.',
+    guideBrave: 'Brave Browser: Click the Lion icon next to the address bar & turn Shields OFF.',
+    guideExtension: 'uBlock / AdBlock: Click the extension icon and toggle blocking OFF for this site.',
+    btnCheck: "I've allowed ads — check again",
+    btnChecking: 'Checking…',
+    btnSuccess: 'Ads allowed ✓ Reloading…',
+    btnFailed: 'Still blocked — please allow ads & retry',
+    footer: 'Thank you for supporting independent developer education!',
+    noJsTitle: 'JavaScript is Required',
+    noJsMsg: 'Online Linux Terminal requires JavaScript to simulate the bash terminal and render documentation. Please enable JavaScript in your browser settings to continue.',
+  },
+  ru: {
+    badge: 'Бесплатный проект для всех',
+    title: 'Помогите сохранить терминал бесплатным ❤️',
+    msg1: 'Мы заметили, что у вас включен блокировщик рекламы. Online Linux Terminal — независимый образовательный проект, доступный бесплатно для каждого.',
+    msg2: 'Аренда серверов и поддержка виртуальных сред требуют реальных затрат. Ненавязчивая реклама — наш единственный способ покрывать расходы без платных подписок.',
+    msg3: 'Пожалуйста, добавьте onlinelinuxterminal.com в белый список или отключите блокировщик.',
+    guideBrave: 'В браузере Brave: нажмите на значок льва в строке адреса и отключите Shields.',
+    guideExtension: 'В AdBlock / uBlock: нажмите на иконку и отключите блокировку для этого сайта.',
+    btnCheck: 'Я разрешил рекламу — проверить',
+    btnChecking: 'Проверка…',
+    btnSuccess: 'Реклама разрешена ✓ Обновление…',
+    btnFailed: 'Всё ещё заблокировано — попробуйте снова',
+    footer: 'Спасибо за поддержку открытого образовательного проекта!',
+    noJsTitle: 'Требуется JavaScript',
+    noJsMsg: 'Для работы виртуального терминала Linux и интерактивных руководств требуется включенный JavaScript. Пожалуйста, включите его в настройках браузера.',
+  },
+  es: {
+    badge: 'Recurso educativo gratuito',
+    title: 'Ayúdanos a mantener este terminal gratuito ❤️',
+    msg1: 'Detectamos que estás usando un bloqueador de anuncios. Online Linux Terminal es un proyecto gratuito e independiente para estudiantes y desarrolladores.',
+    msg2: 'Mantener servidores y entornos virtuales tiene un costo real. La publicidad no intrusiva es nuestro único sustento para no cobrar suscripciones ni limitar funciones.',
+    msg3: 'Por favor, añade onlinelinuxterminal.com a tu lista de permitidos o desactiva tu bloqueador.',
+    guideBrave: 'Brave: Haz clic en el icono del león y desactiva los escudos (Shields).',
+    guideExtension: 'uBlock / AdBlock: Haz clic en el icono de la extensión y desactiva el bloqueo.',
+    btnCheck: 'Ya permití anuncios — verificar',
+    btnChecking: 'Verificando…',
+    btnSuccess: 'Anuncios permitidos ✓ Recargando…',
+    btnFailed: 'Sigue bloqueado — intenta de nuevo',
+    footer: '¡Gracias por apoyar la educación gratuita para desarrolladores!',
+    noJsTitle: 'Se requiere JavaScript',
+    noJsMsg: 'Online Linux Terminal requiere JavaScript para simular la terminal bash y cargar las guías. Por favor, actívalo en tu navegador para continuar.',
+  },
+  de: {
+    badge: 'Kostenloses Bildungsprojekt',
+    title: 'Hilf uns, das Linux-Terminal kostenlos zu halten ❤️',
+    msg1: 'Wir haben festgestellt, dass du einen Werbeblocker verwendest. Online Linux Terminal ist ein kostenloses Projekt für Entwickler und Lernende.',
+    msg2: 'Der Betrieb von Servern und Sandbox-Umgebungen verursacht echte Kosten. Unaufdringliche Werbung ist unsere einzige Einnahmequelle, um alles gratis anzubieten.',
+    msg3: 'Bitte deaktiviere deinen Werbeblocker für onlinelinuxterminal.com, um uns zu unterstützen.',
+    guideBrave: 'Brave: Klicke auf das Löwen-Symbol und schalte Shields AUS.',
+    guideExtension: 'uBlock / AdBlock: Klicke auf das Symbol und erlaube Werbung auf dieser Website.',
+    btnCheck: 'Werbung erlaubt — erneut prüfen',
+    btnChecking: 'Prüfe…',
+    btnSuccess: 'Werbung erlaubt ✓ Lade neu…',
+    btnFailed: 'Noch blockiert — bitte prüfen und wiederholen',
+    footer: 'Vielen Dank für deine Unterstützung freier Entwicklerbildung!',
+    noJsTitle: 'JavaScript erforderlich',
+    noJsMsg: 'Online Linux Terminal benötigt JavaScript für den Bash-Simulator und die interaktiven Guides. Bitte aktiviere JavaScript in deinem Browser.',
+  },
+  fr: {
+    badge: 'Projet éducatif gratuit',
+    title: 'Aidez-nous à garder ce terminal gratuit ❤️',
+    msg1: 'Nous avons détecté un bloqueur de publicités. Online Linux Terminal est un projet libre et gratuit pour pratiquer Linux directement dans le navigateur.',
+    msg2: "L'hébergement des serveurs et des environnements virtuels a un coût réel. Des publicités discrètes sont notre seul moyen de garder l'accès 100% gratuit.",
+    msg3: 'Merci de désactiver votre bloqueur ou de mettre onlinelinuxterminal.com en liste blanche.',
+    guideBrave: 'Brave : Cliquez sur le lion dans la barre d’adresse et désactivez les Shields.',
+    guideExtension: 'uBlock / AdBlock : Cliquez sur l’icône et désactivez le blocage pour ce site.',
+    btnCheck: 'Publicités autorisées — vérifier',
+    btnChecking: 'Vérification…',
+    btnSuccess: 'Publicités autorisées ✓ Rechargement…',
+    btnFailed: 'Toujours bloqué — veuillez réessayer',
+    footer: 'Merci de soutenir l’apprentissage libre de l’informatique !',
+    noJsTitle: 'JavaScript est requis',
+    noJsMsg: 'Online Linux Terminal nécessite JavaScript pour faire fonctionner la console bash et charger le contenu. Veuillez activer JavaScript dans votre navigateur.',
+  },
+  zh: {
+    badge: '免费开源学习项目',
+    title: '请支持我们保持免费运营 ❤️',
+    msg1: '我们检测到您正在使用广告拦截器。Online Linux Terminal 致力于为全球开发者和学生提供完全免费的浏览器 Linux 终端与学习资源。',
+    msg2: '运行服务器和沙盒环境需要持续的成本投入。我们仅依赖极简、非侵入式广告来抵消服务器开销，坚持不收订阅费、不锁功能。',
+    msg3: '请将 onlinelinuxterminal.com 加入白名单或暂时关闭广告拦截器，支持我们的持续运营。',
+    guideBrave: '使用 Brave 浏览器？点击网址栏旁的狮子图标并关闭当前网站的 Shields。',
+    guideExtension: '使用 uBlock / AdBlock？点击插件图标并在当前站点关闭拦截。',
+    btnCheck: '我已允许广告 — 重新检测',
+    btnChecking: '检测中…',
+    btnSuccess: '广告已允许 ✓ 正在刷新…',
+    btnFailed: '仍被拦截 — 请关闭后重试',
+    footer: '感谢您支持独立免费的技术教育项目！',
+    noJsTitle: '需要启用 JavaScript',
+    noJsMsg: 'Online Linux Terminal 需要 JavaScript 来模拟 Bash 终端和加载交互式教程。请在浏览器设置中启用 JavaScript 以继续访问。',
+  },
+};
+
+const text = COPY[lang] || COPY.en;
+const debug = ADS_CONFIG.antiAdblock?.debug ?? false;
+---
+
+<!-- Anti-Adblock Detection Engine & Closed Shadow DOM Prompt -->
+<script is:inline define:vars={{ text, debug }}>
+  (function () {
+    'use strict';
+
+    var CONFIG = {
+      NETWORK_TIMEOUT: 3500,
+      CONNECTIVITY_TIMEOUT: 2500,
+      COSMETIC_DELAY: 300,
+      BLOCK_THRESHOLD: 4,
+      DEBUG: debug,
+    };
+
+    var started = false;
+    var popupHost = null;
+
+    function isSearchEngineBot() {
+      try {
+        var ua = (navigator.userAgent || '').toLowerCase();
+        return /googlebot|adsbot|bingbot|yandex|baiduspider|duckduckbot|slurp|facebookexternalhit|headlesschrome/i.test(ua);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Never show or test on search engine indexing crawlers
+    if (isSearchEngineBot()) {
+      return;
+    }
+
+    function sleep(ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    function randomName() {
+      return 'x' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+    }
+
+    function debugLog() {
+      if (!CONFIG.DEBUG || !window.console || !console.debug) return;
+      try {
+        console.debug.apply(console, arguments);
+      } catch (e) {}
+    }
+
+    function nextPaint() {
+      return new Promise(function (resolve) {
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(resolve);
+          });
+          return;
+        }
+        setTimeout(resolve, 32);
+      });
+    }
+
+    function isHttpPage() {
+      return location.protocol === 'http:' || location.protocol === 'https:';
+    }
+
+    function sameHost(a, b) {
+      try {
+        return new URL(a, location.href).host === new URL(b, location.href).host;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function watchCspFor(url) {
+      var hit = false;
+      function onViolation(event) {
+        var blockedUri = event && event.blockedURI ? String(event.blockedURI) : '';
+        if (blockedUri && sameHost(blockedUri, url)) {
+          hit = true;
+        }
+      }
+      window.addEventListener('securitypolicyviolation', onViolation, true);
+      return {
+        wasHit: function () {
+          return hit;
+        },
+        stop: function () {
+          window.removeEventListener('securitypolicyviolation', onViolation, true);
+        },
+      };
+    }
+
+    function testScriptResource(url, name) {
+      return new Promise(function (resolve) {
+        var link = document.createElement('link');
+        var csp = watchCspFor(url);
+        var finished = false;
+        var timer = null;
+
+        function finish(status) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          csp.stop();
+          link.onload = null;
+          link.onerror = null;
+          try {
+            link.remove();
+          } catch (e) {}
+          resolve({
+            name: name,
+            status: csp.wasHit() ? 'csp' : status,
+          });
+        }
+
+        timer = setTimeout(function () {
+          finish('timeout');
+        }, CONFIG.NETWORK_TIMEOUT);
+
+        link.rel = 'preload';
+        link.as = 'script';
+        link.referrerPolicy = 'no-referrer';
+        link.onload = function () {
+          finish('loaded');
+        };
+        link.onerror = function () {
+          setTimeout(function () {
+            finish('error');
+          }, 40);
+        };
+        link.href = url + (url.indexOf('?') === -1 ? '?' : '&') + 'abcb=' + Date.now();
+        try {
+          (document.head || document.documentElement).appendChild(link);
+        } catch (e) {
+          finish('error');
+        }
+      });
+    }
+
+    function testPageConnectivity() {
+      if (!isHttpPage()) {
+        return Promise.resolve(null);
+      }
+      if (navigator.onLine === false) {
+        return Promise.resolve(false);
+      }
+      return new Promise(function (resolve) {
+        var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        var csp = watchCspFor(location.href);
+        var finished = false;
+        var timer = null;
+
+        function finish(value) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          csp.stop();
+          resolve(csp.wasHit() ? null : value);
+        }
+
+        timer = setTimeout(function () {
+          if (controller) controller.abort();
+          finish(false);
+        }, CONFIG.CONNECTIVITY_TIMEOUT);
+
+        var options = {
+          method: 'HEAD',
+          cache: 'no-store',
+          credentials: 'same-origin',
+        };
+        if (controller) options.signal = controller.signal;
+
+        fetch(location.href, options)
+          .then(function () {
+            finish(true);
+          })
+          .catch(function () {
+            setTimeout(function () {
+              finish(false);
+            }, 40);
+          });
+      });
+    }
+
+    function elementLooksHidden(element) {
+      if (!element || !element.isConnected) return true;
+      try {
+        var style = window.getComputedStyle(element);
+        var rect = element.getBoundingClientRect();
+        var opacity = parseFloat(style.opacity);
+        return (
+          style.display === 'none' ||
+          style.visibility === 'hidden' ||
+          (!Number.isNaN(opacity) && opacity === 0) ||
+          rect.width < 1 ||
+          rect.height < 1 ||
+          element.offsetWidth < 1 ||
+          element.offsetHeight < 1
+        );
+      } catch (e) {
+        return true;
+      }
+    }
+
+    async function testCosmeticFiltering() {
+      if (!document.body) {
+        return { status: 'inconclusive', hidden: 0, total: 0 };
+      }
+      var wrapper = document.createElement('div');
+      var control = document.createElement('div');
+      var baits = [];
+      var suffix = randomName();
+
+      wrapper.setAttribute('aria-hidden', 'true');
+      wrapper.style.position = 'absolute';
+      wrapper.style.left = '-10000px';
+      wrapper.style.top = '-10000px';
+      wrapper.style.width = '32px';
+      wrapper.style.height = '32px';
+      wrapper.style.pointerEvents = 'none';
+
+      control.className = randomName();
+      control.style.width = '12px';
+      control.style.height = '12px';
+
+      var definitions = [
+        { tag: 'div', id: '', className: 'adsbox' },
+        { tag: 'ins', id: '', className: 'adsbygoogle' },
+        { tag: 'div', id: 'google_ads_' + suffix, className: 'advertisement' },
+        { tag: 'div', id: '', className: 'ad-banner ad-container banner-ad sponsored-ad' },
+        { tag: 'div', id: 'yandex_rtb_' + suffix, className: 'yandex-ad-unit yandex-rtb' },
+      ];
+
+      definitions.forEach(function (def, index) {
+        var bait = document.createElement(def.tag);
+        if (def.id) bait.id = def.id;
+        bait.className = def.className;
+        bait.setAttribute('data-ad', 'true');
+        bait.setAttribute('data-ad-slot', String(1000 + index));
+        bait.style.position = 'absolute';
+        bait.style.left = String(index * 14) + 'px';
+        bait.style.top = '0';
+        bait.style.width = '12px';
+        bait.style.height = '12px';
+        baits.push(bait);
+        wrapper.appendChild(bait);
+      });
+
+      wrapper.appendChild(control);
+      document.body.appendChild(wrapper);
+
+      await nextPaint();
+      await sleep(CONFIG.COSMETIC_DELAY);
+
+      var controlHidden = elementLooksHidden(control);
+      var hiddenCount = baits.reduce(function (count, bait) {
+        return count + (elementLooksHidden(bait) ? 1 : 0);
+      }, 0);
+
+      try {
+        wrapper.remove();
+      } catch (e) {}
+
+      if (controlHidden) {
+        return {
+          status: 'inconclusive',
+          hidden: hiddenCount,
+          total: baits.length,
+        };
+      }
+
+      return {
+        status: hiddenCount > 0 ? 'blocked' : 'clear',
+        hidden: hiddenCount,
+        total: baits.length,
+      };
+    }
+
+    function networkPoints(result, connectivity) {
+      if (!result || connectivity === false) return 0;
+      if (result.status === 'error') return 2;
+      if (result.status === 'timeout') return 1;
+      return 0;
+    }
+
+    async function detectAdblock() {
+      var results = await Promise.all([
+        testScriptResource('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', 'googleAds'),
+        testScriptResource('https://securepubads.g.doubleclick.net/tag/js/gpt.js', 'doubleClick'),
+        testScriptResource('https://yandex.ru/ads/system/context.js', 'yandexAds'),
+        testCosmeticFiltering(),
+        testPageConnectivity(),
+      ]);
+
+      var googleAds = results[0];
+      var doubleClick = results[1];
+      var yandexAds = results[2];
+      var cosmetic = results[3];
+      var connectivity = results[4];
+
+      var score = 0;
+      score += networkPoints(googleAds, connectivity);
+      score += networkPoints(doubleClick, connectivity);
+      score += networkPoints(yandexAds, connectivity);
+
+      if (cosmetic.status === 'blocked') {
+        score += cosmetic.hidden >= 2 ? 4 : 3;
+      }
+
+      var output = {
+        blocked: score >= CONFIG.BLOCK_THRESHOLD,
+        score: score,
+        signals: {
+          googleAds: googleAds.status,
+          doubleClick: doubleClick.status,
+          yandexAds: yandexAds.status,
+          cosmetic: cosmetic.status,
+          cosmeticHidden: cosmetic.hidden,
+          cosmeticTotal: cosmetic.total,
+          pageConnectivity: connectivity,
+        },
+      };
+
+      debugLog('[OnlineLinuxTerminal-adblock-detector]', output);
+      return output;
+    }
+
+    function showPopup() {
+      if (popupHost) return;
+
+      var host = document.createElement('div');
+      var shadow;
+      var wrapper = document.createElement('div');
+
+      var overlayClass = randomName();
+      var cardClass = randomName();
+      var badgeClass = randomName();
+      var iconClass = randomName();
+      var titleClass = randomName();
+      var textClass = randomName();
+      var guideBoxClass = randomName();
+      var guideItemClass = randomName();
+      var buttonClass = randomName();
+      var smallClass = randomName();
+
+      var style = document.createElement('style');
+      var oldHtmlOverflow = document.documentElement.style.overflow;
+      var oldBodyOverflow = document.body ? document.body.style.overflow : '';
+
+      host.id = randomName();
+      host.style.setProperty('position', 'fixed', 'important');
+      host.style.setProperty('inset', '0', 'important');
+      host.style.setProperty('z-index', '2147483647', 'important');
+      host.style.setProperty('display', 'block', 'important');
+      document.documentElement.appendChild(host);
+
+      try {
+        shadow = host.attachShadow({ mode: 'closed' });
+      } catch (e) {
+        host.remove();
+        popupHost = null;
+        return;
+      }
+
+      style.textContent = `
+        .${overlayClass} {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          padding: 20px;
+          background: rgba(9, 9, 11, 0.88);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          z-index: 2147483647;
+        }
+
+        .${cardClass} {
+          position: relative;
+          width: min(480px, 100%);
+          max-height: 90vh;
+          overflow-y: auto;
+          box-sizing: border-box;
+          padding: 32px 28px 24px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 20px;
+          background: #121316;
+          color: #f4f4f5;
+          text-align: center;
+          box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 50px rgba(16, 185, 129, 0.1);
+          animation: aaFadeUp .28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes aaFadeUp {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .${badgeClass} {
+          display: inline-block;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          color: #34d399;
+          background: rgba(16, 185, 129, 0.12);
+          border: 1px solid rgba(16, 185, 129, 0.28);
+          padding: 4px 12px;
+          border-radius: 9999px;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+        }
+
+        .${iconClass} {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 16px;
+          border-radius: 50%;
+          background: rgba(239, 68, 68, 0.12);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          font-size: 28px;
+          line-height: 1;
+        }
+
+        .${titleClass} {
+          margin: 0 0 12px;
+          color: #ffffff;
+          font-size: 22px;
+          line-height: 1.3;
+          font-weight: 750;
+          letter-spacing: -0.02em;
+        }
+
+        .${textClass} {
+          margin: 0 auto 16px;
+          color: #a1a1aa;
+          font-size: 14px;
+          line-height: 1.6;
+          text-align: left;
+        }
+
+        .${textClass} p {
+          margin: 0 0 10px;
+        }
+
+        .${textClass} strong {
+          color: #f4f4f5;
+        }
+
+        .${guideBoxClass} {
+          background: #18191e;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 12px;
+          padding: 12px 14px;
+          margin: 0 0 20px;
+          text-align: left;
+          font-size: 12px;
+          line-height: 1.55;
+          color: #d4d4d8;
+        }
+
+        .${guideItemClass} {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+        .${guideItemClass}:last-child {
+          margin-bottom: 0;
+        }
+
+        .${guideItemClass} .icon {
+          flex-shrink: 0;
+          font-size: 14px;
+          margin-top: 1px;
+        }
+
+        .${buttonClass} {
+          width: 100%;
+          box-sizing: border-box;
+          border: 0;
+          border-radius: 12px;
+          padding: 14px 20px;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: #041f14;
+          cursor: pointer;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+          transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+        }
+        .${buttonClass}:hover:not(:disabled) {
+          transform: translateY(-1px);
+          filter: brightness(1.08);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        .${buttonClass}:active:not(:disabled) {
+          transform: translateY(0);
+        }
+        .${buttonClass}:focus-visible {
+          outline: 3px solid #34d399;
+          outline-offset: 3px;
+        }
+        .${buttonClass}:disabled {
+          cursor: default;
+          opacity: 0.65;
+          background: #27272a;
+          color: #a1a1aa;
+          box-shadow: none;
+        }
+
+        .${smallClass} {
+          margin: 16px 0 0;
+          color: #71717a;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        @keyframes aaShake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-6px); }
+          40%, 80% { transform: translateX(6px); }
+        }
+
+        .${buttonClass}.shake {
+          animation: aaShake .35s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .${cardClass} { animation: none; }
+          .${buttonClass} { transition: none; animation: none; }
+        }
+      `;
+
+      wrapper.className = overlayClass;
+      wrapper.innerHTML = `
+        <div class="${cardClass}" role="dialog" aria-modal="true" aria-labelledby="aa-title">
+          <div class="${badgeClass}">${text.badge}</div>
+          <div class="${iconClass}" aria-hidden="true">🛡️</div>
+          <h2 id="aa-title" class="${titleClass}">${text.title}</h2>
+          <div class="${textClass}">
+            <p>${text.msg1}</p>
+            <p>${text.msg2}</p>
+            <p><strong>${text.msg3}</strong></p>
+          </div>
+          <div class="${guideBoxClass}">
+            <div class="${guideItemClass}">
+              <span class="icon">🦁</span>
+              <span>${text.guideBrave}</span>
+            </div>
+            <div class="${guideItemClass}">
+              <span class="icon">🛑</span>
+              <span>${text.guideExtension}</span>
+            </div>
+          </div>
+          <button type="button" class="${buttonClass}">${text.btnCheck}</button>
+          <p class="${smallClass}">${text.footer}</p>
+        </div>
+      `;
+
+      shadow.appendChild(style);
+      shadow.appendChild(wrapper);
+
+      document.documentElement.style.setProperty('overflow', 'hidden', 'important');
+      if (document.body) {
+        document.body.style.setProperty('overflow', 'hidden', 'important');
+      }
+
+      var button = wrapper.querySelector('.' + buttonClass);
+      button.addEventListener('click', async function () {
+        button.disabled = true;
+        button.textContent = text.btnChecking;
+        await sleep(250);
+
+        var result = await detectAdblock();
+        if (!result.blocked) {
+          button.style.background = '#10b981';
+          button.style.color = '#041f14';
+          button.textContent = text.btnSuccess;
+          await sleep(350);
+          location.reload();
+          return;
+        }
+
+        button.disabled = false;
+        button.textContent = text.btnFailed;
+        button.classList.add('shake');
+        setTimeout(function () {
+          button.classList.remove('shake');
+        }, 400);
+      });
+
+      host.__restoreOverflow = function () {
+        document.documentElement.style.overflow = oldHtmlOverflow;
+        if (document.body) {
+          document.body.style.overflow = oldBodyOverflow;
+        }
+      };
+
+      popupHost = host;
+      try {
+        button.focus({ preventScroll: true });
+      } catch (e) {
+        try {
+          button.focus();
+        } catch (ignored) {}
+      }
+    }
+
+    async function triggerCheck() {
+      if (started) return;
+      started = true;
+      removeActivationListeners();
+      await sleep(150);
+      var result = await detectAdblock();
+      if (result.blocked) {
+        showPopup();
+      }
+    }
+
+    function onUserInteraction(event) {
+      if (event && event.isTrusted === false) return;
+      triggerCheck();
+    }
+
+    function removeActivationListeners() {
+      window.removeEventListener('pointerdown', onUserInteraction, true);
+      window.removeEventListener('touchstart', onUserInteraction, { capture: true });
+      window.removeEventListener('touchmove', onUserInteraction, { capture: true });
+      window.removeEventListener('wheel', onUserInteraction, { capture: true });
+      window.removeEventListener('scroll', onUserInteraction, { capture: true });
+      window.removeEventListener('keydown', onUserInteraction, true);
+    }
+
+    // Trigger on first genuine human interaction
+    window.addEventListener('pointerdown', onUserInteraction, true);
+    window.addEventListener('touchstart', onUserInteraction, { capture: true, passive: true });
+    window.addEventListener('touchmove', onUserInteraction, { capture: true, passive: true });
+    window.addEventListener('wheel', onUserInteraction, { capture: true, passive: true });
+    window.addEventListener('scroll', onUserInteraction, { capture: true, passive: true });
+    window.addEventListener('keydown', onUserInteraction, true);
+
+    // Fallback timer: if user sits idle without clicking/scrolling for 6 seconds, check anyway
+    setTimeout(function () {
+      if (!started) {
+        triggerCheck();
+      }
+    }, 6000);
+  })();
+</script>
+
+<!-- Noscript fallback: ensures users who completely disable JavaScript cannot bypass -->
+<noscript>
+  <style>
+    html,
+    body {
+      overflow: hidden !important;
+    }
+    #javascript-required-barrier {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background: rgba(9, 9, 11, 0.96);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #javascript-required-barrier .nojs-card {
+      width: min(460px, 100%);
+      box-sizing: border-box;
+      padding: 34px 28px;
+      border-radius: 18px;
+      background: #121316;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f4f4f5;
+      text-align: center;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(16, 185, 129, 0.1);
+    }
+    #javascript-required-barrier .nojs-icon {
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
+    #javascript-required-barrier h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    #javascript-required-barrier p {
+      margin: 0;
+      color: #a1a1aa;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+  <div id="javascript-required-barrier">
+    <div class="nojs-card">
+      <div class="nojs-icon" aria-hidden="true">⚡</div>
+      <h2>{text.noJsTitle}</h2>
+      <p>{text.noJsMsg}</p>
+    </div>
+  </div>
+</noscript>
+

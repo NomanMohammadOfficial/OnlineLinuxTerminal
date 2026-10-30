@@ -31,8 +31,23 @@ export interface YandexAdsConfig {
   excludePaths: string[];
 }
 
-export const ADS_CONFIG: { enabled: boolean; yandex: YandexAdsConfig } = {
+export interface AntiAdblockConfig {
+  /** Master switch for anti-adblock detection modal. */
+  enabled: boolean;
+  /** Log detection scores and signals to console. */
+  debug: boolean;
+}
+
+export const ADS_CONFIG: {
+  enabled: boolean;
+  antiAdblock: AntiAdblockConfig;
+  yandex: YandexAdsConfig;
+} = {
   enabled: true,
+  antiAdblock: {
+    enabled: true,
+    debug: false,
+  },
   yandex: {
     pageId: '19789036',
     placement: 'auto',
@@ -76,4 +91,10 @@ export function shouldLoadYandexAds(pathname: string): boolean {
   return !ADS_CONFIG.yandex.excludePaths.some(
     (excluded) => path === excluded || path.startsWith(excluded + '/')
   );
+}
+
+/** Whether anti-adblock detection should run for the given clean path. */
+export function shouldShowAntiAdblock(pathname: string): boolean {
+  if (!ADS_CONFIG.enabled || !ADS_CONFIG.antiAdblock.enabled) return false;
+  return shouldLoadYandexAds(pathname);
 }
